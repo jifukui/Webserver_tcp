@@ -1,6 +1,6 @@
 /* libhttpd.c - HTTP protocol library
 **
-** Copyright � 1995,1998,1999,2000,2001,2015 by
+** Copyright � 1995,1998,1999,2000,2001,2015 by
 ** Jef Poskanzer <jef@mail.acme.com>. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -81,7 +81,8 @@
 #include "timers.h"
 #include "match.h"
 #include "tdate_parse.h"
-
+#include <jansson.h>
+#include "LiguoWeb.h"
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
 #endif
@@ -3380,7 +3381,7 @@ cgi_child( httpd_conn* hc )
     char** envp;
     char* binary;
     char* directory;
-
+    int fidx=0;
     /* Unset close-on-exec flag for this socket.  This actually shouldn't
     ** be necessary, according to POSIX a dup()'d file descriptor does
     ** *not* inherit the close-on-exec flag, its flag is always clear.
@@ -3398,159 +3399,6 @@ cgi_child( httpd_conn* hc )
     */
     closelog();
 
-    /* If the socket happens to be using one of the stdin/stdout/stderr
-    ** descriptors, move it to another descriptor so that the dup2 calls
-    ** below don't screw things up.  We arbitrarily pick fd 3 - if there
-    ** was already something on it, we clobber it, but that doesn't matter
-    ** since at this point the only fd of interest is the connection.
-    ** All others will be closed on exec.
-    */
-    if ( hc->conn_fd == STDIN_FILENO || hc->conn_fd == STDOUT_FILENO || hc->conn_fd == STDERR_FILENO )
-	{
-	int newfd = dup2( hc->conn_fd, STDERR_FILENO + 1 );
-	if ( newfd >= 0 )
-	    hc->conn_fd = newfd;
-	/* If the dup2 fails, shrug.  We'll just take our chances.
-	** Shouldn't happen though.
-	*/
-	}
-
-    /* Make the environment vector. */
-    envp = make_envp( hc );
-
-    /* Make the argument vector. */
-    argp = make_argp( hc );
-
-    /* Set up stdin.  For POSTs we may have to set up a pipe from an
-    ** interposer process, depending on if we've read some of the data
-    ** into our buffer.
-    */
-    if ( hc->method == METHOD_POST && hc->read_idx > hc->checked_idx )
-	{
-	int p[2];
-
-	if ( pipe( p ) < 0 )
-	    {
-	    syslog( LOG_ERR, "pipe - %m" );
-	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
-	    httpd_write_response( hc );
-	    exit( 1 );
-	    }
-	r = fork( );
-	if ( r < 0 )
-	    {
-	    syslog( LOG_ERR, "fork - %m" );
-	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
-	    httpd_write_response( hc );
-	    exit( 1 );
-	    }
-	if ( r == 0 )
-	    {
-	    /* Interposer process. */
-	    sub_process = 1;
-	    (void) close( p[0] );
-	    cgi_interpose_input( hc, p[1] );
-	    exit( 0 );
-	    }
-	/* Need to schedule a kill for process r; but in the main process! */
-	(void) close( p[1] );
-	if ( p[0] != STDIN_FILENO )
-	    {
-	    (void) dup2( p[0], STDIN_FILENO );
-	    (void) close( p[0] );
-	    }
-	}
-    else
-	{
-	/* Otherwise, the request socket is stdin. */
-	if ( hc->conn_fd != STDIN_FILENO )
-	    (void) dup2( hc->conn_fd, STDIN_FILENO );
-	}
-
-    /* Set up stdout/stderr.  If we're doing CGI header parsing,
-    ** we need an output interposer too.
-    */
-    if ( strncmp( argp[0], "nph-", 4 ) != 0 && hc->mime_flag )
-	{
-	int p[2];
-
-	if ( pipe( p ) < 0 )
-	    {
-	    syslog( LOG_ERR, "pipe - %m" );
-	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
-	    httpd_write_response( hc );
-	    exit( 1 );
-	    }
-	r = fork( );
-	if ( r < 0 )
-	    {
-	    syslog( LOG_ERR, "fork - %m" );
-	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
-	    httpd_write_response( hc );
-	    exit( 1 );
-	    }
-	if ( r == 0 )
-	    {
-	    /* Interposer process. */
-	    sub_process = 1;
-	    (void) close( p[1] );
-	    cgi_interpose_output( hc, p[0] );
-	    exit( 0 );
-	    }
-	/* Need to schedule a kill for process r; but in the main process! */
-	(void) close( p[0] );
-	if ( p[1] != STDOUT_FILENO )
-	    (void) dup2( p[1], STDOUT_FILENO );
-	if ( p[1] != STDERR_FILENO )
-	    (void) dup2( p[1], STDERR_FILENO );
-	if ( p[1] != STDOUT_FILENO && p[1] != STDERR_FILENO )
-	    (void) close( p[1] );
-	}
-    else
-	{
-	/* Otherwise, the request socket is stdout/stderr. */
-	if ( hc->conn_fd != STDOUT_FILENO )
-	    (void) dup2( hc->conn_fd, STDOUT_FILENO );
-	if ( hc->conn_fd != STDERR_FILENO )
-	    (void) dup2( hc->conn_fd, STDERR_FILENO );
-	}
-
-    /* At this point we would like to set close-on-exec again for hc->conn_fd
-    ** (see previous comments on Linux's broken behavior re: close-on-exec
-    ** and dup.)  Unfortunately there seems to be another Linux problem, or
-    ** perhaps a different aspect of the same problem - if we do this
-    ** close-on-exec in Linux, the socket stays open but stderr gets
-    ** closed - the last fd duped from the socket.  What a mess.  So we'll
-    ** just leave the socket as is, which under other OSs means an extra
-    ** file descriptor gets passed to the child process.  Since the child
-    ** probably already has that file open via stdin stdout and/or stderr,
-    ** this is not a problem.
-    */
-    /* (void) fcntl( hc->conn_fd, F_SETFD, 1 ); */
-
-#ifdef CGI_NICE
-    /* Set priority. */
-    (void) nice( CGI_NICE );
-#endif /* CGI_NICE */
-
-    /* Split the program into directory and binary, so we can chdir()
-    ** to the program's own directory.  This isn't in the CGI 1.1
-    ** spec, but it's what other HTTP servers do.
-    */
-    directory = strdup( hc->expnfilename );
-    if ( directory == (char*) 0 )
-	binary = hc->expnfilename;      /* ignore errors */
-    else
-	{
-	binary = strrchr( directory, '/' );
-	if ( binary == (char*) 0 )
-	    binary = hc->expnfilename;
-	else
-	    {
-	    *binary++ = '\0';
-	    (void) chdir( directory );  /* ignore errors */
-	    }
-	}
 
     /* Default behavior for SIGPIPE. */
 #ifdef HAVE_SIGSET
@@ -3559,15 +3407,248 @@ cgi_child( httpd_conn* hc )
     (void) signal( SIGPIPE, SIG_DFL );
 #endif /* HAVE_SIGSET */
 
-    /* Run the program. */
-    (void) execve( binary, argp, envp );
 
-    /* Something went wrong. */
-    syslog( LOG_ERR, "execve %.80s - %m", hc->expnfilename );
-    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
-    httpd_write_response( hc );
-    _exit( 1 );
-    }
+	if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
+	{
+
+		send_mime(hc,200,"","","","application/json;charset=utf-8",(off_t)-1,(time_t)0);
+#ifdef CGI_NICE
+    /* Set priority. */
+    	(void) nice( CGI_NICE );
+#endif /* CGI_NICE */
+		char *instr=NULL,errstr[200];
+		json_t *jsonobj;
+		json_t *jsonecho;
+		json_t *jsonres;
+		jsonobj=json_object();
+		jsonecho=json_object();
+		jsonres=json_object();
+		if((jsonecho==(json_t*)0)||(jsonobj==(json_t *)0)||(jsonres==(json_t*)0))
+		{
+			char data[100]="{\"status\":\"ERROR\",\"error\":\"Json init error\"}";
+			add_response(hc,data);
+    		httpd_write_response( hc );	
+			_exit(0);
+		}
+		char *str;
+		unsigned char flag=0;
+		if(hc->method==1)
+		{
+			instr=NEW(char,1000);
+			strdecode(instr,hc->query);
+			flag=LiguoWeb_GET_Method(instr,jsonres,errstr);
+		}	
+		else if(hc->method==3)
+		{
+			instr=NEW(unsigned char,hc->contentlength+1);
+			if(instr!=(unsigned char*)0)
+			{
+				size_t num=0;
+				ssize_t rrr=0;
+				num=hc->read_idx-hc->checked_idx;
+				memcpy(instr,&hc->read_buf[hc->checked_idx],num);
+				
+				while(num<hc->contentlength)
+				{
+					rrr=read(hc->conn_fd,&instr[num],MIN(1024,hc->contentlength-num));
+					if(rrr<0||(errno==EINTR||errno==EAGAIN))
+					{
+						sleep(1);
+		             	continue;
+					}
+					if(rrr<=0)
+					{
+						break;
+					}
+					num+=rrr;
+				}
+				instr[hc->contentlength]='\0';	
+				flag=LiguoWeb_POST_Method(instr,jsonres,errstr);				
+			}
+		}
+		else
+		{
+			instr=NEW(char,5);
+			strcpy(errstr,"Error of Method");
+		}	
+		json_object_set_new(jsonecho,"result",jsonres);
+		json_object_set_new(jsonobj,"echo",jsonecho);
+		if(!instr)
+		{
+			json_object_set_new(jsonobj,"status",json_string("ERROR"));
+			json_object_set_new(jsonobj,"error",json_string("malloc fail"));
+		}
+		if(flag)
+		{
+			json_object_set_new(jsonobj,"status",json_string("SUCCESS"));
+		}
+		else
+		{
+			json_object_set_new(jsonobj,"status",json_string("ERROR"));
+			json_object_set_new(jsonobj,"error",json_string(errstr));
+		}
+		if(instr)
+		{
+			free(instr);
+		}
+		str=json_dumps(jsonobj,JSON_PRESERVE_ORDER);
+		add_response(hc,str);
+    	httpd_write_response( hc );
+		json_decref(jsonobj);
+		free(str);
+		if(str!=NULL)
+		{
+			str=NULL;
+		}
+    	_exit( 0 );
+	}
+	else
+	{
+		 if ( hc->conn_fd == STDIN_FILENO || hc->conn_fd == STDOUT_FILENO || hc->conn_fd == STDERR_FILENO )
+		{
+			int newfd = dup2( hc->conn_fd, STDERR_FILENO + 1 );
+			if ( newfd >= 0 )
+	    	{
+				hc->conn_fd = newfd;
+			}
+		}
+		envp = make_envp( hc );
+		argp = make_argp( hc );
+		if ( hc->method == METHOD_POST && hc->read_idx > hc->checked_idx )
+		{
+			int p[2];
+
+			if ( pipe( p ) < 0 )
+	    	{
+	    		syslog( LOG_ERR, "pipe - %m" );
+	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
+	    		httpd_write_response( hc );
+	    		exit( 1 );
+	    	}
+			r = fork( );
+			if ( r < 0 )
+	    	{
+	    		syslog( LOG_ERR, "fork - %m" );
+	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
+	    		httpd_write_response( hc );
+	    		exit( 1 );
+	    	}
+			if ( r == 0 )
+	    	{
+	    		/* Interposer process. */
+	    		sub_process = 1;
+	    		(void) close( p[0] );
+	    		cgi_interpose_input( hc, p[1] );
+	    		exit( 0 );
+	    	}
+	/* Need to schedule a kill for process r; but in the main process! */
+			(void) close( p[1] );
+			if ( p[0] != STDIN_FILENO )
+	    	{
+	    		(void) dup2( p[0], STDIN_FILENO );
+	    		(void) close( p[0] );
+	    	}
+		}
+    	else
+		{
+		/* Otherwise, the request socket is stdin. */
+			if ( hc->conn_fd != STDIN_FILENO )
+	    	{
+				(void) dup2( hc->conn_fd, STDIN_FILENO );
+			}
+		}
+
+    	/* Set up stdout/stderr.  If we're doing CGI header parsing,
+    	** we need an output interposer too.
+    	*/
+    	if ( strncmp( argp[0], "nph-", 4 ) != 0 && hc->mime_flag )
+		{
+			int p[2];
+
+			if ( pipe( p ) < 0 )
+	    	{
+	    		syslog( LOG_ERR, "pipe - %m" );
+	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
+	    		httpd_write_response( hc );
+	    		exit( 1 );
+	    	}
+			r = fork( );
+			if ( r < 0 )
+	    	{
+	    		syslog( LOG_ERR, "fork - %m" );
+	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
+	    		httpd_write_response( hc );
+	    		exit( 1 );
+	    	}
+			if ( r == 0 )
+	    	{
+	    	/* Interposer process. */
+	    		sub_process = 1;
+	    		(void) close( p[1] );
+	    		cgi_interpose_output( hc, p[0] );
+	    		exit( 0 );
+	    	}
+			/* Need to schedule a kill for process r; but in the main process! */
+			(void) close( p[0] );
+			if ( p[1] != STDOUT_FILENO )
+	    	{
+				(void) dup2( p[1], STDOUT_FILENO );
+			}
+			if ( p[1] != STDERR_FILENO )
+	    	{
+				(void) dup2( p[1], STDERR_FILENO );
+			}
+			if ( p[1] != STDOUT_FILENO && p[1] != STDERR_FILENO )
+	    	{
+				(void) close( p[1] );
+			}
+		}
+    	else
+		{
+			/* Otherwise, the request socket is stdout/stderr. */
+			if ( hc->conn_fd != STDOUT_FILENO )
+	    	{
+				(void) dup2( hc->conn_fd, STDOUT_FILENO );
+			}
+			if ( hc->conn_fd != STDERR_FILENO )
+	    	{
+				(void) dup2( hc->conn_fd, STDERR_FILENO );
+			}
+		}
+		(void) nice( 10 );
+		directory = strdup( hc->expnfilename );
+    	if ( directory == (char*) 0 )
+		{
+			binary = hc->expnfilename;      /* ignore errors */
+		}
+    	else
+		{
+			//获取最后的/的位置
+			binary = strrchr( directory, '/' );
+			if ( binary == (char*) 0 )
+	    	{
+				binary = hc->expnfilename;
+			}
+			else
+	    	{
+	    		*binary++ = '\0';
+				//切换目录
+	    		(void) chdir( directory );  /* ignore errors */
+	    	}
+		}
+
+
+
+    	/* Run the program. */
+    	(void) execve( binary, argp, envp );
+
+    	/* Something went wrong. */
+    	syslog( LOG_ERR, "execve %.80s - %m", hc->expnfilename );
+    	httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
+    	httpd_write_response( hc );
+    	_exit( 1 );
+	}
+}
 
 
 static int
