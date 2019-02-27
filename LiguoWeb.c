@@ -120,7 +120,7 @@ uint8 JsonFromFile(uint8 *filepath,uint8 *data)
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 {
-	prtinf("GET Method\n");
+	printf("GET Method\n");
 	char* str=strchr(sstr,'=');
 	uint8 flag=0;
 	if(str)
