@@ -3407,7 +3407,7 @@ cgi_child( httpd_conn* hc )
     (void) signal( SIGPIPE, SIG_DFL );
 #endif /* HAVE_SIGSET */
 
-
+	printf("The hc->expnfilename is %s\n",hc->expnfilename);
 	if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
 	{
 		printf("jifukui start work it\n");
@@ -3504,7 +3504,8 @@ cgi_child( httpd_conn* hc )
 	}
 	else
 	{
-		 if ( hc->conn_fd == STDIN_FILENO || hc->conn_fd == STDOUT_FILENO || hc->conn_fd == STDERR_FILENO )
+		printf("The cgi start do it\n");
+		if ( hc->conn_fd == STDIN_FILENO || hc->conn_fd == STDOUT_FILENO || hc->conn_fd == STDERR_FILENO )
 		{
 			int newfd = dup2( hc->conn_fd, STDERR_FILENO + 1 );
 			if ( newfd >= 0 )
