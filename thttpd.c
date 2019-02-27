@@ -169,7 +169,7 @@ static void show_stats( ClientData client_data, struct timeval* nowP );
 #endif /* STATS_TIME */
 static void logstats( struct timeval* nowP );
 static void thttpd_logstats( long secs );
-
+int sockfd;
 
 /* SIGTERM and SIGINT say to exit immediately. */
 static void
@@ -374,7 +374,6 @@ main( int argc, char** argv )
 	#define MAXLINE 80
 	#define SERV_PORT 5000
 	struct sockaddr_in servaddr;
-	int sockfd;
 	sockfd=socket(AF_INET,SOCK_STREAM,0);
     bzero(&servaddr,sizeof(servaddr));
 	servaddr.sin_family=AF_INET;
