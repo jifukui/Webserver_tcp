@@ -195,13 +195,17 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     char buf[MAXLINE];
     int sockfd,n=0;
     char str[]="#model?\r\n";
+	printf("start socket\n");
     sockfd=socket(AF_INET,SOCK_STREAM,0);
+	printf("cocket\n");
     bzero(&servaddr,sizeof(servaddr));
     servaddr.sin_family=AF_INET;
     inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
     servaddr.sin_port=htons(SERV_PORT);
     connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
+	printf("connect\n");
     write(sockfd,str,strlen(str));
+	printf("write\n");
 	do{
 		n=read(socket,buf,MAXLINE);
 		printf("have nothing code is %s\n",n);
