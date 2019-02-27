@@ -189,6 +189,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
 #define MAXLINE 80
 #define SERV_PORT 5000
+	printf("get name\n");
 	uint8 flag=1;
 	struct sockaddr_in servaddr;
     char buf[MAXLINE];
