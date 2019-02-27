@@ -192,7 +192,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	uint8 flag=1;
 	struct sockaddr_in servaddr;
     char buf[MAXLINE];
-    int sockfd,n;
+    int sockfd,n=0;
     char str[]="#model?\r\n";
     sockfd=socket(AF_INET,SOCK_STREAM,0);
     bzero(&servaddr,sizeof(servaddr));
@@ -201,7 +201,9 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     servaddr.sin_port=htons(SERV_PORT);
     connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
     write(sockfd,str,strlen(str));
-    n=read(socket,buf,MAXLINE);
+	do{
+		n=read(socket,buf,MAXLINE);
+	}while(n<=0);
     //printf("Response form server:%s\n",buf);
     close(sockfd);
     json_object_set_new(json,"name",json_string(buf));
