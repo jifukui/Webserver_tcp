@@ -185,6 +185,8 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 
 uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
+#define MAXLINE 80
+#define SERV_PORT 5000
 	uint8 flag=1;
 	struct sockaddr_in servaddr;
     char buf[MAXLINE];
