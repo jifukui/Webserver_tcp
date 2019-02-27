@@ -206,11 +206,10 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	printf("connect\n");
     write(sockfd,str,strlen(str));
 	printf("write\n");
-	do{
-		n=read(socket,buf,MAXLINE);
-		printf("have nothing code is %s\n",n);
-	}while(n<=0);
-    //printf("Response form server:%s\n",buf);
+	
+	n=read(socket,buf,MAXLINE);
+	printf("have nothing code is %s\n",n);
+    printf("read\n");
     close(sockfd);
     json_object_set_new(json,"name",json_string(buf));
 	return flag;
