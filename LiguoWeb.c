@@ -190,7 +190,6 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 #define MAXLINE 80
 #define SERV_PORT 5000
 	uint8 flag=1;
-	printf("get name\n");
 	struct sockaddr_in servaddr;
     char buf[MAXLINE];
     int sockfd,n;
@@ -203,9 +202,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     servaddr.sin_port=htons(SERV_PORT);
     connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
     write(sockfd,str,strlen(str));
-	printf("write\n");
     n=read(sockfd,buf,MAXLINE);
-    printf("Response form server:%s\n",buf);
     json_object_set_new(json,"name",json_string(buf));
 	close(sockfd);
 	return flag;
