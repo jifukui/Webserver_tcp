@@ -195,7 +195,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	//struct sockaddr_in servaddr;
     char buf[MAXLINE];
     //int sockfd,n;
-	int n
+	int n;
     char str[]="#model?\r\n";
     //sockfd=socket(AF_INET,SOCK_STREAM,0);
     //bzero(&servaddr,sizeof(servaddr));
