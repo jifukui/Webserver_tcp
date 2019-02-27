@@ -371,6 +371,18 @@ main( int argc, char** argv )
 
     argv0 = argv[0];
 	printf("Hello,This is jifukui\n");
+	#define MAXLINE 80
+	#define SERV_PORT 5000
+	struct sockaddr_in servaddr;
+	int sockfd;
+	sockfd=socket(AF_INET,SOCK_STREAM,0);
+    bzero(&servaddr,sizeof(servaddr));
+	servaddr.sin_family=AF_INET;
+    inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+	servaddr.sin_port=htons(SERV_PORT);
+    connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
+
+
     cp = strrchr( argv0, '/' );
     if ( cp != (char*) 0 )
 	++cp;

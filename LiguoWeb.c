@@ -13,6 +13,8 @@ typedef unsigned short int uint16;
 typedef short int int16;
 
 #define STATIC static
+extern int sockfd;
+
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
@@ -190,17 +192,18 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 #define MAXLINE 80
 #define SERV_PORT 5000
 	uint8 flag=1;
-	struct sockaddr_in servaddr;
+	//struct sockaddr_in servaddr;
     char buf[MAXLINE];
-    int sockfd,n;
+    //int sockfd,n;
+	int n
     char str[]="#model?\r\n";
-    sockfd=socket(AF_INET,SOCK_STREAM,0);
-    bzero(&servaddr,sizeof(servaddr));
+    //sockfd=socket(AF_INET,SOCK_STREAM,0);
+    //bzero(&servaddr,sizeof(servaddr));
 	bzero(buf,sizeof(buf));
-    servaddr.sin_family=AF_INET;
-    inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
-    servaddr.sin_port=htons(SERV_PORT);
-    connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
+    //servaddr.sin_family=AF_INET;
+    //inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+    //servaddr.sin_port=htons(SERV_PORT);
+    //connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
     write(sockfd,str,strlen(str));
     n=read(sockfd,buf,MAXLINE);
     json_object_set_new(json,"name",json_string(buf));
