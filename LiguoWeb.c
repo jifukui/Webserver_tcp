@@ -120,6 +120,7 @@ uint8 JsonFromFile(uint8 *filepath,uint8 *data)
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 {
+	prtinf("GET Method\n");
 	char* str=strchr(sstr,'=');
 	uint8 flag=0;
 	if(str)
@@ -139,6 +140,7 @@ uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 {
+	printf("POST Method\n");
 	return CommandHandle(sstr,json,estr);
 }
 

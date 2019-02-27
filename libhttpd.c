@@ -3410,7 +3410,7 @@ cgi_child( httpd_conn* hc )
 
 	if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
 	{
-
+		printf("jifukui start work it\n");
 		send_mime(hc,200,"","","","application/json;charset=utf-8",(off_t)-1,(time_t)0);
 #ifdef CGI_NICE
     /* Set priority. */
