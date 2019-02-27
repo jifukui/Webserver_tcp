@@ -203,6 +203,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     write(sockfd,str,strlen(str));
 	do{
 		n=read(socket,buf,MAXLINE);
+		printf("have nothing code is %s\n",n);
 	}while(n<=0);
     //printf("Response form server:%s\n",buf);
     close(sockfd);
