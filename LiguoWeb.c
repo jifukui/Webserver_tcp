@@ -186,6 +186,20 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
 	uint8 flag=1;
-    json_object_set_new(json,"name",json_string("just to test it"));
+	struct sockaddr_in servaddr;
+    char buf[MAXLINE];
+    int sockfd,n;
+    char str[]="#model?\r\n";
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    bzero(&servaddr,sizeof(servaddr));
+    servaddr.sin_family=AF_INET;
+    inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
+    servaddr.sin_port=htons(SERV_PORT);
+    connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
+    write(sockfd,str,strlen(str));
+    n=read(socket,buf,MAXLINE);
+    //printf("Response form server:%s\n",buf);
+    close(sockfd);
+    json_object_set_new(json,"name",json_string(buf));
 	return flag;
 }
