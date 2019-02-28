@@ -204,9 +204,18 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     //inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
     //servaddr.sin_port=htons(SERV_PORT);
     //connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
-    write(sockfd,str,strlen(str));
-    n=read(sockfd,buf,MAXLINE);
-    json_object_set_new(json,"name",json_string(buf));
-	close(sockfd);
+    //write(sockfd,str,strlen(str));
+    //n=read(sockfd,buf,MAXLINE);
+	n=lig_pip_write_bytes(status,str,strlen(str));
+	if(n>0)
+    {
+        printf("good to write\n");
+        bzero(buf,sizeof(buf));
+		do{
+        	n=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+		}while(n<1);
+        printf("The read buf is %s,the num is %d\n",buf,n);
+		json_object_set_new(json,"name",json_string(buf));
+    }
 	return flag;
 }

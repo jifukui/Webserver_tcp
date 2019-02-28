@@ -371,6 +371,7 @@ main( int argc, char** argv )
 
     argv0 = argv[0];
 	printf("Hello,This is jifukui\n");
+	/*
 	#define MAXLINE 80
 	#define SERV_PORT 5000
 	struct sockaddr_in servaddr;
@@ -380,6 +381,9 @@ main( int argc, char** argv )
     inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
 	servaddr.sin_port=htons(SERV_PORT);
     connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
+	*/
+	sockfd=lig_pip_open(0);
+	
 
 
     cp = strrchr( argv0, '/' );
