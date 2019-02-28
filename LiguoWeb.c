@@ -206,7 +206,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     //connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
     //write(sockfd,str,strlen(str));
     //n=read(sockfd,buf,MAXLINE);
-	n=lig_pip_write_bytes(status,str,strlen(str));
+	n=lig_pip_write_bytes(sockfd,str,strlen(str));
 	if(n>0)
     {
         printf("good to write\n");
