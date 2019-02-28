@@ -1,7 +1,7 @@
 # Generated automatically from Makefile.in by configure.
 # Makefile.in for thttpd
 #
-# Copyright © 1995,1998 by Jef Poskanzer <jef@mail.acme.com>.
+# Copyright ï¿½ 1995,1998 by Jef Poskanzer <jef@mail.acme.com>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ INSTALL =	/usr/bin/install -c
 	@rm -f $@
 	$(CC) $(CFLAGS) -c $*.c
 
-SRC =		thttpd.c libhttpd.c fdwatch.c mmc.c timers.c match.c tdate_parse.c LiguoWeb.c
+SRC =		thttpd.c libhttpd.c fdwatch.c mmc.c timers.c match.c tdate_parse.c LiguoWeb.c lig_pip.c
 
 OBJ =		$(SRC:.c=.o) 
 
@@ -173,3 +173,4 @@ timers.o:	timers.h
 match.o:	match.h
 tdate_parse.o:	tdate_parse.h
 LiguoWeb.o :LiguoWeb.h
+lig_pip.o:lig_pip.h
