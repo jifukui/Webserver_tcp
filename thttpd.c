@@ -1504,6 +1504,10 @@ shut_down( void )
     free( (void*) connects );
     if ( throttles != (throttletab*) 0 )
 	free( (void*) throttles );
+	if(sockfd>=0)
+	{
+		lig_pip_close(sockfd);
+	}
     }
 
 

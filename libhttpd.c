@@ -83,6 +83,7 @@
 #include "tdate_parse.h"
 #include <jansson.h>
 #include "LiguoWeb.h"
+extern int sockfd;
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
 #endif
@@ -3432,45 +3433,53 @@ cgi_child( httpd_conn* hc )
 		}
 		char *str;
 		unsigned char flag=0;
-		if(hc->method==1)
+		if(sockfd!=-1)
 		{
-			instr=NEW(char,1000);
-			strdecode(instr,hc->query);
-			flag=LiguoWeb_GET_Method(instr,jsonres,errstr);
-		}	
-		else if(hc->method==3)
-		{
-			instr=NEW(unsigned char,hc->contentlength+1);
-			if(instr!=(unsigned char*)0)
+			if(hc->method==1)
 			{
-				size_t num=0;
-				ssize_t rrr=0;
-				num=hc->read_idx-hc->checked_idx;
-				memcpy(instr,&hc->read_buf[hc->checked_idx],num);
-				
-				while(num<hc->contentlength)
+				instr=NEW(char,1000);
+				strdecode(instr,hc->query);
+				flag=LiguoWeb_GET_Method(instr,jsonres,errstr);
+			}	
+			else if(hc->method==3)
+			{
+				instr=NEW(unsigned char,hc->contentlength+1);
+				if(instr!=(unsigned char*)0)
 				{
-					rrr=read(hc->conn_fd,&instr[num],MIN(1024,hc->contentlength-num));
-					if(rrr<0||(errno==EINTR||errno==EAGAIN))
+					size_t num=0;
+					ssize_t rrr=0;
+					num=hc->read_idx-hc->checked_idx;
+					memcpy(instr,&hc->read_buf[hc->checked_idx],num);
+				
+					while(num<hc->contentlength)
 					{
-						sleep(1);
-		             	continue;
+						rrr=read(hc->conn_fd,&instr[num],MIN(1024,hc->contentlength-num));
+						if(rrr<0||(errno==EINTR||errno==EAGAIN))
+						{
+							sleep(1);
+		             		continue;
+						}
+						if(rrr<=0)
+						{
+							break;
+						}
+						num+=rrr;
 					}
-					if(rrr<=0)
-					{
-						break;
-					}
-					num+=rrr;
+					instr[hc->contentlength]='\0';	
+					flag=LiguoWeb_POST_Method(instr,jsonres,errstr);				
 				}
-				instr[hc->contentlength]='\0';	
-				flag=LiguoWeb_POST_Method(instr,jsonres,errstr);				
 			}
+			else
+			{
+				instr=NEW(char,5);
+				strcpy(errstr,"Error of Method");
+			}	
 		}
 		else
 		{
-			instr=NEW(char,5);
-			strcpy(errstr,"Error of Method");
-		}	
+			json_object_set_new(jsonobj,"status",json_string("ERROR"));
+			json_object_set_new(jsonobj,"error",json_string("Device Init Error"));
+		}
 		json_object_set_new(jsonecho,"result",jsonres);
 		json_object_set_new(jsonobj,"echo",jsonecho);
 		if(!instr)
