@@ -44,7 +44,7 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	},
 	{
-		"matrix_status22",
+		"matrix_status",
 		&GetDeviceModuleName,
 	}
 };
@@ -257,6 +257,10 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
         	n=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 		}while(n<1);
         printf("The read buf is %s,the num is %d\n",buf,n);
+		if(json==null)
+		{
+			printf("The json is null\n");
+		}
 		json_object_set_new(json,"name",json_string(buf));
     }
 	return flag;
