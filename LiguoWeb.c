@@ -186,6 +186,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 			
 			json_error_t error;
 			json_object_set_new(json,"cmd",json_string(str));
+			printf("Good for this \n");
             /*if(!strcmp(str,"matrix_status"))
             {
                 flag=GetDeviceModuleName(json,estr);
@@ -228,6 +229,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     //int sockfd,n;
 	int n;
     char str[]="#model?\r\n";
+	printf("have called \n");
     //sockfd=socket(AF_INET,SOCK_STREAM,0);
     //bzero(&servaddr,sizeof(servaddr));
 	bzero(buf,sizeof(buf));
