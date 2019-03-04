@@ -231,7 +231,7 @@ uint8 PiPHandler(char *tx,char *rx)
 uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
 	uint8 flag=1;
-    char buf[MAXLINE];
+    char buf[80];
 	int n;
     char str[]="#model?\r\n";	
 	PiPHandler(str,buf);
