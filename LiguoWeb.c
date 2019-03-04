@@ -196,12 +196,13 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
 					printf("Have Get a command\n");
-					flag=(*CommandHandler[i].CmdHandler)(json,estr);
+					//flag=(*CommandHandler[i].CmdHandler)(json,estr);
+					flag=GetDeviceModuleName(json,estr);
 					break;
 				}
 			}
 			sprintf("The length is %d The is %d\n",length,i);
-			if(i==length)
+			if(i>=length)
 			{
 				strcpy(estr,"not this command");
 			}
