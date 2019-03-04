@@ -193,6 +193,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
             }*/
 			for(i=0;i<length;i++)
 			{
+				printf("for this i is %d,name is %s\n",i,CommandHandler[i].CommandName);
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
 					printf("Have Get a command\n");
