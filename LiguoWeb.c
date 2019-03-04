@@ -29,6 +29,20 @@ STATIC uint8 JsonGetUint8(json_t *json,uint8 *data);
 STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,char *estr);
+typedef uint8 (*CMD_FUNC)(json_t *json,char * estr);
+typedef {
+	char CommandName[30];
+	CMD_FUNC CmdHandler;
+}LigCommandHandler;
+LigCommandHandler={
+	{
+		"model?",
+		&GetDeviceModuleName,
+	},
+};
+
+
+
 
 void Uint8toString(int8 *str,uint8 *data,uint32 length)
 {
@@ -165,11 +179,19 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 			
 			json_error_t error;
 			json_object_set_new(json,"cmd",json_string(str));
-            if(!strcmp(str,"matrix_status"))
+            /*if(!strcmp(str,"matrix_status"))
             {
                 flag=GetDeviceModuleName(json,estr);
-            }
-			else
+            }*/
+			for(uint8 i=0;i<1;i++)
+			{
+				if(!strcmp(str,LigCommandHandler[i].CommandName))
+				{
+					flags=*(LigCommandHandler[i].CmdHandler)(json,estr);
+					break;
+				}
+			}
+			if(i==1)
 			{
 				strcpy(estr,"not this command");
 			}
