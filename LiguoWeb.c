@@ -222,6 +222,7 @@ uint8 PiPHandler(char *tx,char *rx)
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
 	if(length>0)
 	{
+		length=0;
 		printf("good for write\n");
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,sizeof(rx));
