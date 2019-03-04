@@ -183,7 +183,6 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 	printf("The size2 is %d\n",sizeof(LigCommandHandler));
 	length=((sizeof(CommandHandler)/sizeof(LigCommandHandler)));
 	printf("The length is %d\n",length);
-	length=1;
     if(jsonget)
     {
         json_t *cmd;
@@ -200,7 +199,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
                 flag=GetDeviceModuleName(json,estr);
             }*/
 			printf("The cmd is %s\n",str);
-			for(i=0;i<3;i++)
+			for(i=0;i<length;i++)
 			{
 				printf("for this i is %d,name is %s\n",i,CommandHandler[i].CommandName);
 				if(!strcmp(str,CommandHandler[i].CommandName))
