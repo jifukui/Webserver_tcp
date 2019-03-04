@@ -169,6 +169,8 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     jsonget=json_loads(sstr,0,&error);
     uint8 flag=0;
 	int8 data[20000];
+	uint8 i;
+	uint8 length=((sizeof(CommandHandler)/sizeof(LigCommandHandler)));
     if(jsonget)
     {
         json_t *cmd;
@@ -183,7 +185,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
             {
                 flag=GetDeviceModuleName(json,estr);
             }*/
-			for(uint8 i=0;i<1;i++)
+			for(uint8 i=0;i<length;i++)
 			{
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
@@ -191,7 +193,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 					break;
 				}
 			}
-			if(i==1)
+			if(i==length)
 			{
 				strcpy(estr,"not this command");
 			}
