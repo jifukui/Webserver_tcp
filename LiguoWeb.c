@@ -200,7 +200,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
                 flag=GetDeviceModuleName(json,estr);
             }*/
 			printf("The cmd is %s\n",str);
-			for(i=0;i<length;i++)
+			for(i=0;i<3;i++)
 			{
 				printf("for this i is %d,name is %s\n",i,CommandHandler[i].CommandName);
 				if(!strcmp(str,CommandHandler[i].CommandName))
