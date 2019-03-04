@@ -34,7 +34,7 @@ typedef struct{
 	char CommandName[30];
 	CMD_FUNC CmdHandler;
 }LigCommandHandler;
-LigCommandHandler={
+LigCommandHandler[]={
 	{
 		"model?",
 		&GetDeviceModuleName,
