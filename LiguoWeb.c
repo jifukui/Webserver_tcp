@@ -171,9 +171,11 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 	int8 data[20000];
 	uint8 i;
 	uint8 length;
+	printf("The size1 is %d\n",sizeof(CommandHandler));
+	printf("The size2 is %d\n",sizeof(LigCommandHandler));
 	length=((sizeof(CommandHandler)/sizeof(LigCommandHandler)));
-	printf("The size1 is %d\n",sizeof(CommandHandler);
-	printf("The size2 is %d\n",sizeof(LigCommandHandler);
+	printf("The length is %d\n",length);
+	length=1;
     if(jsonget)
     {
         json_t *cmd;
