@@ -222,17 +222,19 @@ uint8 PiPHandler(char *tx,char *rx)
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
 	if(length>0)
 	{
+		printf("good for write\n");
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,sizeof(rx));
 		}while(length<1);
+		printf("The length is %d\n",length);
 	}
+	return length;
 }
 
 uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
 	uint8 flag=1;
     char buf[80];
-	int n;
     char str[]="#model?\r\n";	
 	PiPHandler(str,buf);
 	json_object_set_new(json,"name",json_string(buf));
