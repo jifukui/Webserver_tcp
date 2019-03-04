@@ -209,7 +209,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 					printf("No this command %s\n",CommandHandler[i].CommandName);
 				}
 			}
-			sprintf("The length is %d The is %d\n",length,i);
+			printf("The length is %d The is %d\n",length,i);
 			if(i>=length)
 			{
 				strcpy(estr,"not this command");
