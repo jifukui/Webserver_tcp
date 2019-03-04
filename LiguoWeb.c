@@ -205,8 +205,8 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
 					printf("Have Get a command\n");
-					//flag=(*CommandHandler[i].CmdHandler)(json,estr);
-					flag=GetDeviceModuleName(json,estr);
+					flag=(*CommandHandler[i].CmdHandler)(json,estr);
+					//flag=GetDeviceModuleName(json,estr);
 					break;
 				}
 				else
