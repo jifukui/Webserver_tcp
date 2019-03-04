@@ -48,7 +48,7 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	}
 };
-
+STATIC uint8 PiPHandler(char *tx,char *rx);
 
 
 
@@ -189,27 +189,14 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
         {	
 			json_error_t error;
 			json_object_set_new(json,"cmd",json_string(str));
-            /*if(!strcmp(str,"matrix_status"))
-            {
-                flag=GetDeviceModuleName(json,estr);
-            }*/
-			printf("The cmd is %s\n",str);
 			for(i=0;i<length;i++)
 			{
-				printf("for this i is %d,name is %s\n",i,CommandHandler[i].CommandName);
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
-					printf("Have Get a command\n");
 					flag=(*CommandHandler[i].CmdHandler)(json,estr);
-					//flag=GetDeviceModuleName(json,estr);
 					break;
 				}
-				else
-				{
-					printf("No this command %s\n",CommandHandler[i].CommandName);
-				}
 			}
-			printf("The length is %d The is %d\n",length,i);
 			if(i>=length)
 			{
 				strcpy(estr,"not this command");
@@ -228,40 +215,26 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     return flag;
 }
 
+uint8 PiPHandler(char *tx,char *rx)
+{
+	uint8 length;
+	bzero(rx,sizeof(rx));
+	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
+	if(length>0)
+	{
+		do{
+        	length=lig_pip_read_bytes(sockfd,rx,sizeof(rx));
+		}while(length<1);
+	}
+}
+
 uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
-#define MAXLINE 80
-#define SERV_PORT 5000
 	uint8 flag=1;
-	//struct sockaddr_in servaddr;
     char buf[MAXLINE];
-    //int sockfd,n;
 	int n;
-    char str[]="#model?\r\n";
-	printf("have called \n");
-    //sockfd=socket(AF_INET,SOCK_STREAM,0);
-    //bzero(&servaddr,sizeof(servaddr));
-	bzero(buf,sizeof(buf));
-    //servaddr.sin_family=AF_INET;
-    //inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
-    //servaddr.sin_port=htons(SERV_PORT);
-    //connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
-    //write(sockfd,str,strlen(str));
-    //n=read(sockfd,buf,MAXLINE);
-	n=lig_pip_write_bytes(sockfd,str,strlen(str));
-	if(n>0)
-    {
-        printf("good to write\n");
-        bzero(buf,sizeof(buf));
-		do{
-        	n=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-		}while(n<1);
-        printf("The read buf is %s,the num is %d\n",buf,n);
-		if(json==0)
-		{
-			printf("The json is null\n");
-		}
-		json_object_set_new(json,"name",json_string(buf));
-    }
+    char str[]="#model?\r\n";	
+	PiPHandler(str,buf);
+	json_object_set_new(json,"name",json_string(buf));
 	return flag;
 }
