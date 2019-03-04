@@ -185,7 +185,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
             {
                 flag=GetDeviceModuleName(json,estr);
             }*/
-			for(uint8 i=0;i<length;i++)
+			for(i=0;i<length;i++)
 			{
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
