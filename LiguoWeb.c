@@ -34,7 +34,7 @@ typedef struct{
 	char CommandName[30];
 	CMD_FUNC CmdHandler;
 }LigCommandHandler;
-LigCommandHandler[]={
+LigCommandHandler CommandHandler[]={
 	{
 		"model?",
 		&GetDeviceModuleName,
@@ -185,9 +185,9 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
             }*/
 			for(uint8 i=0;i<1;i++)
 			{
-				if(!strcmp(str,LigCommandHandler[i].CommandName))
+				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
-					flags=*(LigCommandHandler[i].CmdHandler)(json,estr);
+					flags=*(CommandHandler[i].CmdHandler)(json,estr);
 					break;
 				}
 			}
