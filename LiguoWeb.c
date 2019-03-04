@@ -39,6 +39,10 @@ LigCommandHandler CommandHandler[]={
 		"model?",
 		&GetDeviceModuleName,
 	},
+	{
+		"matrix_status",
+		&GetDeviceModuleName,
+	}
 };
 
 
@@ -191,6 +195,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
             {
                 flag=GetDeviceModuleName(json,estr);
             }*/
+			printf("The cmd is %s\n",str);
 			for(i=0;i<length;i++)
 			{
 				printf("for this i is %d,name is %s\n",i,CommandHandler[i].CommandName);
@@ -200,6 +205,10 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 					//flag=(*CommandHandler[i].CmdHandler)(json,estr);
 					flag=GetDeviceModuleName(json,estr);
 					break;
+				}
+				else
+				{
+					printf("No this command %s\n",CommandHandler[i].CommandName);
 				}
 			}
 			sprintf("The length is %d The is %d\n",length,i);
