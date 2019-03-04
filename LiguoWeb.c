@@ -42,6 +42,10 @@ LigCommandHandler CommandHandler[]={
 	{
 		"matrix_status",
 		&GetDeviceModuleName,
+	},
+	{
+		"matrix_status",
+		&GetDeviceModuleName,
 	}
 };
 
