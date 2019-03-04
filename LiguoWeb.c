@@ -40,11 +40,11 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	},
 	{
-		"matrix_status",
+		"matrix_status12",
 		&GetDeviceModuleName,
 	},
 	{
-		"matrix_status",
+		"matrix_status22",
 		&GetDeviceModuleName,
 	}
 };
@@ -179,21 +179,16 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 	int8 data[20000];
 	uint8 i;
 	uint8 length;
-	printf("The size1 is %d\n",sizeof(CommandHandler));
-	printf("The size2 is %d\n",sizeof(LigCommandHandler));
 	length=((sizeof(CommandHandler)/sizeof(LigCommandHandler)));
-	printf("The length is %d\n",length);
     if(jsonget)
     {
         json_t *cmd;
         cmd=json_object_get(jsonget,"cmd");
 		char str[30];
         if(JsonGetString(cmd,str))
-        {
-			
+        {	
 			json_error_t error;
 			json_object_set_new(json,"cmd",json_string(str));
-			printf("Good for this \n");
             /*if(!strcmp(str,"matrix_status"))
             {
                 flag=GetDeviceModuleName(json,estr);
