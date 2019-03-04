@@ -30,7 +30,7 @@ STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,char *estr);
 typedef uint8 (*CMD_FUNC)(json_t *json,char * estr);
-typedef {
+typedef struct{
 	char CommandName[30];
 	CMD_FUNC CmdHandler;
 }LigCommandHandler;
