@@ -293,7 +293,7 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 			printf("The str is %s\n",str);
 			PiPHandler(str,buf,sizeof(buf));
 			flag=CmdStrHandler("MODULE-TYPE",buf);
-			sscanf(buf[&flag],"%d,%d,%d",&data[0],&data[1],&data[2]);
+			sscanf(&buf[flag],"%d,%d,%d",&data[0],&data[1],&data[2]);
 			printf("The data 1 is %d\n",data[0]);
 			printf("The data 2 is %d\n",data[1]);
 			printf("The data 3 is %d\n",data[2]);
