@@ -230,9 +230,10 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
+		length-=4;
+		memmove(rx,&rx[4],length);
 		length-=2;
 		rx[length]=NULL;
-		memmove(rx,&rx[4],length-4);
 		printf("The buf is %s\n",rx);
 		//
 	}
