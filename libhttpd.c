@@ -3409,10 +3409,8 @@ cgi_child( httpd_conn* hc )
     (void) signal( SIGPIPE, SIG_DFL );
 #endif /* HAVE_SIGSET */
 
-	printf("The hc->expnfilename is %s\n",hc->expnfilename);
 	if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
 	{
-		printf("jifukui start work it\n");
 		send_mime(hc,200,"","","","application/json;charset=utf-8",(off_t)-1,(time_t)0);
 #ifdef CGI_NICE
     /* Set priority. */
@@ -3514,7 +3512,6 @@ cgi_child( httpd_conn* hc )
 	}
 	else
 	{
-		printf("The cgi start do it\n");
 		if ( hc->conn_fd == STDIN_FILENO || hc->conn_fd == STDOUT_FILENO || hc->conn_fd == STDERR_FILENO )
 		{
 			int newfd = dup2( hc->conn_fd, STDERR_FILENO + 1 );

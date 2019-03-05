@@ -237,12 +237,6 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
-		//length-=4;
-		//memmove(rx,&rx[4],length);
-		//length-=2;
-		//rx[length]=NULL;
-		//printf("The buf is %s\n",rx);
-		//
 	}
 	return length;
 }
@@ -255,22 +249,6 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     char str[]="#model?\r\n";	
 	PiPHandler(str,buf,sizeof(buf));
 	buf[strlen(buf)-2]=NULL;
-	/*if(strstr(buf,"MODEL"))
-	{
-		for(i=(strlen("MODEL")+START);i<(strlen(buf));i++)
-		{
-			if(buf[i]!=' ')
-			{
-				flag=1;
-				json_object_set_new(json,"name",json_string(&buf[i]));
-				break;
-			}
-		}
-		if(!flag)
-		{
-			strcpy(estr,"Not Get Model Name");
-		}
-	}*/
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
@@ -287,6 +265,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 {
 	uint8 flag=0;
+	uint32 data[3];
     char buf[4096];
     char str[30]="#signal? *\r\n";
 	uint8 i;
@@ -308,15 +287,19 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 	}
 	if(i=PortNum-1)
 	{
-		//for(i=1;i<17;i++)
-		//{
-			sprintf(str,"#model-type? %d\r\n",1);
+		for(i=1;i<17;i++)
+		{
+			sprintf(str,"#MODULE-TYPE? %d\r\n",1);
 			printf("The str is %s\n",str);
 			PiPHandler(str,buf,sizeof(buf));
-			flag=1;
+			flag=CmdStrHandler("MODULE-TYPE",buf);
+			sscanf(buf[&flag],"%d,%d,%d",&data[0],&data[1],&data[2]);
+			printf("The data 1 is %d\n",data[0]);
+			printf("The data 2 is %d\n",data[1]);
+			printf("The data 3 is %d\n",data[2]);
 			json_object_set_new(json,"Data",json_string(buf));
 
-		//}
+		}
 	}
 
 	/*PiPHandler(str,buf,sizeof(buf));
