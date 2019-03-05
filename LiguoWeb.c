@@ -48,7 +48,7 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	}
 };
-STATIC uint8 PiPHandler(char *tx,char *rx);
+STATIC uint32 PiPHandler(char *tx,char *rx);
 
 
 
@@ -215,18 +215,18 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     return flag;
 }
 
-uint8 PiPHandler(char *tx,char *rx)
+uint32 PiPHandler(char *tx,char *rx)
 {
-	uint8 length;
-	bzero(rx,sizeof(rx));
+	uint32 length;
+	lig_pip_read_bytes(sockfd,rx,sizeof(rx));
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
 	if(length>0)
 	{
 		length=0;
-		printf("good for write\n");
+		bzero(rx,sizeof(rx));
 		do{
-        	length=lig_pip_read_bytes(sockfd,rx[length],sizeof(rx)-length);
-		}while(strstr(rx,"\n"));
+        	length+=lig_pip_read_bytes(sockfd,&rx[length],sizeof(rx)-length);
+		}while(!strstr(rx,"\n")&&length<sizeof(rx));
 		printf("The buf is %s\n",rx);
 		printf("The length is %d\n",length);
 	}
