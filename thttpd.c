@@ -374,7 +374,7 @@ main( int argc, char** argv )
 	json_t *LigPra;
     json_error_t Ligerr;
 	do{
-		LigFile=json_load_file("/nandflash/thttpd/www/configuration.json",0,Ligerr);
+		LigFile=json_load_file("/nandflash/thttpd/www/configuration.json",0,&Ligerr);
 	}while(!LigFile);
 	LigPra=json_object_get(LigFile,"data");
 	if(LigPra)
