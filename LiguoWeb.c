@@ -222,7 +222,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
 	lig_pip_read_bytes(sockfd,rx,len);
-	length=lig_pip_write_bytes(sockfd,tx,strlen(*tx));
+	length=lig_pip_write_bytes(sockfd,tx,strlen(*tx)+1);
 	if(length>0)
 	{
 		length=0;
