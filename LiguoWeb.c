@@ -221,7 +221,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint32 PiPHandler(char *tx,char *rx)
 {
 	uint32 length;
-	printf("The size is %d\n",strlen(*rx));
+	printf("The size is %d\n",strlen(rx));
 	lig_pip_read_bytes(sockfd,rx,sizeof(*rx));
 	length=lig_pip_write_bytes(sockfd,tx,strlen(*tx));
 	if(length>0)
