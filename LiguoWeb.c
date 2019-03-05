@@ -226,7 +226,7 @@ uint32 PiPHandler(char *tx,char *rx)
 	if(length>0)
 	{
 		length=0;
-		bzero(rx,len);
+		bzero(rx,sizeof(*rx));
 		do{
         	length+=lig_pip_read_bytes(sockfd,&rx[length],sizeof(*rx));
 		}while(length>0);
