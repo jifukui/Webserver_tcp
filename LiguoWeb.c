@@ -288,12 +288,39 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 {
 	uint8 flag=1;
     char buf[4096];
-    char str[]="#signal? *\r\n";	
-	PiPHandler(str,buf,sizeof(buf));
+    char str[30]="#signal? *\r\n";
+	uint8 i;
+	uint8 PortNum=LigPortNum/8;
+	json_t *portarr;
+	portarr=json_array();
+	json_t *portinfo[PortNum],copy;
+	if(!portarr)
+	{
+		strcpy_s(estr,"Init array error\n");
+	}
+	for(i=0;i<portNum;i++)
+	{
+		portinfo[i]=json_object();
+		if(!portinfo[i])
+		{
+			break;
+		}
+	}
+	if(i=PortNum-1)
+	{
+		//for(i=1;i<17;i++)
+		//{
+			sprintf(str,"#model-type? %d\r\n",1);
+			json_object_set_new(json,"Data",json_string(buf));
+
+		//}
+	}
+
+	/*PiPHandler(str,buf,sizeof(buf));
 	json_object_set_new(json,"In",json_string(buf));
 	strcpy(str,"#display? *\r\n");
 	printf("The str is %s\n",str);
-	PiPHandler(str,buf,sizeof(buf));
-	json_object_set_new(json,"Out",json_string(buf));
+	PiPHandler(str,buf,sizeof(buf));*/
+	//json_object_set_new(json,"Out",json_string(buf));
 	return flag;
 }
