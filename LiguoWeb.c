@@ -16,7 +16,7 @@ typedef short int int16;
 #define STATIC static
 #define START 4
 extern int sockfd;
-
+extern unsigned int LigPortNum;
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
@@ -158,7 +158,6 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 {
-	printf("GET Method\n");
 	char* str=strchr(sstr,'=');
 	uint8 flag=0;
 	if(str)
@@ -178,7 +177,6 @@ uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 {
-	printf("POST Method\n");
 	return CommandHandle(sstr,json,estr);
 }
 

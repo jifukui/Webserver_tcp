@@ -84,6 +84,7 @@
 #include <jansson.h>
 #include "LiguoWeb.h"
 extern int sockfd;
+extern unsigned int LigPortNum;
 #ifndef STDIN_FILENO
 #define STDIN_FILENO 0
 #endif
@@ -3433,7 +3434,7 @@ cgi_child( httpd_conn* hc )
 		}
 		char *str;
 		unsigned char flag=0;
-		if(sockfd!=-1)
+		if(sockfd!=-1||LigPortNum==0)
 		{
 			if(hc->method==1)
 			{

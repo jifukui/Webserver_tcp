@@ -170,7 +170,7 @@ static void show_stats( ClientData client_data, struct timeval* nowP );
 static void logstats( struct timeval* nowP );
 static void thttpd_logstats( long secs );
 int sockfd;
-
+unsigned int LigPortNum=0;
 /* SIGTERM and SIGINT say to exit immediately. */
 static void
 handle_term( int sig )
@@ -370,18 +370,46 @@ main( int argc, char** argv )
     struct timeval tv;
 
     argv0 = argv[0];
-	printf("Hello,This is jifukui\n");
-	/*
-	#define MAXLINE 80
-	#define SERV_PORT 5000
-	struct sockaddr_in servaddr;
-	sockfd=socket(AF_INET,SOCK_STREAM,0);
-    bzero(&servaddr,sizeof(servaddr));
-	servaddr.sin_family=AF_INET;
-    inet_pton(AF_INET,"127.0.0.1",&servaddr.sin_addr);
-	servaddr.sin_port=htons(SERV_PORT);
-    connect(sockfd,(struct sockaddr *)&servaddr,sizeof(servaddr));
-	*/
+	json_t *LigFile;
+	json_t *LigPra;
+    json_error_t Ligerr;
+	do{
+		LigFile=json_load_file("/nandflash/thttpd/www/configuration.json",0,Ligerr);
+	}while(!LigFile);
+	LigPra=json_object_get(LigFile,"data");
+	if(LigPra)
+	{
+		LigPra=json_object_get(LigPra,"matrix");
+		if(LigPra)
+		{
+			LigPra=json_object_get(LigPra,"type");
+			if(LigPra)
+			{
+				if(json_typeof(LigPra)==JSON_INTEGER&&)
+				{
+					LigPortNum=json_integer_value(LigPra);
+					printf("The Port NUM is %d\n",LigPortNum);
+				}
+				else
+				{
+					printf("is not integer\n");
+				}
+			}
+			else
+			{
+				printf("get type error\n");
+			}
+		}
+		else
+		{
+			printf("get matrix error\n");
+		}
+	}
+	else
+	{
+		printf("get data error\n")
+	}
+	
 	sockfd=lig_pip_open(0);
 	
 
