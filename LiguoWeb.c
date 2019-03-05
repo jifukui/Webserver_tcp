@@ -222,15 +222,16 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
 	lig_pip_read_bytes(sockfd,rx,len);
-	length=lig_pip_write_bytes(sockfd,tx,9);
+	length=lig_pip_write_bytes(sockfd,tx,strlen(*tx));
 	if(length>0)
 	{
 		length=0;
 		bzero(rx,len);
 		do{
-        	length+=lig_pip_read_bytes(sockfd,rx,len);
+        	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length>0);
 		printf("The length is %d \n",length);
+		printf("The len is %d \n",len);
 		length-=2;
 		rx[length]=NULL;
 		printf("The buf is %s\n",rx);
