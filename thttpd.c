@@ -385,7 +385,7 @@ main( int argc, char** argv )
 			LigPra=json_object_get(LigPra,"type");
 			if(LigPra)
 			{
-				if(json_typeof(LigPra)==JSON_INTEGER&&)
+				if(json_typeof(LigPra)==JSON_INTEGER)
 				{
 					LigPortNum=json_integer_value(LigPra);
 					printf("The Port NUM is %d\n",LigPortNum);
