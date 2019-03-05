@@ -250,6 +250,8 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 	PiPHandler(str,buf,sizeof(buf));
 	json_object_set_new(json,"In",json_string(buf));
 	strcpy(str,"#display? *\r\n");
+	printf("The str is %s\n",str);
+	PiPHandler(str,buf,sizeof(buf));
 	json_object_set_new(json,"Out",json_string(buf));
 	return flag;
 }
