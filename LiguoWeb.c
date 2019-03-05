@@ -243,6 +243,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	{
 		for(i=(strlen("MODEL")+START);i<(strlen(buf));i++)
 		{
+			printf("The i is %d\n",i);
 			if(buf[i]!=' ')
 			{
 				flag=1;
