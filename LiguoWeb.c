@@ -311,6 +311,7 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 		//for(i=1;i<17;i++)
 		//{
 			sprintf(str,"#model-type? %d\r\n",1);
+			printf("The str is %s\n",str);
 			PiPHandler(str,buf,sizeof(buf));
 			flag=1;
 			json_object_set_new(json,"Data",json_string(buf));
