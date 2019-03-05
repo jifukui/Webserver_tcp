@@ -29,7 +29,7 @@ STATIC uint8 JsonGetString(json_t *json,char *data);
 STATIC uint8 JsonGetInteger(json_t *json,uint32 *data);
 STATIC uint8 JsonGetUint8(json_t *json,uint8 *data);
 STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
-STATIC uint16 CmdStrHandler(uint8 *str,uint8 buf);
+STATIC uint8 CmdStrHandler(uint8 *str,uint8 buf);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,char *estr);
 STATIC uint8 GetDeviceLinkStatus(json_t *json,char *estr);
@@ -137,9 +137,9 @@ uint8 JsonFromFile(uint8 *filepath,uint8 *data)
 	return flag;
 }
 
-uint16 CmdStrHandler(uint8 *str,uint8 buf)
+uint8 CmdStrHandler(uint8 *str,uint8 buf)
 {
-	uint16 flag=0;
+	uint8 flag=0;
 	if(strstr(buf,str))
 	{
 		for(i=(strlen(str)+START);i<(strlen(buf));i++)
