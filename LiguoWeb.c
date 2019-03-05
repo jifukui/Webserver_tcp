@@ -223,7 +223,6 @@ uint32 PiPHandler(char *tx,char *rx)
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
 	if(length>0)
 	{
-		sleep(1);
 		length=0;
 		bzero(rx,sizeof(rx));
 		do{
