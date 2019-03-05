@@ -296,7 +296,7 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 	json_t *portinfo[PortNum],copy;
 	if(!portarr)
 	{
-		strcpy_s(estr,"Init array error\n");
+		strcpy(estr,"Init array error\n");
 	}
 	for(i=0;i<PortNum;i++)
 	{
