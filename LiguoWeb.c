@@ -49,7 +49,7 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	}
 };
-STATIC uint32 PiPHandler(char *tx,char *rx);
+STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
 
 
@@ -216,19 +216,20 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     return flag;
 }
 
-uint32 PiPHandler(char *tx,char *rx)
+uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
-	lig_pip_read_bytes(sockfd,rx,sizeof(*rx));
+	lig_pip_read_bytes(sockfd,rx,len);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
 	if(length>0)
 	{
 		length=0;
-		bzero(rx,sizeof(*rx));
+		bzero(rx,len);
 		do{
-        	length+=lig_pip_read_bytes(sockfd,&rx[length],sizeof(*rx));
-		}while((!strstr(rx,"\n"))&&length<sizeof(*rx));
+        	length+=lig_pip_read_bytes(sockfd,&rx[length],len);
+		}while((!strstr(rx,"\n"))&&length<len);
 		printf("The buf is %s\n",rx);
+		printf("The len is %d\n",len);
 		printf("The length is %d\n",length);
 	}
 	return length;
@@ -239,7 +240,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	uint8 flag=1;
     char buf[80];
     char str[]="#model?\r\n";	
-	PiPHandler(str,buf);
+	PiPHandler(str,buf,sizeof(buf));
 	json_object_set_new(json,"name",json_string(buf));
 	return flag;
 }
