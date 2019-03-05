@@ -245,7 +245,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 {
 	uint8 flag=1;
-    char buf[200];
+    char buf[4096];
     char str[]="#signal? *\r\n";	
 	PiPHandler(str,buf,sizeof(buf));
 	json_object_set_new(json,"In",json_string(buf));
