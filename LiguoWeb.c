@@ -49,7 +49,8 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	}
 };
-STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
+STATIC int8 CmdIndex=-1;
+STATIC uint32 PiPHandler(char *tx,char *rx);
 
 
 
@@ -195,10 +196,11 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
 					flag=(*CommandHandler[i].CmdHandler)(json,estr);
+					CmdIndex=i;
 					break;
 				}
 			}
-			if(i>=length)
+			if(CmdIndex==-1)
 			{
 				strcpy(estr,"not this command");
 			}
@@ -216,23 +218,21 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     return flag;
 }
 
-uint32 PiPHandler(char *tx,char *rx,uint32 len)
+uint32 PiPHandler(char *tx,char *rx)
 {
 	uint32 length;
-	lig_pip_read_bytes(sockfd,rx,len);
-	length=lig_pip_write_bytes(sockfd,tx,strlen(tx));
+	lig_pip_read_bytes(sockfd,rx,sizeof(*rx));
+	length=lig_pip_write_bytes(sockfd,tx,strlen(*tx));
 	if(length>0)
 	{
 		length=0;
 		bzero(rx,len);
 		do{
-        	length+=lig_pip_read_bytes(sockfd,&rx[length],len);
-		}while((!strstr(rx,"\n"))&&length<len);
-		printf("The buf is %s\n",rx);
-		printf("The len is %d\n",len);
-		printf("The length is %d\n",length);
+        	length+=lig_pip_read_bytes(sockfd,&rx[length],sizeof(*rx));
+		}while(length>0);
 		length-=2;
 		rx[length]=NULL;
+		rx=&rx[4];
 	}
 	return length;
 }
@@ -242,7 +242,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	uint8 flag=1;
     char buf[80];
     char str[]="#model?\r\n";	
-	PiPHandler(str,buf,sizeof(buf));
+	PiPHandler(str,buf);
 	json_object_set_new(json,"name",json_string(buf));
 	return flag;
 }
