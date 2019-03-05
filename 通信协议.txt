@@ -5,19 +5,23 @@
 }
 成功返回
 {
-	"cmd":"SetDeviceName",
 	"status":"SUCCESS",
 	"echo":
 	{
+        "result":{
+            "cmd":"SetDeviceName",
+        }
 	},
 	"error":null
 }
 失败返回
 {
-	"cmd":"SetDeviceName",
 	"status":"ERROR",
 	"echo":
 	{
+        "result":{
+            "cmd":"SetDeviceName",
+        }
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
@@ -47,4 +51,59 @@
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
-（3）
+（3）获取设备状态
+请求数据格式
+{
+    	"cmd":" matrix_status",
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+		"result"
+		{
+            "cmd":"matrix_status",
+			"name":"xxxxxxxxxxxxxxxxxxxx"
+		}
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"matrix_status"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（4）获取设备信息
+请求数据格式
+{
+    	"cmd":"GetDeviceInfo"
+}
+成功返回
+{
+	"cmd":"GetDeviceInfo",
+	"status":"SUCCESS",
+	"echo":
+	{
+		"result"
+		{
+			"name":"xxxxxxxxxxxxxxxxxxxx"
+		}
+	},
+	"error":null
+}
+失败返回
+{
+	"cmd":"GetDeviceInfo",
+	"status":"ERROR",
+	"echo":
+	{
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}

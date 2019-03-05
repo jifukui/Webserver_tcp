@@ -233,12 +233,29 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 
 uint8 GetDeviceModuleName(json_t *json,char *estr)
 {
-	uint8 flag=1;
+	uint8 flag=0;
+	uint8 i;
     char buf[80];
     char str[]="#model?\r\n";	
 	PiPHandler(str,buf,sizeof(buf));
 	buf[strlen(buf)-2]=NULL;
-	json_object_set_new(json,"name",json_string(&buf[START]));
+	if(strstr(buf,"MODEL"))
+	{
+		for(i=(strlen("MODEL")+START);i<(strlen(buf));i++)
+		{
+			if(buf[i]!=' ')
+			{
+				flag=1;
+				json_object_set_new(json,"name",json_string(&buf[START]));
+				break;
+			}
+		}
+		if(!flag)
+		{
+			strcpy(estr,"Not Get Model Name");
+		}
+	}
+	
 	return flag;
 }
 
