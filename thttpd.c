@@ -59,7 +59,7 @@
 #include "mmc.h"
 #include "timers.h"
 #include "match.h"
-
+#include <jansson.h>
 #ifndef SHUT_WR
 #define SHUT_WR 1
 #endif
