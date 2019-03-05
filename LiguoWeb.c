@@ -224,14 +224,14 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	uint32 txlen=strlen(tx)+1;
 	printf("The length of tx is %d \n",txlen);
 	lig_pip_read_bytes(sockfd,rx,len);
-	length=lig_pip_write_bytes(sockfd,tx,txlen);
+	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
 		length=0;
 		bzero(rx,len);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
-		}while(length>0);
+		}while(length==0);
 		printf("The length is %d \n",length);
 		printf("The len is %d \n",len);
 		length-=2;
