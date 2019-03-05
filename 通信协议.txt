@@ -1,0 +1,50 @@
+（1）设置设备名称
+{
+    "cmd":"SetDeviceName",
+	"DeviceName":"xxxxxx"//15个字符的字母数字
+}
+成功返回
+{
+	"cmd":"SetDeviceName",
+	"status":"SUCCESS",
+	"echo":
+	{
+	},
+	"error":null
+}
+失败返回
+{
+	"cmd":"SetDeviceName",
+	"status":"ERROR",
+	"echo":
+	{
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（2）设置视频切换
+{
+    "cmd":"SetVideoSwitch",
+	"VideoSwitch":{
+        "InPort":xx,
+        "OutPort":[]
+    }
+}
+成功返回
+{
+	"cmd":"SetVideoSwitch",
+	"status":"SUCCESS",
+	"echo":
+	{
+	},
+	"error":null
+}
+失败返回
+{
+	"cmd":"SetVideoSwitch",
+	"status":"ERROR",
+	"echo":
+	{
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（3）

@@ -14,6 +14,7 @@ typedef unsigned short int uint16;
 typedef short int int16;
 
 #define STATIC static
+#define START 4
 extern int sockfd;
 
 
@@ -30,6 +31,7 @@ STATIC uint8 JsonGetUint8(json_t *json,uint8 *data);
 STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,char *estr);
+STATIC uint8 GetDeviceLinkStatus(json_t *json,char *estr);
 typedef uint8 (*CMD_FUNC)(json_t *json,char * estr);
 typedef struct{
 	char CommandName[30];
@@ -37,8 +39,8 @@ typedef struct{
 }LigCommandHandler;
 LigCommandHandler CommandHandler[]={
 	{
-		"model?",
-		&GetDeviceModuleName,
+		"LinkStatus",
+		&GetDeviceLinkStatus,
 	},
 	{
 		"matrix_status12",
@@ -49,7 +51,6 @@ LigCommandHandler CommandHandler[]={
 		&GetDeviceModuleName,
 	}
 };
-STATIC int8 CmdIndex=-1;
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
 
@@ -196,11 +197,10 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
 					flag=(*CommandHandler[i].CmdHandler)(json,estr);
-					CmdIndex=i;
 					break;
 				}
 			}
-			if(CmdIndex==-1)
+			if(i>=length)
 			{
 				strcpy(estr,"not this command");
 			}
@@ -230,11 +230,11 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
-		length-=4;
-		memmove(rx,&rx[4],length);
-		length-=2;
-		rx[length]=NULL;
-		printf("The buf is %s\n",rx);
+		//length-=4;
+		//memmove(rx,&rx[4],length);
+		//length-=2;
+		//rx[length]=NULL;
+		//printf("The buf is %s\n",rx);
 		//
 	}
 	return length;
@@ -245,6 +245,18 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	uint8 flag=1;
     char buf[80];
     char str[]="#model?\r\n";	
+	PiPHandler(str,buf,sizeof(buf));
+	buf[strlen(buf)-2]=NULL;
+	buf=&buf[START];
+	json_object_set_new(json,"name",json_string(buf));
+	return flag;
+}
+
+uint8 GetDeviceLinkStatus(json_t *json,char *estr)
+{
+	uint8 flag=1;
+    char buf[80];
+    char str[]="#signal? *\r\n";	
 	PiPHandler(str,buf,sizeof(buf));
 	json_object_set_new(json,"name",json_string(buf));
 	return flag;
