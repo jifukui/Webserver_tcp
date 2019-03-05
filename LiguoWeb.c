@@ -289,10 +289,10 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 	{
 		for(i=1;i<17;i++)
 		{
-			sprintf(str,"#MODULE-TYPE? %d\r\n",1);
+			sprintf(str,"#MODUEL-TYPE? %d\r\n",1);
 			printf("The str is %s\n",str);
 			PiPHandler(str,buf,sizeof(buf));
-			flag=CmdStrHandler("MODULE-TYPE",buf);
+			flag=CmdStrHandler("MODUEL-TYPE",buf);
 			sscanf(&buf[flag],"%d,%d,%d",&data[0],&data[1],&data[2]);
 			printf("The data 1 is %d\n",data[0]);
 			printf("The data 2 is %d\n",data[1]);
