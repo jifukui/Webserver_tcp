@@ -140,6 +140,7 @@ uint8 JsonFromFile(uint8 *filepath,uint8 *data)
 uint8 CmdStrHandler(uint8 *str,uint8 buf)
 {
 	uint8 flag=0;
+	uint8 i;
 	if(strstr(buf,str))
 	{
 		for(i=(strlen(str)+START);i<(strlen(buf));i++)
