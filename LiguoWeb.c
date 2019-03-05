@@ -39,9 +39,9 @@ typedef struct{
 	CMD_FUNC CmdHandler;
 }LigCommandHandler;
 LigCommandHandler CommandHandler[]={
-	{"LinkStatus",&GetDeviceLinkStatus,},
-	{"matrix_status12",&GetDeviceModuleName,},
-	{"matrix_status",&GetDeviceModuleName,}
+	{"LinkStatus",&GetDeviceLinkStatus},
+	{"matrix_status12",&GetDeviceModuleName},
+	{"matrix_status",&GetDeviceModuleName}
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -286,7 +286,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 
 uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 {
-	uint8 flag=1;
+	uint8 flag=0;
     char buf[4096];
     char str[30]="#signal? *\r\n";
 	uint8 i;
@@ -311,6 +311,8 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 		//for(i=1;i<17;i++)
 		//{
 			sprintf(str,"#model-type? %d\r\n",1);
+			PiPHandler(str,buf,sizeof(buf));
+			flag=1;
 			json_object_set_new(json,"Data",json_string(buf));
 
 		//}
