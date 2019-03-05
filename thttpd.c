@@ -407,7 +407,7 @@ main( int argc, char** argv )
 	}
 	else
 	{
-		printf("get data error\n")
+		printf("get data error\n");
 	}
 	
 	sockfd=lig_pip_open(0);
