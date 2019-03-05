@@ -231,6 +231,8 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		printf("The buf is %s\n",rx);
 		printf("The len is %d\n",len);
 		printf("The length is %d\n",length);
+		length-=2;
+		rx[length]=NULL;
 	}
 	return length;
 }
