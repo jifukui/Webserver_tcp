@@ -247,7 +247,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
     char str[]="#model?\r\n";	
 	PiPHandler(str,buf,sizeof(buf));
 	buf[strlen(buf)-2]=NULL;
-	buf=&buf[START];
+	&buf=&buf[START];
 	json_object_set_new(json,"name",json_string(buf));
 	return flag;
 }
