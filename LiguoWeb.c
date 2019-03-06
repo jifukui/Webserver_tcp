@@ -330,8 +330,6 @@ uint8 GetPortInfo(json_t *json,char *estr)
 		json_object_set_new(portinfo,"Linkstatus",json_false());
 		json_object_set_new(portinfo,"PortIndedx",json_integer(0));
 		PiPHandler(str,buf,sizeof(buf));
-		//strcpy(str,"#DISPLAY? *\r\n");
-		//PiPHandler(str,buf[1],sizeof(buf[1]));
 		for(i=0;i<(LigPortNum*2)+EXTPORT;i++)
 		{
 			json_object_set(portinfo,"PortIndedx",json_integer(i+1));
