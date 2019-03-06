@@ -357,6 +357,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 			{
 				if(data[1]==1)
 				{
+					printf("The port is %d\n",data[0]);
 					index=PortImage(data[0],0);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
@@ -388,6 +389,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 			{
 				if(data[1]==1)
 				{
+					printf("The port is %d\n",data[0]);
 					index=PortImage(data[0],1);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
