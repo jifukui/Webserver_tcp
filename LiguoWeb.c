@@ -541,7 +541,7 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 				if(in<LigPortNum+EXTPORT)
 				{
 					Outport=json_object_get(cmd,"Output");
-					if(json_typeof(json)==JSON_ARRAY)
+					if(json_typeof(Outport)==JSON_ARRAY)
 					{
 						length=json_array_size(Outport);
 						if(length==0)
