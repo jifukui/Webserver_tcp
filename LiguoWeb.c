@@ -392,7 +392,8 @@ uint8 GetPortInfo(json_t *json,char *estr)
 					index=PortImage(data[0],1);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
-					json_array_set(portarr,index-1,portinfo);
+					copy=json_deep_copy(portinfo);
+					json_array_set(portarr,index-1,copy);
 				}
 			}
 		}
