@@ -389,7 +389,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 					index=PortImage(data[0],1);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
-					json_array_set(array,index-1,portinfo);
+					json_array_set(portarr,index-1,portinfo);
 				}
 			}
 		}
@@ -430,7 +430,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 				json_object_set(portinfo,"InPort",json_integer(index));
 				json_object_set(portinfo,"OutPort",json_integer(index1));
 				copy=json_deep_copy(portinfo);
-				json_array_append(arry,copy);
+				json_array_append(portarr,copy);
 			}
 		}
 		json_object_set(json,"VideoRouting",portarr);
