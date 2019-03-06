@@ -544,12 +544,14 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 					if(json_typeof(Outport)==JSON_ARRAY)
 					{
 						length=json_array_size(Outport);
+						printf("The length is %d\n",length);
 						if(length==0)
 						{
 							flag=1;
 						}
 						else
 						{
+							printf("start buf\n");
 							strcpy(str,"#VID ");
 							for(i=0;i<length;i++)
 							{
@@ -565,6 +567,7 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 							}
 							if(status)
 							{
+								printf("good this\n");
 								str[strlen(str)-1]=NULL;
 								strcat(str,"\r\n");
 								printf("The str is %s\n",str);
