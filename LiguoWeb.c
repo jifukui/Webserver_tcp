@@ -396,7 +396,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 				}
 			}
 		}
-		json_object_set(json,"LinkStatus",portarr1);
+		json_object_set(json,"LinkStatus",portarr);
 		strcpy(str,"#VID? *\r\n");
 		json_object_set_new(portinfo1,"InPort",json_integer(0));
 		json_object_set_new(portinfo1,"OutPort",json_integer(0));
