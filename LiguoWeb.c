@@ -346,7 +346,7 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 			if(flag)
 			{
 				status=sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
-				&buf=&buf[flag];
+				memmove(buf,&buf[flag]);
 			}
 			else
 			{
