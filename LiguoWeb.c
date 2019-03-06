@@ -18,7 +18,7 @@ typedef short int int16;
 #define EXTPORT 2
 extern int sockfd;
 extern unsigned int LigPortNum;
-const uint8 PortNum=LigPortNum/8;
+
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
@@ -456,6 +456,7 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 	json_t *portarr;
 	portarr=json_array();
 	json_t *portinfo,*copy;
+	uint8 PortNum=LigPortNum/8;
 	if(!portarr)
 	{
 		strcpy(estr,"Init array error\n");
