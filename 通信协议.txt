@@ -108,3 +108,38 @@
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（5）获取端口在线状态
+请求数据格式
+{
+    	"cmd":"PortOnline",
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+		"result"
+		{
+            "cmd":"PortOnline",
+			"Data":[
+				{
+					"PortIndex":xx,
+					"OnlineStatus":true/false
+				},
+				....
+			]
+		}
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"PortOnline"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
