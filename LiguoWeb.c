@@ -148,7 +148,7 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 	{
 		for(i=(strlen(str));i<(strlen(data));i++)
 		{
-			if(buf[i]!=' ')
+			if(data[i]!=' ')
 			{
 				flag=i;
 				strcpy(buf,data);
@@ -342,7 +342,14 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 		i=0;
 		do{
 			flag=CmdStrHandler("MODULE-TYPE",buf);
-			status=sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
+			if(flag)
+			{
+				status=sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
+			}
+			else
+			{
+				status=0;
+			}
 			printf("The flag is %d\n",flag);
 			printf("The status is %d\n",status);
 			if(status!=3)
