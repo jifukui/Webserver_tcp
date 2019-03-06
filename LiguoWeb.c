@@ -33,6 +33,7 @@ STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,char *estr);
 STATIC uint8 GetDeviceLinkStatus(json_t *json,char *estr);
+STATIC uint8 GetCardOnlineStatus(json_t *json,char *estr);
 typedef uint8 (*CMD_FUNC)(json_t *json,char * estr);
 typedef struct{
 	char CommandName[30];
@@ -40,7 +41,7 @@ typedef struct{
 }LigCommandHandler;
 LigCommandHandler CommandHandler[]={
 	{"LinkStatus",&GetDeviceLinkStatus},
-	{"matrix_status12",&GetDeviceModuleName},
+	{"CardOnline",&GetCardOnlineStatus},
 	{"matrix_status",&GetDeviceModuleName}
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -307,5 +308,45 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 	printf("The str is %s\n",str);
 	PiPHandler(str,buf,sizeof(buf));*/
 	//json_object_set_new(json,"Out",json_string(buf));
+	return flag;
+}
+
+uint8 GetCardOnlineStatus(json_t *json,char *estr)
+{
+	uint8 flag=0;
+	uint32 data[3];
+    char buf[4096];
+    char str[30]="#signal? *\r\n";
+	uint8 i;
+	uint8 PortNum=LigPortNum/8;
+	json_t *portarr;
+	portarr=json_array();
+	json_t *portinfo[PortNum],copy;
+	if(!portarr)
+	{
+		strcpy(estr,"Init array error\n");
+	}
+	for(i=0;i<PortNum;i++)
+	{
+		portinfo[i]=json_object();
+		if(!portinfo[i])
+		{
+			break;
+		}
+	}
+	if(i=PortNum-1)
+	{
+		
+		sprintf(str,"#MODULE-TYPE? *\r\n",i);
+		PiPHandler(str,buf,sizeof(buf));
+		//flag=CmdStrHandler("MODULE-TYPE",buf);
+		//sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
+		/*printf("The data 1 is %d\n",data[0]);
+		printf("The data 2 is %d\n",data[1]);
+		printf("The data 3 is %d\n",data[2]);*/
+		json_object_set_new(json,"Data",json_string(buf));
+
+		
+	}
 	return flag;
 }
