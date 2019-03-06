@@ -316,6 +316,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 	uint8 i;
 	uint8 index;
 	uint8 index1;
+	uint8 status;
 	json_t *portarr;
 	portarr=json_array();
 	json_t *portinfo,*copy;
@@ -392,7 +393,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 				}
 			}
 		}
-		json_object_set(json,"LinkStatus",array);
+		json_object_set(json,"LinkStatus",portarr);
 		strcpy(str,"#VID? *\r\n");
 		json_object_set_new(portinfo,"InPort",json_integer(0));
 		json_object_set_new(portinfo,"OutPort",json_integer(0));
@@ -432,7 +433,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 				json_array_append(arry,copy);
 			}
 		}
-		json_object_set(json,"VideoRouting",array);
+		json_object_set(json,"VideoRouting",portarr);
 		flag=1;	
 	}
 	else
