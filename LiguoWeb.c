@@ -526,6 +526,7 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 	{
 		json_t *Inport;
 		json_t *Outport;
+		json_t *port;
 		uint32 in,out;
 		uint8 str[4096];
 		uint8 buf[4096];
@@ -555,7 +556,8 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 							strcpy(str,"#VID ");
 							for(i=0;i<length;i++)
 							{
-								if(JsonGetInteger(json_array_get(Outport,i),out))
+								port=json_array_get(Outport,i);
+								if(JsonGetInteger(port,&out))
 								{
 									if(out<LigPortNum+EXTPORT&&out!=0)
 									{
