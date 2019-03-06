@@ -144,6 +144,7 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 	uint8 i;
 	char *data=NULL;
 	data=strchr(buf,str);
+	printf("The data is %s\n",data);
 	if(data)
 	{
 		for(i=(strlen(str));i<(strlen(data));i++)
@@ -152,6 +153,7 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 			{
 				flag=i;
 				strcpy(buf,data);
+				printf("The buf is %s\n",buf);
 				data=NULL;
 				break;
 			}
