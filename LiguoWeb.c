@@ -143,7 +143,7 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 	uint8 flag=0;
 	uint8 i;
 	char *data=NULL;
-	data=strchr(buf,str);
+	data=strstr(buf,str);
 	printf("The data is %s\n",data);
 	if(data)
 	{
