@@ -550,7 +550,7 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 						}
 						else
 						{
-							strcpy(str,"#VID ")
+							strcpy(str,"#VID ");
 							for(i=0;i<length;i++)
 							{
 								if(JsonGetInteger(json_array_get(Outport,i)))
