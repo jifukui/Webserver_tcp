@@ -334,7 +334,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 		{
 			json_object_set(portinfo,"PortIndedx",json_integer(i+1));
 			copy=json_deep_copy(portinfo);
-			json_array_append(portarr,portinfo);
+			json_array_append(portarr,copy);
 		}
 		for(i=0;i<=LigPortNum;i++)
 		{
