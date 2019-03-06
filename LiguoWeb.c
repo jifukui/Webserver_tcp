@@ -144,7 +144,6 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 	uint8 i;
 	char *data=NULL;
 	data=strstr(buf,str);
-	printf("The data is %s\n",data);
 	if(data)
 	{
 		for(i=(strlen(str));i<(strlen(data));i++)
@@ -343,10 +342,11 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 		PiPHandler(str,buf,sizeof(buf));
 		i=0;
 		do{
-			flag=CmdStrHandler("MODULE-TYPE",&buf[flag]);
+			flag=CmdStrHandler("MODULE-TYPE",buf);
 			if(flag)
 			{
 				status=sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
+				buf=&buf[flag];
 			}
 			else
 			{
