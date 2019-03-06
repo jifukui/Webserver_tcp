@@ -365,6 +365,7 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 					json_array_append(portarr,copy);
 				}
 			}
+			++i;
 		}while(i<16);
 		json_object_set_new(json,"Data",portarr);
 
