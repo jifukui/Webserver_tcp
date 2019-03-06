@@ -18,7 +18,7 @@ typedef short int int16;
 #define EXTPORT 2
 extern int sockfd;
 extern unsigned int LigPortNum;
-uint8 PortNum=LigPortNum/8;
+const uint8 PortNum=LigPortNum/8;
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
