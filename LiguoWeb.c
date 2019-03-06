@@ -398,8 +398,8 @@ uint8 GetPortInfo(json_t *json,char *estr)
 		}
 		json_object_set(json,"LinkStatus",portarr1);
 		strcpy(str,"#VID? *\r\n");
-		json_object_set_new(portinfo,"InPort",json_integer(0));
-		json_object_set_new(portinfo,"OutPort",json_integer(0));
+		json_object_set_new(portinfo1,"InPort",json_integer(0));
+		json_object_set_new(portinfo1,"OutPort",json_integer(0));
 		PiPHandler(str,buf,sizeof(buf));
 		for(i=0;i<=LigPortNum;i++)
 		{
