@@ -341,29 +341,29 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 			n+=flag;
 			status=sscanf(&buf[n],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
 			printf("The status is %d\n",status);
-			if(status==3)
+			if(status!=3)
 			{
-
+				data[0]=1;
+				data[1]=4;
+				data[2]=4;
 			}
-			else
+			
+			printf("The data 1 is %d\n",data[0]);
+			printf("The data 2 is %d\n",data[1]);
+			printf("The data 3 is %d\n",data[2]);
+			for(flag=1;flag<=PortNum;flag++)
 			{
-				printf("The data 1 is %d\n",data[0]);
-				printf("The data 2 is %d\n",data[1]);
-				printf("The data 3 is %d\n",data[2]);
-				for(flag=1;flag<=PortNum;flag++)
+				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag));
+				if(data[2]==0)
 				{
-					json_object_set(portinfo,"PortIndex",json_integer(PortNum*data[0]+flag));
-					if(data[3]==0)
-					{
-						json_object_set(portinfo,"OnlineStatus",json_true());
-					}
-					else
-					{
-						json_object_set(portinfo,"OnlineStatus",json_false());
-					}
-					copy=json_deep_copy(portinfo);
-					json_array_append(portarr,copy);
+					json_object_set(portinfo,"OnlineStatus",json_true());
 				}
+				else
+				{
+					json_object_set(portinfo,"OnlineStatus",json_false());
+				}
+				copy=json_deep_copy(portinfo);
+				json_array_append(portarr,copy);
 			}
 			++i;
 		}while(i<16);
