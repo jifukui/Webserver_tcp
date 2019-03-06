@@ -340,10 +340,11 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 			flag=CmdStrHandler("MODULE-TYPE",&buf[n]);
 			n+=flag;
 			status=sscanf(&buf[n],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
+			printf("The n is %d\n",n);
 			printf("The status is %d\n",status);
 			if(status!=3)
 			{
-				data[0]=1;
+				data[0]=4;
 				data[1]=4;
 				data[2]=4;
 			}
@@ -367,9 +368,7 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 			}
 			++i;
 		}while(i<16);
-		json_object_set_new(json,"Data",portarr);
-
-		
+		json_object_set_new(json,"Data",portarr);	
 	}
 	return flag;
 }
