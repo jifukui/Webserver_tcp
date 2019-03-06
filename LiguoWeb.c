@@ -169,7 +169,7 @@ uint8 PortImage(uint8 port,uint8 flag)
 		{
 			index=port+(LigPortNum/2);
 		}
-		else if(port==(LigPortNum+1)
+		else if(port==(LigPortNum+1))
 		{
 			index=LigPortNum*2+1;
 		}
