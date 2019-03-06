@@ -343,7 +343,7 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 		PiPHandler(str,buf,sizeof(buf));
 		i=0;
 		do{
-			flag=CmdStrHandler("MODULE-TYPE",buf);
+			flag=CmdStrHandler("MODULE-TYPE",&buf[flag]);
 			if(flag)
 			{
 				status=sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
