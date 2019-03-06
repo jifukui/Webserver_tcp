@@ -142,13 +142,17 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 {
 	uint8 flag=0;
 	uint8 i;
-	if(strstr(buf,str))
+	char *data=NULL;
+	data=strchr(buf,str);
+	if(data)
 	{
-		for(i=(strlen(str)+START);i<(strlen(buf));i++)
+		for(i=(strlen(str));i<(strlen(data));i++)
 		{
 			if(buf[i]!=' ')
 			{
 				flag=i;
+				strcpy(buf,data);
+				data=NULL;
 				break;
 			}
 		}
@@ -314,12 +318,12 @@ uint8 GetDeviceLinkStatus(json_t *json,char *estr)
 uint8 GetCardOnlineStatus(json_t *json,char *estr)
 {
 	uint8 flag=0;
-	uint16 n=0;
 	uint32 data[3];
 	uint8 status;
 	uint8 index=1;
     char buf[4096];
     char str[30]="#MODULE-TYPE? *\r\n";
+	char buffer[80];
 	uint8 i;
 	uint8 PortNum=LigPortNum/8;
 	json_t *portarr;
@@ -337,10 +341,9 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 		PiPHandler(str,buf,sizeof(buf));
 		i=0;
 		do{
-			flag=CmdStrHandler("MODULE-TYPE",&buf[n]);
-			n+=flag;
-			status=sscanf(&buf[n],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
-			printf("The n is %d\n",n);
+			flag=CmdStrHandler("MODULE-TYPE",buf);
+			status=sscanf(&buf[flag],"%d,%d,%d\r\n",&data[0],&data[1],&data[2]);
+			printf("The flag is %d\n",flag);
 			printf("The status is %d\n",status);
 			if(status!=3)
 			{
