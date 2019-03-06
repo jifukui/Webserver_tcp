@@ -152,7 +152,7 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 			{
 				flag=i;
 				strcpy(buf,data);
-				printf("The buf is %s\n",buf);
+				//printf("The buf is %s\n",buf);
 				data=NULL;
 				break;
 			}
@@ -353,8 +353,8 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 			{
 				status=0;
 			}
-			printf("The flag is %d\n",flag);
-			printf("The status is %d\n",status);
+			//printf("The flag is %d\n",flag);
+			//printf("The status is %d\n",status);
 			if(status!=3)
 			{
 				data[0]=4;
@@ -362,12 +362,12 @@ uint8 GetCardOnlineStatus(json_t *json,char *estr)
 				data[2]=4;
 			}
 			
-			printf("The data 1 is %d\n",data[0]);
-			printf("The data 2 is %d\n",data[1]);
-			printf("The data 3 is %d\n",data[2]);
+			//printf("The data 1 is %d\n",data[0]);
+			//printf("The data 2 is %d\n",data[1]);
+			//printf("The data 3 is %d\n",data[2]);
 			for(flag=1;flag<=PortNum;flag++)
 			{
-				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag));
+				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag-1));
 				if(data[2]==0)
 				{
 					json_object_set(portinfo,"OnlineStatus",json_true());
