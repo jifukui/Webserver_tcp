@@ -146,30 +146,30 @@ uint8 PortImage(uint8 port,uint8 flag)
 	uint8 index;
 	if(flag)
 	{
-		if(data[0]<=(LigPortNum/2))
+		if(port<=(LigPortNum/2))
 		{
-			index=data[0]+(LigPortNum/2);
+			index=port+(LigPortNum/2);
 		}
-		else if(data[0]<=LigPortNum)
+		else if(port<=LigPortNum)
 		{
-			index=data[0]+LigPortNum;
+			index=port+LigPortNum;
 		}
-		else if(data[0]==(LigPortNum+1))
+		else if(port==(LigPortNum+1))
 		{
 			index=LigPortNum*2+2;
 		}
 	}
 	else
 	{
-		if(data[0]<=(LigPortNum/2))
+		if(port<=(LigPortNum/2))
 		{
-			index=data[0];
+			index=port;
 		}
-		else if(data[0]<=LigPortNum)
+		else if(port<=LigPortNum)
 		{
-			index=data[0]+(LigPortNum/2);
+			index=port+(LigPortNum/2);
 		}
-		else if(data[0]==(LigPortNum+1)
+		else if(port==(LigPortNum+1)
 		{
 			index=LigPortNum*2+1;
 		}
