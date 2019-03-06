@@ -37,6 +37,8 @@ STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
 STATIC uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr);
+
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
 	char CommandName[30];
@@ -45,7 +47,8 @@ typedef struct{
 LigCommandHandler CommandHandler[]={
 	{"PortInfo",&GetPortInfo},
 	{"PortOnline",&GetCardOnlineStatus},
-	{"matrix_status",&GetDeviceModuleName}
+	{"matrix_status",&GetDeviceModuleName},
+	{"VideoSetting",&VideoSwitch}
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -513,6 +516,93 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 	else
 	{
 		strcpy(estr,"Init json error\n");
+	}
+	return flag;
+}
+uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
+{
+	uint flag=0;
+	if(cmd)
+	{
+		json_t *Inport;
+		json_t *Outport;
+		uint32 in,out;
+		uint8 str[4096];
+		uint8 buf[4096];
+		uint8 cmdbuf[80];
+		uint8 length;
+		uint8 i;
+		uint8 status;
+		Inport=json_object_get(cmd,"Input");
+		if(Inport)
+		{
+			if(JsonGetInteger(Inport,&in))
+			{
+				if(in<LigPortNum+EXTPORT)
+				{
+					Outport=json_object_get(cmd,"Output");
+					if(json_typeof(json)==JSON_ARRAY)
+					{
+						length=json_array_size(Outport);
+						if(length==0)
+						{
+							flag=1;
+						}
+						else
+						{
+							strcpy(str,"#VID ")
+							for(i=0;i<length;i++)
+							{
+								if(JsonGetInteger(json_array_get(Outport,i)))
+								{
+									if(out<LigPortNum+EXTPORT&&out!=0)
+									{
+										status=1;
+										sprintf(cmdbuf,"%d>%d,",in,out);
+										strcat(str,cmdbuf);
+									}
+								}
+							}
+							if(status)
+							{
+								str[strlen(str)-1]=NULL;
+								strcat(str,"\r\n");
+								printf("The str is %s\n",str);
+								PiPHandler(str,buf,sizeof(buf));
+								flag=CmdStrHandler("VID",buf);
+								flag=CmdStrHandler("ERR",&buf[flag]);
+								printf("The err is %d\n",flag);
+								flag=!flag;
+							}
+							else
+							{
+								strcpy(estr,"Outport error ");
+							}
+						}
+					}
+					else
+					{
+						strcpy(estr,"Outport is not array ");
+					}
+				}
+				else
+				{
+					strcpy(estr,"Inport out of range ");
+				}
+			}
+			else
+			{
+				strcpy(estr,"Inport is not integer");
+			}
+		}
+		else
+		{
+			strcpy(estr,"Not The Inport");
+		}
+	}
+	else
+	{
+		strcpy(estr,"Not The data");
 	}
 	return flag;
 }
