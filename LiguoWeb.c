@@ -34,10 +34,10 @@ STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
 STATIC uint8 PortImage(uint8 port,uint8 flag);
 STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
 
-STATIC uint8 GetDeviceModuleName(json_t *json,char *estr);
-STATIC uint8 GetPortInfo(json_t *json,char *estr);
-STATIC uint8 GetCardOnlineStatus(json_t *json,char *estr);
-typedef uint8 (*CMD_FUNC)(json_t *json,char * estr);
+STATIC uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr);
+typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
 	char CommandName[30];
 	CMD_FUNC CmdHandler;
@@ -238,7 +238,9 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     if(jsonget)
     {
         json_t *cmd;
+		json_t *command;
         cmd=json_object_get(jsonget,"cmd");
+		command=json_object_get(jsonget,"Data");
 		char str[30];
         if(JsonGetString(cmd,str))
         {	
@@ -248,7 +250,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 			{
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
-					flag=(*CommandHandler[i].CmdHandler)(json,estr);
+					flag=(*CommandHandler[i].CmdHandler)(json,command,estr);
 					break;
 				}
 			}
@@ -286,7 +288,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	return length;
 }
 
-uint8 GetDeviceModuleName(json_t *json,char *estr)
+uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
 	uint8 i;
@@ -307,7 +309,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	return flag;
 }
 
-uint8 GetPortInfo(json_t *json,char *estr)
+uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
 	uint32 data[2];
@@ -448,7 +450,7 @@ uint8 GetPortInfo(json_t *json,char *estr)
 	return flag;
 }
 
-uint8 GetCardOnlineStatus(json_t *json,char *estr)
+uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
 	uint32 data[3];
