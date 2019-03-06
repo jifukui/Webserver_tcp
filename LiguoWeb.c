@@ -41,7 +41,7 @@ typedef struct{
 }LigCommandHandler;
 LigCommandHandler CommandHandler[]={
 	{"LinkStatus",&GetDeviceLinkStatus},
-	{"CardOnline",&GetCardOnlineStatus},
+	{"PortOnline",&GetCardOnlineStatus},
 	{"matrix_status",&GetDeviceModuleName}
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -259,6 +259,7 @@ uint8 GetDeviceModuleName(json_t *json,char *estr)
 	if(flag)
 	{
 		json_object_set_new(json,"name",json_string(&buf[flag]));
+		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 	}
 	else
 	{

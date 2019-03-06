@@ -64,7 +64,8 @@
 		"result"
 		{
             "cmd":"matrix_status",
-			"name":"xxxxxxxxxxxxxxxxxxxx"
+			"name":"xxxxxxxxxxxxxxxxxxxx",
+			"PortNumber":xx
 		}
 	},
 	"error":null
