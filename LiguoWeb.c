@@ -690,12 +690,12 @@ uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr)
 		}
 		else
 		{
-			strcpy_s(estr,"Get mode Error");
+			strcpy(estr,"Get mode Error");
 		}
 	}
 	else
 	{
-		strcpy_s(estr,"Get Inport Error");
+		strcpy(estr,"Get Inport Error");
 	}
 	return flag;
 }
