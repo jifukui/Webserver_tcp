@@ -225,6 +225,9 @@ uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 {
+	pid_t pid;
+	pid=getpid();
+	printf("The father pid is %d \n",pid);
 	return CommandHandle(sstr,json,estr);
 }
 
@@ -279,6 +282,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
 	struct timeval start,end;
+	pid_t pid;
 	unsigned long time;
 	bzero(rx,len);
 	lig_pip_read_bytes(sockfd,rx,len);
@@ -294,6 +298,8 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		gettimeofday(&end,NULL);
 		time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
 		printf("The time is %d\n",time);
+		pid =getpid();
+		printf("The father pid is %d \n",pid);
 	}
 	printf("The recieve buf is %s\n",rx);
 	return length;
