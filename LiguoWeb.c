@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <jansson.h>
 #include <unistd.h>
-/*#include <sys/time.h>*/
+#include <sys/time.h>
 
 typedef unsigned char uint8;
 typedef char int8;
@@ -278,6 +278,8 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
+	struct timeval start,end;
+	unsigned long time;
 	bzero(rx,len);
 	lig_pip_read_bytes(sockfd,rx,len);
 	printf("The send buf is %s\n",tx);
@@ -285,10 +287,13 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	if(length>0)
 	{
 		length=0;
+		gettimeofday(&start,NULL);
 		do{
-			printf("start read data\n");
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
+		gettimeofday(&end,NULL);
+		time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
+		printf("The time is %d\n",time);
 	}
 	printf("The recieve buf is %s\n",rx);
 	return length;
