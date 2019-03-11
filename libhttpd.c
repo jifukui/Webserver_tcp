@@ -2331,6 +2331,7 @@ httpd_parse_request( httpd_conn* hc )
     if ( hc->hs->vhost )
 	if ( ! vhost_map( hc ) )
 	    {
+			printf("1");
 	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    return -1;
 	    }
@@ -2341,6 +2342,7 @@ httpd_parse_request( httpd_conn* hc )
     cp = expand_symlinks( hc->expnfilename, &pi, hc->hs->no_symlink_check, hc->tildemapped );
     if ( cp == (char*) 0 )
 	{
+		printf("2");
 	httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	return -1;
 	}
@@ -2765,6 +2767,7 @@ ls( httpd_conn* hc )
 	    {
 	    syslog( LOG_ERR, "fork - %m" );
 	    closedir( dirp );
+		printf("3");
 	    httpd_send_err(
 		hc, 500, err500title, "", err500form, hc->encodedurl );
 	    return -1;
@@ -2793,6 +2796,7 @@ ls( httpd_conn* hc )
 	    if ( fp == (FILE*) 0 )
 		{
 		syslog( LOG_ERR, "fdopen - %m" );
+		printf("4");
 		httpd_send_err(
 		    hc, 500, err500title, "", err500form, hc->encodedurl );
 		httpd_write_response( hc );
@@ -3530,6 +3534,7 @@ cgi_child( httpd_conn* hc )
 			if ( pipe( p ) < 0 )
 	    	{
 	    		syslog( LOG_ERR, "pipe - %m" );
+				printf("5");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3538,6 +3543,7 @@ cgi_child( httpd_conn* hc )
 			if ( r < 0 )
 	    	{
 	    		syslog( LOG_ERR, "fork - %m" );
+				printf("6");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3577,6 +3583,7 @@ cgi_child( httpd_conn* hc )
 			if ( pipe( p ) < 0 )
 	    	{
 	    		syslog( LOG_ERR, "pipe - %m" );
+				printf("7");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3585,6 +3592,7 @@ cgi_child( httpd_conn* hc )
 			if ( r < 0 )
 	    	{
 	    		syslog( LOG_ERR, "fork - %m" );
+				printf("8");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3653,6 +3661,7 @@ cgi_child( httpd_conn* hc )
 
     	/* Something went wrong. */
     	syslog( LOG_ERR, "execve %.80s - %m", hc->expnfilename );
+		printf("9");
     	httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
     	httpd_write_response( hc );
     	_exit( 1 );
@@ -3732,6 +3741,7 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
     /* Stat the file. */
     if ( stat( hc->expnfilename, &hc->sb ) < 0 )
 	{
+		printf("10");
 	httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	return -1;
 	}
@@ -3836,6 +3846,7 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	cp = expand_symlinks( indexname, &pi, hc->hs->no_symlink_check, hc->tildemapped );
 	if ( cp == (char*) 0 || pi[0] != '\0' )
 	    {
+			printf("11");
 	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    return -1;
 	    }
@@ -3971,6 +3982,7 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	hc->file_address = mmc_map( hc->expnfilename, &(hc->sb), nowP );
 	if ( hc->file_address == (char*) 0 )
 	    {
+			printf("12");
 	    httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    return -1;
 	    }
