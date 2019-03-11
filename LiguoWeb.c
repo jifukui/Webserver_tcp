@@ -225,10 +225,14 @@ uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 {
+	uint8 flag;
 	pid_t pid;
 	pid=getpid();
 	printf("The father pid is %d \n",pid);
-	return CommandHandle(sstr,json,estr);
+	flag=CommandHandle(sstr,json,estr);
+	pid=getpid();
+	printf("end pid is %d \n",pid);
+	return flag;
 }
 
 uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
@@ -301,7 +305,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		pid =getpid();
 		printf("The child pid is %d \n",pid);
 	}
-	printf("The recieve buf is %s\n",rx);
+	//printf("The recieve buf is %s\n",rx);
 	return length;
 }
 
