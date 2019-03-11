@@ -645,7 +645,7 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 	printf("The name is %s\n",name);
 	if(JsonGetString(name,namebuf))
 	{	
-		sprintf(sendbuf,"#NAME %s\r\n",name);
+		sprintf(sendbuf,"#NAME %s\r\n",namebuf);
 		printf("The sendbuf is %s\n",sendbuf);
 		PiPHandler(sendbuf,buf,sizeof(buf));
 		if(CmdStrHandler("NAME",buf))
