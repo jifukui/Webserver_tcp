@@ -642,6 +642,11 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 	uint8 status;
 	printf("Hello,set Name\n");
 	name=json_object_get(cmd,"Name");
+	if(name)
+	{
+		printf("Name is good\n");
+		printf("The type of name is %d\n",json_typeof(name));
+	}
 	if(JsonGetString(name,namebuf))
 	{	
 		sprintf(sendbuf,"#NAME %s\r\n",name);
