@@ -38,6 +38,7 @@ STATIC uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -48,7 +49,8 @@ LigCommandHandler CommandHandler[]={
 	{"PortInfo",&GetPortInfo},
 	{"PortOnline",&GetCardOnlineStatus},
 	{"matrix_status",&GetDeviceModuleName},
-	{"VideoSetting",&VideoSwitch}
+	{"VideoSetting",&VideoSwitch},
+	{"SetDeviceName",&SetDeviceName},
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -226,12 +228,12 @@ uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 {
 	uint8 flag;
-	pid_t pid;
-	pid=getpid();
-	printf("The father pid is %d \n",pid);
+	//pid_t pid;
+	//pid=getpid();
+	//printf("The father pid is %d \n",pid);
 	flag=CommandHandle(sstr,json,estr);
-	pid=getpid();
-	printf("end pid is %d \n",pid);
+	//pid=getpid();
+	//printf("end pid is %d \n",pid);
 	return flag;
 }
 
@@ -285,12 +287,12 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
-	struct timeval start,end;
-	pid_t pid;
-	unsigned long time;
+	//struct timeval start,end;
+	//pid_t pid;
+	//unsigned long time;
 	bzero(rx,len);
 	//slig_pip_read_bytes(sockfd,rx,len);
-	printf("The send buf is %s\n",tx);
+	//printf("The send buf is %s\n",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
@@ -299,11 +301,11 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
-		gettimeofday(&end,NULL);
-		time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
-		printf("The time is %d\n",time);
-		pid =getpid();
-		printf("The child pid is %d \n",pid);
+		//gettimeofday(&end,NULL);
+		//time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
+		//printf("The time is %d\n",time);
+		//pid =getpid();
+		//printf("The child pid is %d \n",pid);
 	}
 	//printf("The recieve buf is %s\n",rx);
 	return length;
@@ -626,6 +628,30 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 	else
 	{
 		strcpy(estr,"Not The data");
+	}
+	return flag;
+}
+
+uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
+{
+	uint flag=0;
+	json_t *name;
+	char namebuf[64];
+	char sendbuf[256];
+	char buf[256];
+	uint8 status;
+	name=json_object_get(cmd,"Name");
+	if(JsonGetString(name,namebuf))
+	{	
+		sprintf(sendbuf,"#NAME %s\r\n",name);
+		PiPHandler(str,buf,sizeof(buf));
+		if(CmdStrHandler("NAEM",buf))
+		{
+			printf("The name is %s\n",buf);
+			status=sscanf(buf,"NAME ERR %d");
+			printf("The status is %d\n",status);
+			flag=!status;
+		}
 	}
 	return flag;
 }
