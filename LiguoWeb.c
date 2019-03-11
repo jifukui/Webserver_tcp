@@ -640,23 +640,22 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 	char sendbuf[256];
 	char buf[256];
 	uint8 status;
-	printf("Hello,set Name\n");
 	name=json_object_get(cmd,"Name");
-	if(name)
-	{
-		printf("Name is good\n");
-		printf("The type of name is %d\n",json_typeof(name));
-	}
+	//status=JsonGetString(name,namebuf);
 	if(JsonGetString(name,namebuf))
 	{	
 		sprintf(sendbuf,"#NAME %s\r\n",name);
 		PiPHandler(sendbuf,buf,sizeof(buf));
-		if(CmdStrHandler("NAEM",buf))
+		if(CmdStrHandler("NAME",buf))
 		{
 			printf("The name is %s\n",buf);
 			status=sscanf(buf,"NAME ERR %d");
 			printf("The status is %d\n",status);
 			flag=!status;
+		}
+		else
+		{
+			strcpy(estr,"Not get name");
 		}
 	}
 	return flag;
