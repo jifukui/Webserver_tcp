@@ -161,7 +161,11 @@
 （6）视频切换
 请求数据格式
 {
-    	"cmd":"VideoSetting"
+    	"cmd":"VideoSetting",
+		"Data":{
+				"Inport":xx,
+				"Outport":[xxx,xxx]
+			}
 }
 成功返回
 {
@@ -171,6 +175,7 @@
 		"result"
 		{
             "cmd":"VideoSetting",
+			
 		}
 	},
 	"error":null
