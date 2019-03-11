@@ -3508,7 +3508,8 @@ cgi_child( httpd_conn* hc )
 		{
 			str=NULL;
 		}
-    	_exit( 0 );
+    	//_exit( 0 );
+		return 0;
 	}
 	else
 	{
