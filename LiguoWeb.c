@@ -39,6 +39,7 @@ STATIC uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -51,6 +52,7 @@ LigCommandHandler CommandHandler[]={
 	{"matrix_status",&GetDeviceModuleName},
 	{"VideoSetting",&VideoSwitch},
 	{"SetDeviceName",&SetDeviceName},
+	{"SetInputHDCPMOD",&SetInputHDCPMOD},
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -554,14 +556,14 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 		uint8 length;
 		uint8 i;
 		uint8 status;
-		Inport=json_object_get(cmd,"Input");
+		Inport=json_object_get(cmd,"Inport");
 		if(Inport)
 		{
 			if(JsonGetInteger(Inport,&in))
 			{
 				if(in<LigPortNum+EXTPORT)
 				{
-					Outport=json_object_get(cmd,"Output");
+					Outport=json_object_get(cmd,"Outport");
 					if(json_typeof(Outport)==JSON_ARRAY)
 					{
 						length=json_array_size(Outport);
@@ -642,23 +644,58 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 	uint32 data;
 	uint8 status;
 	name=json_object_get(cmd,"Name");
-	printf("The name is %s\n",name);
 	if(JsonGetString(name,namebuf))
 	{	
 		sprintf(sendbuf,"#NAME %s\r\n",namebuf);
-		printf("The sendbuf is %s\n",sendbuf);
 		PiPHandler(sendbuf,buf,sizeof(buf));
 		if(CmdStrHandler("NAME",buf))
 		{
-			printf("The name is %s\n",buf);
 			status=sscanf(buf,"NAME ERR %d\r\n",&data);
-			printf("The status is %d\n",status);
 			flag=!status;
 		}
 		else
 		{
 			strcpy(estr,"Not get name");
 		}
+	}
+	return flag;
+}
+
+uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr)
+{
+	uint flag=0;
+	json_t *name;
+	uint32 in,mod;
+	char sendbuf[256];
+	char buf[256];
+	uint32 data;
+	uint8 status;
+	name=json_object_get(cmd,"Inport");
+	if(JsonGetInteger(name,&in)&&in<=(LigPortNum+1))
+	{	
+		name=json_object_get(cmd,"mode");
+		if(JsonGetInteger(name,&mode)&&mod<=1)
+		{
+			sprintf(sendbuf,"#HDCP-MOD %d,%d\r\n",in,mod);
+			PiPHandler(sendbuf,buf,sizeof(buf));
+			if(CmdStrHandler("HDCP-MOD",buf))
+			{
+				status=sscanf(buf,"HDCP-MOD ERR %d\r\n",&data);
+				flag=!status;
+			}
+			else
+			{
+				strcpy(estr,"Not get name of HDCP-MOD");
+			}
+		}
+		else
+		{
+			strcpy_s(estr,"Get mode Error");
+		}
+	}
+	else
+	{
+		strcpy_s(estr,"Get Inport Error");
 	}
 	return flag;
 }

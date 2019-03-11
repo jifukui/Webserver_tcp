@@ -1,7 +1,9 @@
 （1）设置设备名称
 {
     "cmd":"SetDeviceName",
-	"DeviceName":"xxxxxx"//15个字符的字母数字
+	"Data":{
+		"Name":"xxxxxx"//15个字符的字母数字
+	}
 }
 成功返回
 {
@@ -22,32 +24,6 @@
         "result":{
             "cmd":"SetDeviceName",
         }
-	},
-	"error":"xxxxxxxxxxxxxxxxxx"
-}
-（2）设置视频切换
-{
-    "cmd":"SetVideoSwitch",
-	"VideoSwitch":{
-        "InPort":xx,
-        "OutPort":[]
-    }
-}
-成功返回
-{
-	"cmd":"SetVideoSwitch",
-	"status":"SUCCESS",
-	"echo":
-	{
-	},
-	"error":null
-}
-失败返回
-{
-	"cmd":"SetVideoSwitch",
-	"status":"ERROR",
-	"echo":
-	{
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
@@ -158,7 +134,7 @@
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
-（6）视频切换
+（5）视频切换
 请求数据格式
 {
     	"cmd":"VideoSetting",
@@ -187,6 +163,36 @@
 	{
         "result":{
             "cmd":"VideoSetting"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（6）设置输入端口HDCP模式
+{
+    "cmd":"SetDeviceName",
+	"Data":{
+		"Inport":xx//15个字符的字母数字
+		"mode":xx
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDeviceName",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDeviceName",
         }
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
