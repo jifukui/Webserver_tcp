@@ -3674,6 +3674,7 @@ cgi( httpd_conn* hc )
 	}
     ++hc->hs->cgi_count;
     httpd_clear_ndelay( hc->conn_fd );
+	/*
     r = fork( );
     if ( r < 0 )
 	{
@@ -3684,27 +3685,28 @@ cgi( httpd_conn* hc )
 	}
     if ( r == 0 )
 	{
-	/* Child process. */
+	
 	sub_process = 1;
 	httpd_unlisten( hc->hs );
 	cgi_child( hc );
 	}
 
-    /* Parent process. */
+    
     syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
 #ifdef CGI_TIMELIMIT
-    /* Schedule a kill for the child process, in case it runs too long */
+    
     client_data.i = r;
     if ( tmr_create( (struct timeval*) 0, cgi_kill, client_data, CGI_TIMELIMIT * 1000L, 0 ) == (Timer*) 0 )
 	{
 	syslog( LOG_CRIT, "tmr_create(cgi_kill child) failed" );
 	exit( 1 );
 	}
-#endif /* CGI_TIMELIMIT */
+#endif 
     hc->status = 200;
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;
-
+*/
+	cgi_child( hc );
     return 0;
     }
 
