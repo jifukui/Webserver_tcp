@@ -640,6 +640,7 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 	char sendbuf[256];
 	char buf[256];
 	uint8 status;
+	printf("Hello,set Name\n");
 	name=json_object_get(cmd,"Name");
 	if(JsonGetString(name,namebuf))
 	{	
