@@ -394,9 +394,9 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			}
 			if(data[0]<LigPortNum+EXTPORT)
 			{
-				if(data[1]==1)
+				if(data[1]>0)
 				{
-					printf("The port is %d\n",data[0]);
+					//printf("The port is %d\n",data[0]);
 					index=PortImage(data[0],1);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
@@ -547,14 +547,14 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 					if(json_typeof(Outport)==JSON_ARRAY)
 					{
 						length=json_array_size(Outport);
-						printf("The length is %d\n",length);
+						//printf("The length is %d\n",length);
 						if(length==0)
 						{
 							flag=1;
 						}
 						else
 						{
-							printf("start buf\n");
+							//printf("start buf\n");
 							strcpy(str,"#VID ");
 							for(i=0;i<length;i++)
 							{
@@ -571,14 +571,14 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 							}
 							if(status)
 							{
-								printf("good this\n");
+								//printf("good this\n");
 								str[strlen(str)-1]=NULL;
 								strcat(str,"\r\n");
-								printf("The str is %s\n",str);
+								//printf("The str is %s\n",str);
 								PiPHandler(str,buf,sizeof(buf));
 								flag=CmdStrHandler("VID",buf);
 								flag=CmdStrHandler("ERR",&buf[flag]);
-								printf("The err is %d\n",flag);
+								//printf("The err is %d\n",flag);
 								flag=!flag;
 							}
 							else
