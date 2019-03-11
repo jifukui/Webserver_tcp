@@ -299,7 +299,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
 		printf("The time is %d\n",time);
 		pid =getpid();
-		printf("The father pid is %d \n",pid);
+		printf("The child pid is %d \n",pid);
 	}
 	printf("The recieve buf is %s\n",rx);
 	return length;
