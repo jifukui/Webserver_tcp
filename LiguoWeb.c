@@ -297,7 +297,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	if(length>0)
 	{
 		length=0;
-		gettimeofday(&start,NULL);
+		//gettimeofday(&start,NULL);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
@@ -644,7 +644,7 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 	if(JsonGetString(name,namebuf))
 	{	
 		sprintf(sendbuf,"#NAME %s\r\n",name);
-		PiPHandler(str,buf,sizeof(buf));
+		PiPHandler(sendbuf,buf,sizeof(buf));
 		if(CmdStrHandler("NAEM",buf))
 		{
 			printf("The name is %s\n",buf);
