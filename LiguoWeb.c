@@ -674,7 +674,7 @@ uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr)
 	if(JsonGetInteger(name,&in)&&in<=(LigPortNum+1))
 	{	
 		name=json_object_get(cmd,"mode");
-		if(JsonGetInteger(name,&mode)&&mod<=1)
+		if(JsonGetInteger(name,&mod)&&mod<=1)
 		{
 			sprintf(sendbuf,"#HDCP-MOD %d,%d\r\n",in,mod);
 			PiPHandler(sendbuf,buf,sizeof(buf));
