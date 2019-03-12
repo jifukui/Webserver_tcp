@@ -728,7 +728,7 @@ uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr)
 uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
-	json_t obj;
+	json_t *obj;
 	char buf[1024];
 	char str[80];
 	uint32 port,attr;
