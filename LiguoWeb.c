@@ -755,7 +755,6 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 				printf("The status is %d\n",status);
 				if(status==3)
 				{
-					length=lig_pip_write_bytes(sockfd,buf,sizeof(buf));
 					if(length>0)
 					{
 						length=0;
