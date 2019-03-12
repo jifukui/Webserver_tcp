@@ -194,7 +194,7 @@ uint8 PortImage(uint8 port,uint8 flag)
 
 uint8 Port2Phy(uint8 port)
 {
-	uint8 falg=0;
+	uint8 flag=0;
 	uint8 Port=LigPortNum/2;
 	if(port<=Port)
 	{
@@ -208,7 +208,7 @@ uint8 Port2Phy(uint8 port)
 	{
 		flag=port-Port;
 	}	
-	else if(port<4=*Port)
+	else if(port<=4*Port)
 	{
 		flag=port-2*Port;
 	}
