@@ -362,14 +362,14 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	{
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
-		strcpy(str,"#VERSION?");
+		strcpy(str,"#VERSION?\r\n");
 		PiPHandler(str,buf,sizeof(buf));
 		buf[strlen(buf)-2]=NULL;
 		flag=CmdStrHandler("VERSION",buf);
 		if(flag)
 		{
 			json_object_set_new(json,"version",json_string(&buf[flag]));
-			strcpy(str,"#SN?");
+			strcpy(str,"#SN?\r\n");
 			PiPHandler(str,buf,sizeof(buf));
 			buf[strlen(buf)-2]=NULL;
 			flag=CmdStrHandler("SN",buf);
