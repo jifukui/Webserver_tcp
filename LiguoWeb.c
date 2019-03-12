@@ -657,7 +657,7 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 		PiPHandler(sendbuf,buf,sizeof(buf));
 		if(CmdStrHandler("NAME",buf))
 		{
-			status=sscanf(buf,"NAME ERR %d\r\n",&data);
+			status=sscanf(&buf[START],"NAME ERR %d\r\n",&data);
 			flag=!status;
 		}
 		else
@@ -687,7 +687,7 @@ uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr)
 			PiPHandler(sendbuf,buf,sizeof(buf));
 			if(CmdStrHandler("HDCP-MOD",buf))
 			{
-				status=sscanf(buf,"HDCP-MOD ERR %d\r\n",&data);
+				status=sscanf(&buf[START],"HDCP-MOD ERR %d\r\n",&data);
 				flag=!status;
 			}
 			else
@@ -729,8 +729,8 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
 	json_t *obj;
-	char buf[1024];
-	char str[80];
+	uint8 buf[1024];
+	uint8 str[1024];
 	uint32 port,attr;
 	uint32 length;
 	uint8 status;
@@ -763,11 +763,9 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
         					length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 						}while(length==0);
 					}
-					printf("the length is %d\n",length);
-					for(len=0;len<length;len++)
-					{
-						printf("The %d is %d \n",len,buf[len]);
-					}
+					bzero(str,sizeof(str));
+					Uint8toString(buf,str,len);
+					json_object_set_new(json,"EDID",json_string(str));
 					flag=1;
 				}
 				else
