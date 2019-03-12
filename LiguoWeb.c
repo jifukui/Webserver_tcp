@@ -327,7 +327,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	uint32 length;
 	struct timeval start,end;
 	//pid_t pid;
-	//unsigned long time;
+	unsigned long time;
 	bzero(rx,len);
 	//slig_pip_read_bytes(sockfd,rx,len);
 	printf("The send buf is %s\n",tx);
