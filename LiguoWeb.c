@@ -411,7 +411,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		buf=strstr(buf,"~01@");
 		if(buf)
 		{
-			printf("The old addr is %p\n",ststus);
+			printf("The old addr is %p\n",status);
 			printf("The new addr is %p\n",buf);
 		}
 		else
