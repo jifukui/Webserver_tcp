@@ -402,22 +402,23 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	uint8 data[80];
 	uint8 status;
 	PiPHandler(str,buf,sizeof(buf));
+	memmove(buf,&buf[START],strlen(&buf[flag]));
 	buf[strlen(buf)-2]=NULL;
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
-		json_object_set_new(json,"name",json_string(&buf[flag]));
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
-		memmove(buf,&buf[flag],strlen(&buf[flag]));
-		flag=CmdStrHandler("~01@",buf);
-		memmove(buf,&buf[flag],strlen(&buf[flag]));
-		flag=CmdStrHandler("VERSION",&buf[flag]);
+		status=CmdStrHandler("~01@",buf);
+		buf[status-5]=NULL;
+		json_object_set_new(json,"name",json_string(&buf[flag]));
+		memmove(buf,&buf[status],strlen(&buf[status]));
+		flag=CmdStrHandler("VERSION",buf);
 		if(flag)
 		{
+			status=CmdStrHandler("~01@",buf);
+			buf[status-5]=NULL;
 			json_object_set_new(json,"version",json_string(&buf[flag]));
-			memmove(buf,&buf[flag],strlen(&buf[flag]));
-			flag=CmdStrHandler("~01@",buf);
-			memmove(buf,&buf[flag],strlen(&buf[flag]));
+			memmove(buf,&buf[status],strlen(&buf[status]));
 			flag=CmdStrHandler("SN",buf);
 			if(flag)
 			{
