@@ -41,7 +41,9 @@
 		{
             "cmd":"matrix_status",
 			"name":"xxxxxxxxxxxxxxxxxxxx",
-			"PortNumber":xx
+			"PortNumber":xx,
+			"sn":"xxxxxxxxx",
+			"version":"xxxxxxxxxxx"
 		}
 	},
 	"error":null
