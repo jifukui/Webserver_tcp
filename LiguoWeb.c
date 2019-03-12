@@ -419,7 +419,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			printf("Get ERROR");
 			return 0;
 		}
-		
+		/*
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		memmove(buf,&buf[status],strlen(&buf[status]));
 		flag=CmdStrHandler("VERSION",buf);
@@ -442,7 +442,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		else
 		{
 			strcpy(estr,"Get Version Error");
-		}
+		}*/
 		
 	}
 	else
