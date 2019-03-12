@@ -765,8 +765,8 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 								break;
 							}
 						}
-						printf("The flag is%d \n",flag);
-						memmove(buf,&buf[flag],sizeof(buf[flag]));
+						printf("The flag is %d \n",flag);
+						memmove(buf,&buf[flag],len);
 					}
 					else
 					{
