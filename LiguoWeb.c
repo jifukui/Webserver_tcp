@@ -746,7 +746,7 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 					port=port/(LigPortNum/8);
 				}
 				sprintf(str,"#GEDID %d,%d\r\n");
-				PiPHandler(sendbuf,buf,sizeof(buf));
+				PiPHandler(str,buf,sizeof(buf));
 				printf("The buf is :%s \n",buf);
 				length=lig_pip_write_bytes(sockfd,buf,sizeof(buf));
 				if(length>0)
