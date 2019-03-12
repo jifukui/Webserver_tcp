@@ -757,7 +757,15 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					if(attr==2)
 					{
-						flag=CmdStrHandler("\r\n",buf);
+						for(length=0;length<50;length++)
+						{
+							if(buf[length]=='\n')
+							{
+								flag=length+1;
+								break;
+							}
+						}
+						printf("The flag is%d \n",flag);
 						memmove(buf,&buf[flag],sizeof(buf[flag]));
 					}
 					else
