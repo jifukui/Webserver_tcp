@@ -748,10 +748,10 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 					port=port/(LigPortNum/8);
 				}
 				sprintf(str,"#GEDID %d,%d\r\n",attr,port);
-				printf("The str is %d\n",str);
+				printf("The str is %s\n",str);
 				PiPHandler(str,buf,sizeof(buf));
 				printf("The buf is :%s \n",buf);
-				status=sscanf(buf,"#GEDID %d,%d,%d\r\n",&port,&attr,&len);
+				status=sscanf(buf,"GEDID %d,%d,%d\r\n",&port,&attr,&len);
 				printf("The status is %d\n",status);
 				if(status==3)
 				{
@@ -768,6 +768,7 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 					{
 						printf("The %d is %d \n",len,buf[len]);
 					}
+					flag=1;
 				}
 				else
 				{
