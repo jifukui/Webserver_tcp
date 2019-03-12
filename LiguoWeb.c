@@ -406,26 +406,18 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
-		status=sscanf(&buf[START],"MODEL %s\r\n");
-		if(status)
-		{
-			printf("The data is %s\n",data);
-		}
-		else
-		{
-			printf("not get The data \n");
-		}
-		
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
-		memmove(buf,&buf[strlen(buf)+2],200);
-		buf[strlen(buf)-2]=NULL;
-		flag=CmdStrHandler("VERSION",buf);
+		memmove(buf,&buf[flag],strlen(&buf[flag]));
+		flag=CmdStrHandler("~01@",buf);
+		memmove(buf,&buf[flag],strlen(&buf[flag]));
+		flag=CmdStrHandler("VERSION",&buf[flag]);
 		if(flag)
 		{
 			json_object_set_new(json,"version",json_string(&buf[flag]));
-			memmove(buf,&buf[strlen(buf)+2],200);
-			buf[strlen(buf)-2]=NULL;
+			memmove(buf,&buf[flag],strlen(&buf[flag]));
+			flag=CmdStrHandler("~01@",buf);
+			memmove(buf,&buf[flag],strlen(&buf[flag]));
 			flag=CmdStrHandler("SN",buf);
 			if(flag)
 			{
