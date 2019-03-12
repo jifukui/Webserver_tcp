@@ -733,6 +733,8 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 	char str[80];
 	uint32 port,attr;
 	uint32 length;
+	uint8 status;
+	uint32 len;
 	if(cmd)
 	{
 		obj=json_object_get(cmd,"port");
@@ -749,17 +751,29 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 				printf("The str is %d\n",str);
 				PiPHandler(str,buf,sizeof(buf));
 				printf("The buf is :%s \n",buf);
-				length=lig_pip_write_bytes(sockfd,buf,sizeof(buf));
-				if(length>0)
+				status=sscanf(buf,"#GEDID %d,%d,%d\r\n",&port,&attr,&len);
+				printf("The status is %d\n",status);
+				if(status==3)
 				{
-					length=0;
-					do{
-        				length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-					}while(length==0);
+					length=lig_pip_write_bytes(sockfd,buf,sizeof(buf));
+					if(length>0)
+					{
+						length=0;
+						do{
+        					length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+						}while(length==0);
+					}
+					printf("the length is %d\n",length);
+					for(len=0;len<length;len++)
+					{
+						printf("The %d is %d \n",len,buf[len]);
+					}
 				}
-				printf("the length is %d\n",length);
-				printf("The data is %s\n",buf);
-
+				else
+				{
+					strcpy(estr,"Get EDID ERROR");
+				}
+				
 			}
 			else
 			{
