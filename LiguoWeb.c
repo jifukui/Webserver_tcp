@@ -391,7 +391,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				if(data[1]==1)
 				{
-					printf("The port is %d\n",data[0]);
+					//printf("The port is %d\n",data[0]);
 					index=PortImage(data[0],0);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
@@ -755,13 +755,20 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 				printf("The status is %d\n",status);
 				if(status==3)
 				{
-					if(length>0)
+					if(attr==2)
+					{
+						flag=CmdStrHandler("\r\n",buf);
+						memmove(buf,&buf[flag],sizeof(buf[flag]));
+					}
+					else
 					{
 						length=0;
 						do{
         					length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 						}while(length==0);
 					}
+					
+					
 					bzero(str,sizeof(str));
 					Uint8toString(str,buf,len);
 					json_object_set_new(json,"EDID",json_string(str));
