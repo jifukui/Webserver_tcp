@@ -354,7 +354,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	uint8 flag=0;
 	uint8 i;
     char buf[80];
-    char str[]="#model?\r\n";	
+    char str[]="#MODEL?\r\n";	
 	PiPHandler(str,buf,sizeof(buf));
 	buf[strlen(buf)-2]=NULL;
 	flag=CmdStrHandler("MODEL",buf);
@@ -362,6 +362,31 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	{
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
+		strcpy(str,"#VERSION?");
+		PiPHandler(str,buf,sizeof(buf));
+		buf[strlen(buf)-2]=NULL;
+		flag=CmdStrHandler("VERSION",buf);
+		if(flag)
+		{
+			json_object_set_new(json,"version",json_string(&buf[flag]));
+			strcpy(str,"#SN?");
+			PiPHandler(str,buf,sizeof(buf));
+			buf[strlen(buf)-2]=NULL;
+			flag=CmdStrHandler("SN",buf);
+			if(flag)
+			{
+				json_object_set_new(json,"sn",json_string(&buf[flag]));
+			}
+			else
+			{
+				strcpy(estr,"Get Version Error");
+			}
+		}
+		else
+		{
+			strcpy(estr,"Get Version Error");
+		}
+		
 	}
 	else
 	{
