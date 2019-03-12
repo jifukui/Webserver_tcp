@@ -402,7 +402,9 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	uint8 data[80];
 	uint8 status;
 	PiPHandler(str,buf,sizeof(buf));
+	printf("The buf1 is %s\n",buf);
 	memmove(buf,&buf[START],strlen(&buf[flag]));
+	printf("The buf2 is %s\n",buf);
 	buf[strlen(buf)-2]=NULL;
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
