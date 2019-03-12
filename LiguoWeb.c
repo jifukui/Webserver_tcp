@@ -411,29 +411,33 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		status=strstr(buf,"~01@");
 		if(status)
 		{
-			printf("The old addr is %p\n",status);
-			printf("The new addr is %p\n",buf);
-			printf("The calc is %d\n",status-buf);
-		}
-		else
-		{
-			printf("Get ERROR");
-			return 0;
-		}
-		/*
-		json_object_set_new(json,"name",json_string(&buf[flag]));
-		memmove(buf,&buf[status],strlen(&buf[status]));
-		flag=CmdStrHandler("VERSION",buf);
-		if(flag)
-		{
-			status=CmdStrHandler("~01@",buf);
-			buf[status-5]=NULL;
-			json_object_set_new(json,"version",json_string(&buf[flag]));
-			memmove(buf,&buf[status],strlen(&buf[status]));
-			flag=CmdStrHandler("SN",buf);
+			buf[status-buf-2]=NULL;
+			json_object_set_new(json,"name",json_string(&buf[flag]));
+			memmove(buf,status+4,strlen(status+4));
+			flag=CmdStrHandler("VERSION",buf);
 			if(flag)
 			{
-				json_object_set_new(json,"sn",json_string(&buf[flag]));
+				status=strstr(buf,"~01@");
+				if(status)
+				{
+					buf[status-buf-2]=NULL;
+					json_object_set_new(json,"version",json_string(&buf[flag]));
+					memmove(buf,status+4,strlen(status+4));
+					flag=CmdStrHandler("SN",buf);
+					if(flag)
+					{
+						json_object_set_new(json,"sn",json_string(&buf[flag]));
+					}
+					else
+					{
+						strcpy(estr,"Get SN Error");
+					}
+					
+				}
+				else
+				{
+					strcpy(estr,"Get SN Error");
+				}
 			}
 			else
 			{
@@ -443,8 +447,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		else
 		{
 			strcpy(estr,"Get Version Error");
-		}*/
-		
+		}
 	}
 	else
 	{
