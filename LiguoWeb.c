@@ -967,6 +967,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 									out=Port2Phy(out);
 									if(out)
 									{
+										out-=1;
 										bitmap|=(1<<out);
 									}
 								}
