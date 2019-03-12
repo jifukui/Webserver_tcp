@@ -42,7 +42,7 @@ STATIC uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr);
-STSTIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
 
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
@@ -711,7 +711,8 @@ uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=1;
 	char buf[256]="#RESET\r\n";
-	PiPHandler(sendbuf,buf,sizeof(buf));
+	char data[256];
+	PiPHandler(buf,data,sizeof(data));
 	return flag;
 }
 
@@ -719,7 +720,8 @@ uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=1;
 	char buf[256]="#FACTORT\r\n";
-	PiPHandler(sendbuf,buf,sizeof(buf));
+	char data[256];
+	PiPHandler(buf,data,sizeof(data));
 	return flag;
 }
 
