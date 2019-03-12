@@ -953,7 +953,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 				obj=json_object_get(cmd,"type");
 				if(JsonGetInteger(obj,&type))
 				{
-					if(type>2)
+					if(type<=2)
 					{
 						arr=json_object_get(cmd,"dim");
 						if(json_typeof(arr)==JSON_ARRAY)
