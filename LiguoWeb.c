@@ -410,6 +410,9 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 		status=CmdStrHandler("~01@",buf);
 		buf[status-5]=NULL;
+		printf("The flag is %d\n",flag);
+		printf("The status is %d\n",status);
+		printf("The buf is %s\n",buf);
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		memmove(buf,&buf[status],strlen(&buf[status]));
 		flag=CmdStrHandler("VERSION",buf);
