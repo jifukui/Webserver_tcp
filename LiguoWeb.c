@@ -413,7 +413,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		{
 			printf("The old addr is %p\n",status);
 			printf("The new addr is %p\n",buf);
-			printf("The calc is %d\n"status-buf);
+			printf("The calc is %d\n",status-buf);
 		}
 		else
 		{
