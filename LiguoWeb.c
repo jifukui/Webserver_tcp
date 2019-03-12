@@ -939,6 +939,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 	uint32 type;
 	uint32 out=0;
 	uint32 bitmap;
+	uint32 status;
 	json_t *obj;
 	json_t * arr;
 	if(cmd)
