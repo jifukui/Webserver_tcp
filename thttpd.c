@@ -368,7 +368,6 @@ main( int argc, char** argv )
     httpd_sockaddr sa6;
     int gotv4, gotv6;
     struct timeval tv;
-	nice(-10);
     argv0 = argv[0];
 	json_t *LigFile;
 	json_t *LigPra;
