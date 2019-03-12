@@ -397,13 +397,25 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	*/
 	uint8 flag=0;
 	uint8 i;
-    char buf[300];
-    char str[]="#MODEL?\r\n#VERSION?\r\n#SN?\r\n";	
+    uint8 buf[300];
+    uint8 str[]="#MODEL?\r\n#VERSION?\r\n#SN?\r\n";	
+	uint8 data[80];
+	uint8 status;
 	PiPHandler(str,buf,sizeof(buf));
 	buf[strlen(buf)-2]=NULL;
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
+		status=sscanf(&buf[START],"MODEL %s\r\n");
+		if(status)
+		{
+			printf("The data is %s\n",data);
+		}
+		else
+		{
+			printf("not get The data \n");
+		}
+		
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 		memmove(buf,&buf[strlen(buf)+2],200);
