@@ -399,22 +399,27 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	uint8 i;
     uint8 buf[300];
     uint8 str[]="#MODEL?\r\n#VERSION?\r\n#SN?\r\n";	
-	uint8 data[80];
-	uint8 status;
+	uint8 data[300];
+	uint32 *status=buf;
 	PiPHandler(str,buf,sizeof(buf));
-	printf("The buf1 is %s\n",buf);
 	memmove(buf,&buf[START],strlen(&buf[flag]));
-	printf("The buf2 is %s\n",buf);
 	buf[strlen(buf)-2]=NULL;
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
-		status=CmdStrHandler("~01@",buf);
-		buf[status-5]=NULL;
-		printf("The flag is %d\n",flag);
-		printf("The status is %d\n",status);
-		printf("The buf is %s\n",buf);
+		buf=strstr(buf,"~01@");
+		if(buf)
+		{
+			printf("The old addr is %p\n",ststus);
+			printf("The new addr is %p\n",buf);
+		}
+		else
+		{
+			printf("Get ERROR");
+			return 0;
+		}
+		
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		memmove(buf,&buf[status],strlen(&buf[status]));
 		flag=CmdStrHandler("VERSION",buf);
