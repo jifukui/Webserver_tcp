@@ -3418,7 +3418,7 @@ cgi_child( httpd_conn* hc )
 		send_mime(hc,200,"","","","application/json;charset=utf-8",(off_t)-1,(time_t)0);
 #ifdef CGI_NICE
     /* Set priority. */
-    	(void) nice( CGI_NICE );
+    	//(void) nice( CGI_NICE );
 #endif /* CGI_NICE */
 		char *instr=NULL,errstr[200];
 		json_t *jsonobj;
