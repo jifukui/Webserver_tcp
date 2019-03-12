@@ -40,6 +40,10 @@ STATIC uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr);
+STSTIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
+
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -53,6 +57,9 @@ LigCommandHandler CommandHandler[]={
 	{"VideoSetting",&VideoSwitch},
 	{"SetDeviceName",&SetDeviceName},
 	{"SetInputHDCPMOD",&SetInputHDCPMOD},
+	{"SetDeviceReset",&SetDeviceReset},
+	{"SetDeviceFactory",&SetDeviceFactory},
+	{"GetPortEDID",&GetPortEDID},
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -697,5 +704,76 @@ uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr)
 	{
 		strcpy(estr,"Get Inport Error");
 	}
+	return flag;
+}
+
+uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=1;
+	char buf[256]="#RESET\r\n";
+	PiPHandler(sendbuf,buf,sizeof(buf));
+	return flag;
+}
+
+uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=1;
+	char buf[256]="#FACTORT\r\n";
+	PiPHandler(sendbuf,buf,sizeof(buf));
+	return flag;
+}
+
+uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	json_t obj;
+	char buf[1024];
+	char str[80];
+	uint32 port,attr;
+	uint32 length;
+	if(cmd)
+	{
+		obj=json_object_get(cmd,"port");
+		if(JsonGetInteger(obj,&port))
+		{
+			obj=json_object_get(cmd,"attr");
+			if(JsonGetInteger(obj,&attr))
+			{
+				if(attr==2)
+				{
+					port=port/(LigPortNum/8);
+				}
+				sprintf(str,"#GEDID %d,%d\r\n");
+				PiPHandler(sendbuf,buf,sizeof(buf));
+				printf("The buf is :%s \n",buf);
+				length=lig_pip_write_bytes(sockfd,buf,sizeof(buf));
+				if(length>0)
+				{
+					length=0;
+					do{
+        				length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+					}while(length==0);
+				}
+				printf("the length is %d\n",length);
+				printf("The data is %s\n",buf);
+
+			}
+			else
+			{
+				strcpy(estr,"get attr error");
+			}
+			
+		}
+		else
+		{
+			strcpy(estr,"get port error");
+		}
+		
+	}
+	else
+	{
+		strcpy(estr,"error get Data");
+	}
+	
 	return flag;
 }

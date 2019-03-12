@@ -27,7 +27,7 @@
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
-（3）获取设备状态
+（2）获取设备状态
 请求数据格式
 {
     	"cmd":" matrix_status",
@@ -57,7 +57,7 @@
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
-（4）获取设备信息
+（3）获取设备信息
 请求数据格式
 {
     	"cmd":"PortInfo"
@@ -99,7 +99,7 @@
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
-（5）获取端口在线状态
+（4）获取端口在线状态
 请求数据格式
 {
     	"cmd":"PortOnline",
@@ -169,7 +169,7 @@
 }
 （6）设置输入端口HDCP模式
 {
-    "cmd":"SetDeviceName",
+    "cmd":"SetInputHDCPMOD",
 	"Data":{
 		"Inport":xx//15个字符的字母数字
 		"mode":xx
@@ -181,7 +181,7 @@
 	"echo":
 	{
         "result":{
-            "cmd":"SetDeviceName",
+            "cmd":"SetInputHDCPMOD",
         }
 	},
 	"error":null
@@ -192,8 +192,96 @@
 	"echo":
 	{
         "result":{
-            "cmd":"SetDeviceName",
+            "cmd":"SetInputHDCPMOD",
         }
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（7）设置设备重启
+{
+    "cmd":"SetDeviceReset",
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDeviceReset",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDeviceReset",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（8）设置设备出厂复位
+{
+    "cmd":"SetDeviceFactory",
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDeviceFactory",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDeviceFactory",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（9）获取端口EDID数据
+{
+    "cmd":"GetPortEDID",
+	"Data":{
+		"port":xx,
+		"attr":"0,1,2"
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetPortEDID",
+			"EDID":"00FFFFFF"
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetPortEDID",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（10）拷贝EDID数据
+（11）加载EDID数据
+（12）设置网络参数
+（13）设置端口参数
+（14）设置子板功能
