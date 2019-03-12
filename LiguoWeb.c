@@ -325,27 +325,27 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
-	//struct timeval start,end;
-	//pid_t pid;
-	//unsigned long time;
+	struct timeval start,end;
+	pid_t pid;
+	unsigned long time;
 	bzero(rx,len);
-	//slig_pip_read_bytes(sockfd,rx,len);
-	//printf("The send buf is %s\n",tx);
+	slig_pip_read_bytes(sockfd,rx,len);
+	printf("The send buf is %s\n",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
 		length=0;
-		//gettimeofday(&start,NULL);
+		gettimeofday(&start,NULL);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
-		//gettimeofday(&end,NULL);
-		//time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
-		//printf("The time is %d\n",time);
-		//pid =getpid();
-		//printf("The child pid is %d \n",pid);
+		gettimeofday(&end,NULL);
+		time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
+		printf("The time is %d\n",time);
+		pid =getpid();
+		printf("The child pid is %d \n",pid);
 	}
-	//printf("The recieve buf is %s\n",rx);
+	printf("The recieve buf is %s\n",rx);
 	return length;
 }
 
