@@ -351,7 +351,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 
 uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 {
-	/*
+	
 	uint8 flag=0;
 	uint8 i;
     char buf[80];
@@ -394,7 +394,8 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		strcpy(estr,"Not Get Model Name");
 	}
 	return flag;
-	*/
+	
+/*
 	uint8 flag=0;
 	uint8 i;
     uint8 buf[300];
@@ -453,7 +454,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	{
 		strcpy(estr,"Not Get Model Name");
 	}
-	return flag;
+	return flag;*/
 }
 
 uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
