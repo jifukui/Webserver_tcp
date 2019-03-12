@@ -44,7 +44,7 @@ STATIC uint8 SetInputHDCPMOD(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
-
+STATIC uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -61,6 +61,7 @@ LigCommandHandler CommandHandler[]={
 	{"SetDeviceReset",&SetDeviceReset},
 	{"SetDeviceFactory",&SetDeviceFactory},
 	{"GetPortEDID",&GetPortEDID},
+	{"CopyPortEDID",&CopyPortEDID},
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -926,5 +927,94 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 		strcpy(estr,"error get Data");
 	}
 	
+	return flag;
+}
+
+uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint8 str[80];
+	uint8 buf[80];
+	uint32 in;
+	uint32 type;
+	uint32 out=0;
+	uint32 bitmap;
+	json_t *obj;
+	json_t * arr;
+	if(cmd)
+	{
+		obj=json_object_get(cmd,"org");
+		if(JsonGetInteger(obj,&in))
+		{
+			in=Port2Phy(in);
+			if(in)
+			{
+				obj=json_object_get(cmd,"type");
+				if(JsonGetInteger(obj,&type))
+				{
+					if(type>2)
+					{
+						arr=json_object_get(cmd,"dim");
+						if(json_typeof(arr)==JSON_ARRAY)
+						{
+							uint8 i=0;
+							for(i=0;i<json_array_size(arr);i++)
+							{
+								obj=json_array_get(arr,i);
+								if(JsonGetInteger(obj,&out))
+								{
+									out=Port2Phy(out);
+									if(out)
+									{
+										bitmap|=(1<<out);
+									}
+								}
+							}
+							printf("the in is %d\n",in);
+							printf("The type is %d\n",type);
+							printf("The bit map is %d\n",bitmap);
+							if(bitmap)
+							{
+								sprintf(str,"#CPEDID %d,%d,0,0x%x\r\n",type,in,bitmap);
+								PiPHandler(str,buf,sizeof(buf));
+								printf("The buf is :%s \n",buf);
+								status=sscanf(&buf[START],"GEDID ERR,%d\r\n",&type);
+								printf("The status is %d\n",status);
+								flag=!status;
+							}
+							else
+							{
+								flag=1;
+							}
+						}
+						else
+						{
+							strcpy(estr,"Get dim Error");
+						}
+					}
+					else
+					{
+						strcpy(estr,"type out of range ");
+					}
+				}
+				else
+				{
+					strcpy(estr,"Get type Error");
+				}
+			}
+			else
+			{
+				strcpy(estr,"org out of range");
+			}
+		}
+		else
+		{
+			strcpy(estr,"Get org Error");
+		}
+	}
+	else
+	{
+		strcpy(estr,"error get Data");
+	}
 	return flag;
 }

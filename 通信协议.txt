@@ -283,6 +283,36 @@
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
 （10）拷贝EDID数据
+{
+    "cmd":"CopyPortEDID",
+	"Data":{
+		"org":xx,
+		"type":0/1/2 //0:in,1：out,2default
+		"dim":[xx,xxx,xxx,xxx,xxx,xxx,xx]
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"CopyPortEDID",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"CopyPortEDID",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
 （11）加载EDID数据
 （12）设置网络参数
 （13）设置端口参数
