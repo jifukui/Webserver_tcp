@@ -32,6 +32,7 @@ STATIC uint8 JsonGetInteger(json_t *json,uint32 *data);
 STATIC uint8 JsonGetUint8(json_t *json,uint8 *data);
 STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
 STATIC uint8 PortImage(uint8 port,uint8 flag);
+STATIC uint8 Port2Phy(uint8 port);
 STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr);
@@ -190,6 +191,34 @@ uint8 PortImage(uint8 port,uint8 flag)
 	}
 	return index;
 }
+
+uint8 Port2Phy(uint8 port)
+{
+	uint8 falg=0;
+	uint8 Port=LigPortNum/2;
+	if(port<=Port)
+	{
+		flag=port;
+	}
+	else if(port<=2*Port)
+	{
+		flag=port-Port;
+	}
+	else if(port<=3*Port)
+	{
+		flag=port-Port;
+	}	
+	else if(port<4=*Port)
+	{
+		flag=port-2*Port;
+	}
+	else if(port<=4*Port+2)
+	{
+		flag=LigPortNum+1;
+	}
+	return flag;
+}
+
 
 uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 {
@@ -747,6 +776,11 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					port=port/(LigPortNum/8);
 				}
+				else
+				{
+					port=Port2Phy(port);
+				}
+				
 				sprintf(str,"#GEDID %d,%d\r\n",attr,port);
 				printf("The str is %s\n",str);
 				PiPHandler(str,buf,sizeof(buf));
