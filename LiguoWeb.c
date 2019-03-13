@@ -1078,7 +1078,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 							sprintf(buf,",%02X",edid[i]);
 							strcat(str,buf);
 						}
-						sprintf(buf,",%02X,%02X\r\n",0xaa,0x55);
+						sprintf(buf,",%02X,%02X",0xaa,0x55);
 						strcat(str,buf);
 						printf("The data is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
