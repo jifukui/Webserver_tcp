@@ -1091,8 +1091,8 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						if(len)
 						{
 							do{
-								length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-							}while(length==0);
+								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+							}while(len==0);
 							printf("The Buffer is %s\n",buf);
 							if(strstr(buf,"ERR"))
 							{
