@@ -1242,19 +1242,19 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 				data=json_array_get(arr,i);
 				if(json_typeof(data)==JSON_OBJECT)
 				{
-					obj=json_object_get(cmd,"sid");
+					obj=json_object_get(data,"sid");
 					if(JsonGetInteger(obj,&sid))
 					{
-						obj=json_object_get(cmd,"index");
+						obj=json_object_get(data,"index");
 						if(JsonGetInteger(obj,&index))
 						{
 							index=Port2Phy(index);
 							if(index)
 							{
-								obj=json_object_get(cmd,"dir");
+								obj=json_object_get(data,"dir");
 								if(JsonGetInteger(obj,&dir))
 								{
-									obj=json_object_get(cmd,"value");
+									obj=json_object_get(data,"value");
 									if(JsonGetInteger(obj,&value))
 									{
 										sprintf(str,"#MODULE-FUNC %d,%d,%d,%d\r\n",sid,dir,index,value);
