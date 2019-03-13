@@ -1070,14 +1070,16 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					{
 						printf("good for first\n");
 						bzero(str,sizeof(str));
-						//bzero(edid,sizeof(edid));
 						edid[0]=0;
 						edid[1]=1;
 						edid[2]=(len+2)/256;
 						edid[3]=(len+2)%256;
 						edid[len+4]=0xAA;
 						edid[len+5]=0x55;
-						//bzero(edid,sizeof(edid));
+						for(i=0;i<len+6;i++)
+						{
+							printf("The data is %02x\n",edid[i]);
+						}
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
 						if(len)
 						{
