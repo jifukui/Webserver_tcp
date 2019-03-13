@@ -1150,8 +1150,8 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 	uint8 ip[100];
 	uint8 mask[100];
 	uint8 gateway[100];
-	uint16 tcp;
-	uint16 udp;
+	uint32 tcp;
+	uint32 udp;
 	//uint32 status=0;
 	json_t *obj;
 	if(cmd)
@@ -1182,6 +1182,7 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 		obj=json_object_get(cmd,"tcp");
 		if(JsonGetInteger(obj,&tcp))
 		{
+			printf("The tcp is %d\n",tcp);
 			sprintf(str,"#ETH-PORT TCP,%d\r\n",tcp);
 			PiPHandler(str,buf,sizeof(buf));
 			printf("The buf is %s\n",buf);
