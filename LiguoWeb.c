@@ -1065,8 +1065,10 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					StringtoUint8(data,edid);
 					sprintf(str,"#LDEDID 0,0x%x,%d,1",bitmap,len);
 					PiPHandler(str,buf,sizeof(buf));
+					printf("The Buffer is %s\n",buf);
 					if(strstr(buf,"READY"))
 					{
+						printf("good for first\n");
 						sprintf(buf,"00,01,%d,%d",(len+2)/256,(len+2)%256);
 						strcat(str,buf);
 						for(i=0;i<len;i++)
