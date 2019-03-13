@@ -45,6 +45,7 @@ STATIC uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 LoadEDID(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -62,6 +63,7 @@ LigCommandHandler CommandHandler[]={
 	{"SetDeviceFactory",&SetDeviceFactory},
 	{"GetPortEDID",&GetPortEDID},
 	{"CopyPortEDID",&CopyPortEDID},
+	{"LoadEDID",&LoadEDID},
 };
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
@@ -972,16 +974,16 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 									}
 								}
 							}
-							printf("the in is %d\n",in);
-							printf("The type is %d\n",type);
-							printf("The bit map is %d\n",bitmap);
+							//printf("the in is %d\n",in);
+							//printf("The type is %d\n",type);
+							//printf("The bit map is %d\n",bitmap);
 							if(bitmap)
 							{
 								sprintf(str,"#CPEDID %d,%d,0,0x%x\r\n",type,in,bitmap);
 								PiPHandler(str,buf,sizeof(buf));
-								printf("The buf is :%s \n",buf);
+								//printf("The buf is :%s \n",buf);
 								status=sscanf(&buf[START],"CPEDID ERR,%d\r\n",&type);
-								printf("The status is %d\n",status);
+								//printf("The status is %d\n",status);
 								flag=!status;
 							}
 							else
@@ -1012,6 +1014,92 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 		else
 		{
 			strcpy(estr,"Get org Error");
+		}
+	}
+	else
+	{
+		strcpy(estr,"error get Data");
+	}
+	return flag;
+}
+
+uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint8 str[1024];
+	uint8 data[1024];
+	uint8 edid[1024];
+	uint8 buf[80];
+	uint32 in;
+	uint32 bitmap=0;
+	uint32 status;
+	uint32 len;
+	json_t *obj;
+	json_t * arr;
+	if(cmd)
+	{
+		arr=json_object_get(cmd,"dim");
+		if(json_typeof(arr)==JSON_ARRAY)
+		{
+			uint16 i=0;
+			for(i=0;i<json_array_size(arr);i++)
+			{
+				obj=json_array_get(arr,i);
+				if(JsonGetInteger(obj,&in))
+				{
+					in=Port2Phy(in);
+					if(in)
+					{
+						in-=1;
+						bitmap|=(1<<in);
+					}
+				}
+			}
+			if(bitmap)
+			{
+				obj=json_object_get(cmd,"EDID");
+				if(JsonGetString(obj,data))
+				{
+					len=strlen(data)/2;
+					printf("The len is %d\n",len);
+					StringtoUint8(data,edid);
+					sprintf(str,"#LDEDID 0,0x%x,%d,1",bitmap,len);
+					PiPHandler(str,buf,sizeof(buf));
+					if(strstr(buf,"READY"));
+					{
+						sprintf(buf,"00,01,%d,%d",(len+2)/256,(len+2)%256);
+						strcat(str,buf);
+						for(i=0;i<len;i++)
+						{
+							sprintf(buf,",%d",edid[i]);
+							strcat(str,buf);
+						}
+						sprintf(buf,",%d,%d",0xaa,0x55);
+						strcat(str,buf);
+						printf("The data is %s\n",str);
+						PiPHandler(str,buf,sizeof(buf));
+						status=sscanf(&buf[START],"LDEDID ERR,%d\r\n",&type);
+						flag=!status;
+					}
+					else
+					{
+						strcpy(estr,"First command error");
+					}
+				}
+				else
+				{
+					strcpy(estr,"Get EDID Error");
+				}
+				
+			}
+			else
+			{
+				flag=1;
+			}
+		}
+		else
+		{
+			strcpy(estr,"Get Dim Error");
 		}
 	}
 	else

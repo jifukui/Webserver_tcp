@@ -314,6 +314,35 @@
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
 （11）加载EDID数据
+{
+    "cmd":"LoadEDID",
+	"Data":{
+		"dim":[xx,xxx,xxx,xxx,xxx,xxx,xx],
+		"EDID":"xxxxx"//按照34FD的方式
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"LoadEDID",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"LoadEDID",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
 （12）设置网络参数
 （13）设置端口参数
 （14）设置子板功能
