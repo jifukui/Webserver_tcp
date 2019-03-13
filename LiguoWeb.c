@@ -1071,14 +1071,14 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						printf("good for first\n");
 						StringtoUint8(edid,data);
 						bzero(str,sizeof(str));
-						sprintf(buf,"00,01,%02X,%02X",(len+2)/256,(len+2)%256);
+						sprintf(buf,"00 01 %02X %02X",(len+2)/256,(len+2)%256);
 						strcat(str,buf);
 						for(i=0;i<len;i++)
 						{
-							sprintf(buf,",%02X",edid[i]);
+							sprintf(buf," %02X",edid[i]);
 							strcat(str,buf);
 						}
-						sprintf(buf,",%02X,%02X",0xaa,0x55);
+						sprintf(buf," %02X %02X",0xaa,0x55);
 						strcat(str,buf);
 						printf("The data is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
