@@ -1071,7 +1071,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					len=strlen(data)/2;
 					printf("The len is %d\n",len);
 					StringtoUint8(&edid[4],data);
-					sprintf(str,"#LDEDID 0,0x%x,%d,1\r\n",bitmap,len);
+					sprintf(str,"#LDEDID 0,0x%llx,%d,1\r\n",bitmap,len);
 					PiPHandler(str,buf,sizeof(buf));
 					printf("The Buffer is %s\n",buf);
 					if(strstr(buf,"READY"))
@@ -1103,7 +1103,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 										strcpy(estr,"second command error");
 										break;
 									}
-									else if(sscanf(&buf[START],"LDEDID %d,0x%d,%d,%d OK\r\n",&in,&bitmap,&len,&status))
+									else if(sscanf(&buf[START],"LDEDID %d,0x%llx,%d,%d OK\r\n",&in,&bitmap,&len,&status))
 									{
 										flag=1;
 										break;
