@@ -1237,7 +1237,7 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 	{
 		if(json_typeof(cmd)==JSON_ARRAY)
 		{
-			for(i=0;i<json_array_size(arry);i++)
+			for(i=0;i<json_array_size(arr);i++)
 			{
 				data=json_array_get(arr,i);
 				if(json_typeof(data)==JSON_OBJECT)
