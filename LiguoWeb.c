@@ -1069,19 +1069,26 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					if(strstr(buf,"READY"))
 					{
 						printf("good for first\n");
-						sprintf(buf,"00,01,%d,%d",(len+2)/256,(len+2)%256);
+						bzero(buf,sizeof(buf));
+						sprintf(buf,"00,01,%02X,%02X",(len+2)/256,(len+2)%256);
 						strcat(str,buf);
 						for(i=0;i<len;i++)
 						{
-							sprintf(buf,",%d",edid[i]);
+							sprintf(buf,",%02X",edid[i]);
 							strcat(str,buf);
 						}
-						sprintf(buf,",%d,%d\r\n",0xaa,0x55);
+						sprintf(buf,",%02X,%02X\r\n",0xaa,0x55);
 						strcat(str,buf);
 						printf("The data is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
-						status=sscanf(&buf[START],"LDEDID ERR,%d\r\n",&in);
-						flag=!status;
+						if(strstr(buf,"ERR"))
+						{
+							strcpy(estr,"second command error");
+						}
+						else
+						{
+							flag=1;
+						}
 					}
 					else
 					{
