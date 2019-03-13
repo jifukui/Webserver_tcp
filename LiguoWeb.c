@@ -12,6 +12,8 @@ typedef unsigned int uint32;
 typedef int int32;
 typedef unsigned short int uint16;
 typedef short int int16;
+typedef unsigned long long uint64;
+typedef long long int64;
 
 #define STATIC static
 #define START 4
