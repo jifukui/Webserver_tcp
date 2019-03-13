@@ -948,7 +948,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 	uint32 in;
 	uint32 type;
 	uint32 out=0;
-	uint32 bitmap=0;
+	uint64 bitmap=0;
 	uint32 status;
 	json_t *obj;
 	json_t * arr;
@@ -1039,7 +1039,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 	uint8 edid[1024];
 	uint8 buf[80];
 	uint32 in;
-	uint32 bitmap=0;
+	uint64 bitmap=0;
 	uint32 status;
 	uint32 len;
 	json_t *obj;
