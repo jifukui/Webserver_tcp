@@ -1239,7 +1239,7 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 		{
 			for(i=0;i<json_array;i++)
 			{
-				data=json_array_get(array,i);
+				data=json_array_get(arr,i);
 				if(json_typeof(data)==JSON_OBJECT)
 				{
 					obj=json_object_get(cmd,"sid");
