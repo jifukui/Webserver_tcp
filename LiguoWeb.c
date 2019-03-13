@@ -1065,7 +1065,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					StringtoUint8(data,edid);
 					sprintf(str,"#LDEDID 0,0x%x,%d,1",bitmap,len);
 					PiPHandler(str,buf,sizeof(buf));
-					if(strstr(buf,"READY"));
+					if(strstr(buf,"READY"))
 					{
 						sprintf(buf,"00,01,%d,%d",(len+2)/256,(len+2)%256);
 						strcat(str,buf);
@@ -1078,7 +1078,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						strcat(str,buf);
 						printf("The data is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
-						status=sscanf(&buf[START],"LDEDID ERR,%d\r\n",&type);
+						status=sscanf(&buf[START],"LDEDID ERR,%d\r\n",&in);
 						flag=!status;
 					}
 					else
