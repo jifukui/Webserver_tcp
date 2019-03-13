@@ -344,5 +344,70 @@
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
 （12）设置网络参数
-（13）设置端口参数
-（14）设置子板功能
+ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有修改就不需要，tcp,udp修改了才需要
+{
+    "cmd":"SetNetwork",
+	"Data":{
+		"ip":"xxx.xxx.xxx.xxx",
+		"mask":"xxx.xxx.xxx.xxx",
+		"gateway":"xxx.xxx.xxx.xxx",
+		"tcp":xxx,
+		"udp":xxx
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetNetwork",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetNetwork",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（13）设置子板功能
+{
+    "cmd":"SetPortFunc",
+	"Data":[
+		{
+			"sid":xxx,
+			"index":xxx,
+			"dir":xxx,
+			"value":xxx,
+		}
+	]
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetPortFunc",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetPortFunc",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}

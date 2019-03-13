@@ -46,6 +46,9 @@ STATIC uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 LoadEDID(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetNetwork(json_t *json,json_t* cmd,char *estr);
+
+
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -64,7 +67,9 @@ LigCommandHandler CommandHandler[]={
 	{"GetPortEDID",&GetPortEDID},
 	{"CopyPortEDID",&CopyPortEDID},
 	{"LoadEDID",&LoadEDID},
+	{"SetNetwork",&SetNetwork},
 };
+
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
 
 
@@ -1129,6 +1134,82 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 		{
 			strcpy(estr,"Get Dim Error");
 		}
+	}
+	else
+	{
+		strcpy(estr,"error get Data");
+	}
+	return flag;
+}
+
+uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint8 str[1024];
+	uint8 buf[1024];
+	uint8 ip[100];
+	uint8 mask[100];
+	uint8 gateway[100];
+	uint16 tcp;
+	uint16 udp;
+	//uint32 status=0;
+	json_t *obj;
+	if(cmd)
+	{
+		obj=json_object_get(cmd,"ip");
+		if(JsonGetString(obj,ip))
+		{
+			obj=json_object_get(cmd,"mask");
+			if(JsonGetString(obj,mask))
+			{
+				obj=json_object_get(cmd,"gateway");
+				if(JsonGetString(obj,gateway))
+				{
+					flag=1;
+				}
+			}
+		}
+		if(flag)
+		{
+			sprintf(str,"#NET-CONFIG 0,%s,%s,%s\r\n",ip,mask,gate);
+			PiPHandler(str,buf,sizeof(buf));
+			printf("The buf is %s\n",buf);
+			if(strstr(buf,"ERR"))
+			{
+				strcpy(estr,"set net work error");
+			}
+		}
+		obj=json_object_get(cmd,"tcp");
+		if(JsonGetString(obj,&tcp))
+		{
+			sprintf(str,"#ETH-PORT TCP,%d\r\n",tcp);
+			PiPHandler(str,buf,sizeof(buf));
+			printf("The buf is %s\n",buf);
+			if(strstr(buf,"ERR"))
+			{
+				strcpy(estr,"set tcp error");
+			}
+			else
+			{
+				flag=1;
+			}
+		}
+		obj=json_object_get(cmd,"udp");
+		if(JsonGetString(obj,&tcp))
+		{
+			sprintf(str,"#ETH-PORT UDP,%d\r\n",tcp);
+			PiPHandler(str,buf,sizeof(buf));
+			printf("The buf is %s\n",buf);
+			if(strstr(buf,"ERR"))
+			{
+				strcpy(estr,"set UDP error");
+			}
+			else
+			{
+				flag=1;
+			}
+		}
+
 	}
 	else
 	{
