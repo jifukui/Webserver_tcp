@@ -1171,7 +1171,7 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 		}
 		if(flag)
 		{
-			sprintf(str,"#NET-CONFIG 0,%s,%s,%s\r\n",ip,mask,gate);
+			sprintf(str,"#NET-CONFIG 0,%s,%s,%s\r\n",ip,mask,gateway);
 			PiPHandler(str,buf,sizeof(buf));
 			printf("The buf is %s\n",buf);
 			if(strstr(buf,"ERR"))
@@ -1180,7 +1180,7 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 			}
 		}
 		obj=json_object_get(cmd,"tcp");
-		if(JsonGetString(obj,&tcp))
+		if(JsonGetInteger(obj,&tcp))
 		{
 			sprintf(str,"#ETH-PORT TCP,%d\r\n",tcp);
 			PiPHandler(str,buf,sizeof(buf));
@@ -1195,7 +1195,7 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 			}
 		}
 		obj=json_object_get(cmd,"udp");
-		if(JsonGetString(obj,&tcp))
+		if(JsonGetInteger(obj,&tcp))
 		{
 			sprintf(str,"#ETH-PORT UDP,%d\r\n",tcp);
 			PiPHandler(str,buf,sizeof(buf));
