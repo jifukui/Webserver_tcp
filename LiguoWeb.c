@@ -1069,7 +1069,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					if(strstr(buf,"READY"))
 					{
 						printf("good for first\n");
-						bzero(buf,sizeof(buf));
+						bzero(str,sizeof(str));
 						sprintf(buf,"00,01,%02X,%02X",(len+2)/256,(len+2)%256);
 						strcat(str,buf);
 						for(i=0;i<len;i++)
