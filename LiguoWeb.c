@@ -1062,7 +1062,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					len=strlen(data)/2;
 					printf("The len is %d\n",len);
-					StringtoUint8(data,&edid[4]);
+					StringtoUint8(&edid[4],data);
 					sprintf(str,"#LDEDID 0,0x%x,%d,1\r\n",bitmap,len);
 					PiPHandler(str,buf,sizeof(buf));
 					printf("The Buffer is %s\n",buf);
@@ -1078,7 +1078,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						edid[len+5]=0x55;
 						for(i=0;i<len+6;i++)
 						{
-							printf("The data is %02x\n",edid[i]);
+							printf("The data %d is %02x\n",i,edid[i]);
 						}
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
 						if(len)
