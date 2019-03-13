@@ -1235,7 +1235,6 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 	json_t *data;
 	if(cmd)
 	{
-		printf("Good of cmd\n");
 		if(json_typeof(cmd)==JSON_ARRAY)
 		{
 			for(i=0;i<json_array_size(arr);i++)
@@ -1297,6 +1296,7 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 					strcpy(estr,"Data index is not Object");
 				}
 			}
+			printf("The i is %d\n",i);
 		}
 		else
 		{
