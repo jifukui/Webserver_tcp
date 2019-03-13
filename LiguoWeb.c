@@ -1070,7 +1070,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					{
 						printf("good for first\n");
 						bzero(str,sizeof(str));
-						bzero(edid,sizeof(edid));
+						//bzero(edid,sizeof(edid));
 						edid[0]=0;
 						edid[1]=1;
 						edid[2]=(len+2)/256;
