@@ -1229,56 +1229,77 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 	uint32 sid;
 	uint32 dir;
 	uint32 value;
+	uint8 i=0;
 	json_t *obj;
+	json_t *arr;
+	json_t *data;
 	if(cmd)
 	{
-		obj=json_object_get(cmd,"sid");
-		if(JsonGetInteger(obj,&sid))
+		if(json_typeof(cmd)==JSON_ARRAY)
 		{
-			obj=json_object_get(cmd,"index");
-			if(JsonGetInteger(obj,&index))
+			for(i=0;i<json_array;i++)
 			{
-				index=Port2Phy(index);
-				if(index)
+				data=json_array_get(array,i);
+				if(json_typeof(data)==JSON_OBJECT)
 				{
-					obj=json_object_get(cmd,"dir");
-					if(JsonGetInteger(obj,&index))
+					obj=json_object_get(cmd,"sid");
+					if(JsonGetInteger(obj,&sid))
 					{
-						obj=json_object_get(cmd,"value");
-						if(JsonGetInteger(obj,&value))
+						obj=json_object_get(cmd,"index");
+						if(JsonGetInteger(obj,&index))
 						{
-							sprintf(str,"#MODULE-FUNC %d,%d,%d,%d\r\n",sid,dir,index,value);
-							printf("The str is %s\n",str);
-							PiPHandler(str,buf,sizeof(buf));
-							printf("The buf is %s\n",buf);
-							if(strstr(buf,"ERR"))
+							index=Port2Phy(index);
+							if(index)
 							{
-								strcpy(estr,"set Module function error");
+								obj=json_object_get(cmd,"dir");
+								if(JsonGetInteger(obj,&dir))
+								{
+									obj=json_object_get(cmd,"value");
+									if(JsonGetInteger(obj,&value))
+									{
+										sprintf(str,"#MODULE-FUNC %d,%d,%d,%d\r\n",sid,dir,index,value);
+										printf("The str is %s\n",str);
+										PiPHandler(str,buf,sizeof(buf));
+										printf("The buf is %s\n",buf);
+										if(strstr(buf,"ERR"))
+										{
+											strcpy(estr,"set Module function error");
+										}
+										else
+										{
+											flag=1;
+										}
+									}
+									else
+									{
+										strcpy(estr,"Get value error");
+									}
+								}
+								else
+								{
+									strcpy(estr,"Get dir error");
+								}	
 							}
 							else
 							{
-								flag=1;
-							}
-						}
-						else
-						{
-
+								strcpy(estr,"Get index error");
+							}	
 						}
 					}
 					else
 					{
-
+						strcpy(estr,"Get sid error");
 					}
 				}
 				else
 				{
-
+					strcpy(estr,"Data index is not Object");
 				}
 			}
 		}
 		else
 		{
-			strcpy(estr,"Get sid error");
+			strcpy(estr,"Data is not array");
 		}
 	}
 	else
