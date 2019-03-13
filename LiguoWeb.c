@@ -47,7 +47,7 @@ STATIC uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 LoadEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetNetwork(json_t *json,json_t* cmd,char *estr);
-
+STATIC uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr);
 
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
@@ -68,6 +68,7 @@ LigCommandHandler CommandHandler[]={
 	{"CopyPortEDID",&CopyPortEDID},
 	{"LoadEDID",&LoadEDID},
 	{"SetNetwork",&SetNetwork},
+	{"SetPortFunc",&SetPortFunc};
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -1211,6 +1212,74 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 			}
 		}
 
+	}
+	else
+	{
+		strcpy(estr,"error get Data");
+	}
+	return flag;
+}
+
+uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint8 str[1024];
+	uint8 buf[1024];
+	uint32 index;
+	uint32 sid;
+	uint32 dir;
+	uint32 value;
+	json_t *obj;
+	if(cmd)
+	{
+		obj=json_object_get(cmd,"sid");
+		if(JsonGetInteger(obj,&sid))
+		{
+			obj=json_object_get(cmd,"index");
+			if(JsonGetInteger(obj,&index))
+			{
+				index=Port2Phy(index);
+				if(index)
+				{
+					obj=json_object_get(cmd,"dir");
+					if(JsonGetInteger(obj,&index))
+					{
+						obj=json_object_get(cmd,"value");
+						if(JsonGetInteger(obj,&value))
+						{
+							sprintf(str,"#MODULE-FUNC %d,%d,%d,%d\r\n",sid,dir,index,value);
+							printf("The str is %s\n",str);
+							PiPHandler(str,buf,sizeof(buf));
+							printf("The buf is %s\n",buf);
+							if(strstr(buf,"ERR"))
+							{
+								strcpy(estr,"set Module function error");
+							}
+							else
+							{
+								flag=1;
+							}
+						}
+						else
+						{
+
+						}
+					}
+					else
+					{
+
+					}
+				}
+				else
+				{
+
+				}
+			}
+		}
+		else
+		{
+			strcpy(estr,"Get sid error");
+		}
 	}
 	else
 	{
