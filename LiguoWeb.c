@@ -1095,13 +1095,12 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 										strcpy(estr,"second command error");
 										break;
 									}
-									else if(strstr(buf,"ERR"))
+									else if(sscanf(&buf[START],"LDEDID %d,0x%d,%d,%d OK\r\n",&in,&bitmap,&len,&status))
 									{
 										flag=1;
 										break;
 									}
 								}
-				
 							}while(1);
 							printf("end of ldedid\n");
 						}
