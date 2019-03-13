@@ -68,7 +68,7 @@ LigCommandHandler CommandHandler[]={
 	{"CopyPortEDID",&CopyPortEDID},
 	{"LoadEDID",&LoadEDID},
 	{"SetNetwork",&SetNetwork},
-	{"SetPortFunc",&SetPortFunc};
+	{"SetPortFunc",&SetPortFunc},
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
