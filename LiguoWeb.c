@@ -1076,6 +1076,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						edid[3]=(len+2)%256;
 						edid[len+4]=0xAA;
 						edid[len+5]=0x55;
+						bzero(edid,sizeof(edid));
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
 						if(len)
 						{
