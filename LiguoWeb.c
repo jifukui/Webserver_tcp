@@ -1069,18 +1069,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					if(strstr(buf,"READY"))
 					{
 						printf("good for first\n");
-						//StringtoUint8(edid,data);
 						bzero(str,sizeof(str));
-						/*sprintf(buf,"0001%02X%02X",(len+2)/256,(len+2)%256);
-						strcat(str,buf);
-						for(i=0;i<len;i++)
-						{
-							sprintf(buf,"%02X",edid[i]);
-							strcat(str,buf);
-						}
-						sprintf(buf,"%02X%02X",0xaa,0x55);
-						strcat(str,buf);
-						printf("The data is %s\n",str);*/
 						edid[0]=0;
 						edid[1]=1;
 						edid[2]=(len+2)/256;
@@ -1090,6 +1079,8 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
 						if(len)
 						{
+							printf("The len is %d\n",len);
+							len=0;
 							do{
 								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 							}while(len==0);
