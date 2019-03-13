@@ -1087,16 +1087,23 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 							len=0;
 							do{
 								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-							}while(len==0);
-							printf("The Buffer is %s\n",buf);
-							if(strstr(buf,"ERR"))
-							{
-								strcpy(estr,"second command error");
-							}
-							else
-							{
-								flag=1;
-							}
+								if(len>0)
+								{
+									printf("The buf is %s\n",buf);
+									if(strstr(buf,"ERR"))
+									{
+										strcpy(estr,"second command error");
+										break;
+									}
+									else if(strstr(buf,"ERR"))
+									{
+										flag=1;
+										break;
+									}
+								}
+				
+							}while(1);
+							printf("end of ldedid\n");
 						}
 						else
 						{
