@@ -982,9 +982,9 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 									}
 								}
 							}
-							//printf("the in is %d\n",in);
-							//printf("The type is %d\n",type);
-							//printf("The bit map is %d\n",bitmap);
+							printf("the in is %d\n",in);
+							printf("The type is %d\n",type);
+							printf("The bit map is %0xllx\n",bitmap);
 							if(bitmap)
 							{
 								sprintf(str,"#CPEDID %d,%d,0,0x%llx\r\n",type,in,bitmap);
