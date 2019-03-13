@@ -1062,16 +1062,16 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					len=strlen(data)/2;
 					printf("The len is %d\n",len);
-					StringtoUint8(data,edid);
+					StringtoUint8(data,&edid[4]);
 					sprintf(str,"#LDEDID 0,0x%x,%d,1\r\n",bitmap,len);
 					PiPHandler(str,buf,sizeof(buf));
 					printf("The Buffer is %s\n",buf);
 					if(strstr(buf,"READY"))
 					{
 						printf("good for first\n");
-						StringtoUint8(edid,data);
+						//StringtoUint8(edid,data);
 						bzero(str,sizeof(str));
-						sprintf(buf,"0001%02X%02X",(len+2)/256,(len+2)%256);
+						/*sprintf(buf,"0001%02X%02X",(len+2)/256,(len+2)%256);
 						strcat(str,buf);
 						for(i=0;i<len;i++)
 						{
@@ -1080,15 +1080,32 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						}
 						sprintf(buf,"%02X%02X",0xaa,0x55);
 						strcat(str,buf);
-						printf("The data is %s\n",str);
-						PiPHandler(str,buf,sizeof(buf));
-						if(strstr(buf,"ERR"))
+						printf("The data is %s\n",str);*/
+						edid[0]=0;
+						edid[1]=1;
+						edid[2]=(len+2)/256;
+						edid[3]=(len+2)%256;
+						edid[len+4]=0xAA;
+						edid[len+5]=0x55;
+						len=lig_pip_write_bytes(sockfd,edid,len+6);
+						if(len)
 						{
-							strcpy(estr,"second command error");
+							do{
+								length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+							}while(length==0);
+							printf("The Buffer is %s\n",buf);
+							if(strstr(buf,"ERR"))
+							{
+								strcpy(estr,"second command error");
+							}
+							else
+							{
+								flag=1;
+							}
 						}
 						else
 						{
-							flag=1;
+							strcpy(estr,"send second command error");
 						}
 					}
 					else
