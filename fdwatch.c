@@ -284,9 +284,9 @@ fdwatch_logstats( long secs )
     {
     if ( secs > 0 )
 	{
-#ifdef JI_SYSLOG
+//#ifdef JI_SYSLOG
             syslog(LOG_NOTICE, "  fdwatch - %ld %ss (%g/sec)",nwatches, WHICH, (float) nwatches / secs );
-#endif
+//#endif
     }
     nwatches = 0;
     }
