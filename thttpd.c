@@ -178,7 +178,10 @@ handle_term( int sig )
     /* Don't need to set up the handler again, since it's a one-shot. */
 
     shut_down();
-    syslog( LOG_NOTICE, "exiting due to signal %d", sig );
+	#ifdef JI_SYSLOG
+		syslog( LOG_NOTICE, "exiting due to signal %d", sig );
+	#endif
+    
     closelog();
     exit( 1 );
     }
@@ -215,7 +218,12 @@ handle_chld( int sig )
 	    ** but with some kernels it does anyway.  Ignore it.
 	    */
 	    if ( errno != ECHILD )
-		syslog( LOG_ERR, "child wait - %m" );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "child wait - %m" );
+			#endif
+		}
+		
 	    break;
 	    }
 	/* Decrement the CGI count.  Note that this is not accurate, since
@@ -269,7 +277,10 @@ handle_usr1( int sig )
 	** main loop won't wake up until the next new connection.
 	*/
 	shut_down();
-	syslog( LOG_NOTICE, "exiting" );
+	#ifdef JI_SYSLOG
+		syslog( LOG_NOTICE, "exiting" );
+	#endif
+	
 	closelog();
 	exit( 0 );
 	}
@@ -338,11 +349,17 @@ re_open_logfile( void )
     /* Re-open the log file. */
     if ( logfile != (char*) 0 && strcmp( logfile, "-" ) != 0 )
 	{
-	syslog( LOG_NOTICE, "re-opening logfile" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_NOTICE, "re-opening logfile" );
+		#endif
+	
 	logfp = fopen( logfile, "a" );
 	if ( logfp == (FILE*) 0 )
 	    {
-	    syslog( LOG_CRIT, "re-opening %.80s - %m", logfile );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "re-opening %.80s - %m", logfile );
+			#endif
+	    	
 	    return;
 	    }
 	(void) fcntl( fileno( logfp ), F_SETFD, 1 );
@@ -430,7 +447,10 @@ main( int argc, char** argv )
     lookup_hostname( &sa4, sizeof(sa4), &gotv4, &sa6, sizeof(sa6), &gotv6 );
     if ( ! ( gotv4 || gotv6 ) )
 	{
-	syslog( LOG_ERR, "can't find any valid address" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "can't find any valid address" );
+		#endif
+	
 	(void) fprintf( stderr, "%s: can't find any valid address\n", argv0 );
 	exit( 1 );
 	}
@@ -450,7 +470,10 @@ main( int argc, char** argv )
 	pwd = getpwnam( user );
 	if ( pwd == (struct passwd*) 0 )
 	    {
-	    syslog( LOG_CRIT, "unknown user - '%.80s'", user );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "unknown user - '%.80s'", user );
+			#endif
+	    
 	    (void) fprintf( stderr, "%s: unknown user - '%s'\n", argv0, user );
 	    exit( 1 );
 	    }
@@ -473,13 +496,19 @@ main( int argc, char** argv )
 	    logfp = fopen( logfile, "a" );
 	    if ( logfp == (FILE*) 0 )
 		{
-		syslog( LOG_CRIT, "%.80s - %m", logfile );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "%.80s - %m", logfile );
+			#endif
+		
 		perror( logfile );
 		exit( 1 );
 		}
 	    if ( logfile[0] != '/' )
 		{
-		syslog( LOG_WARNING, "logfile is not an absolute path, you may not be able to re-open it" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_WARNING, "logfile is not an absolute path, you may not be able to re-open it" );
+			#endif
+		
 		(void) fprintf( stderr, "%s: logfile is not an absolute path, you may not be able to re-open it\n", argv0 );
 		}
 	    (void) fcntl( fileno( logfp ), F_SETFD, 1 );
@@ -490,7 +519,10 @@ main( int argc, char** argv )
 		*/
 		if ( fchown( fileno( logfp ), uid, gid ) < 0 )
 		    {
-		    syslog( LOG_WARNING, "fchown logfile - %m" );
+				#ifdef JI_SYSLOG
+					syslog( LOG_WARNING, "fchown logfile - %m" );
+				#endif
+		    
 		    perror( "fchown logfile" );
 		    }
 		}
@@ -504,7 +536,10 @@ main( int argc, char** argv )
 	{
 	if ( chdir( dir ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "chdir - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "chdir - %m" );
+			#endif
+	    
 	    perror( "chdir" );
 	    exit( 1 );
 	    }
@@ -518,7 +553,10 @@ main( int argc, char** argv )
 	*/
 	if ( chdir( pwd->pw_dir ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "chdir - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "chdir - %m" );
+			#endif
+	    
 	    perror( "chdir" );
 	    exit( 1 );
 	    }
@@ -544,7 +582,10 @@ main( int argc, char** argv )
 #ifdef HAVE_DAEMON
 	if ( daemon( 1, 1 ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "daemon - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "daemon - %m" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 #else /* HAVE_DAEMON */
@@ -553,7 +594,10 @@ main( int argc, char** argv )
 	    case 0:
 	    break;
 	    case -1:
-	    syslog( LOG_CRIT, "fork - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "fork - %m" );
+			#endif
+	    
 	    exit( 1 );
 	    default:
 	    exit( 0 );
@@ -579,7 +623,10 @@ main( int argc, char** argv )
 	FILE* pidfp = fopen( pidfile, "w" );
 	if ( pidfp == (FILE*) 0 )
 	    {
-	    syslog( LOG_CRIT, "%.80s - %m", pidfile );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "%.80s - %m", pidfile );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	(void) fprintf( pidfp, "%d\n", (int) getpid() );
@@ -592,7 +639,10 @@ main( int argc, char** argv )
     max_connects = fdwatch_get_nfiles();
     if ( max_connects < 0 )
 	{
-	syslog( LOG_CRIT, "fdwatch initialization failure" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "fdwatch initialization failure" );
+		#endif
+	
 	exit( 1 );
 	}
     max_connects -= SPARE_FDS;
@@ -602,7 +652,10 @@ main( int argc, char** argv )
 	{
 	if ( chroot( cwd ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "chroot - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "chroot - %m" );
+			#endif
+	    
 	    perror( "chroot" );
 	    exit( 1 );
 	    }
@@ -623,7 +676,10 @@ main( int argc, char** argv )
 		}
 	    else
 		{
-		syslog( LOG_WARNING, "logfile is not within the chroot tree, you will not be able to re-open it" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_WARNING, "logfile is not within the chroot tree, you will not be able to re-open it" );
+			#endif
+		
 		(void) fprintf( stderr, "%s: logfile is not within the chroot tree, you will not be able to re-open it\n", argv0 );
 		}
 	    }
@@ -631,7 +687,10 @@ main( int argc, char** argv )
 	/* Always chdir to / after a chroot. */
 	if ( chdir( cwd ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "chroot chdir - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "chroot chdir - %m" );
+			#endif
+	    
 	    perror( "chroot chdir" );
 	    exit( 1 );
 	    }
@@ -642,7 +701,10 @@ main( int argc, char** argv )
 	{
 	if ( chdir( data_dir ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "data_dir chdir - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "data_dir chdir - %m" );
+			#endif
+	    
 	    perror( "data_dir chdir" );
 	    exit( 1 );
 	    }
@@ -691,13 +753,19 @@ main( int argc, char** argv )
     /* Set up the occasional timer. */
     if ( tmr_create( (struct timeval*) 0, occasional, JunkClientData, OCCASIONAL_TIME * 1000L, 1 ) == (Timer*) 0 )
 	{
-	syslog( LOG_CRIT, "tmr_create(occasional) failed" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "tmr_create(occasional) failed" );
+		#endif
+	
 	exit( 1 );
 	}
     /* Set up the idle timer. */
     if ( tmr_create( (struct timeval*) 0, idle, JunkClientData, 5 * 1000L, 1 ) == (Timer*) 0 )
 	{
-	syslog( LOG_CRIT, "tmr_create(idle) failed" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "tmr_create(idle) failed" );
+		#endif
+	
 	exit( 1 );
 	}
     if ( numthrottles > 0 )
@@ -705,7 +773,10 @@ main( int argc, char** argv )
 	/* Set up the throttles timer. */
 	if ( tmr_create( (struct timeval*) 0, update_throttles, JunkClientData, THROTTLE_TIME * 1000L, 1 ) == (Timer*) 0 )
 	    {
-	    syslog( LOG_CRIT, "tmr_create(update_throttles) failed" );
+			#ifdef JI_SYSLOG
+				 syslog( LOG_CRIT, "tmr_create(update_throttles) failed" );
+			#endif
+	   
 	    exit( 1 );
 	    }
 	}
@@ -713,7 +784,10 @@ main( int argc, char** argv )
     /* Set up the stats timer. */
     if ( tmr_create( (struct timeval*) 0, show_stats, JunkClientData, STATS_TIME * 1000L, 1 ) == (Timer*) 0 )
 	{
-	syslog( LOG_CRIT, "tmr_create(show_stats) failed" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "tmr_create(show_stats) failed" );
+		#endif
+	
 	exit( 1 );
 	}
 #endif /* STATS_TIME */
@@ -728,18 +802,29 @@ main( int argc, char** argv )
 	/* Set aux groups to null. */
 	if ( setgroups( 0, (const gid_t*) 0 ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "setgroups - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "setgroups - %m" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	/* Set primary group. */
 	if ( setgid( gid ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "setgid - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "setgid - %m" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	/* Try setting aux groups correctly - not critical if this fails. */
 	if ( initgroups( user, gid ) < 0 )
-	    syslog( LOG_WARNING, "initgroups - %m" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_WARNING, "initgroups - %m" );
+		#endif
+	}
+	    
 #ifdef HAVE_SETLOGIN
 	/* Set login name. */
         (void) setlogin( user );
@@ -747,21 +832,30 @@ main( int argc, char** argv )
 	/* Set uid. */
 	if ( setuid( uid ) < 0 )
 	    {
-	    syslog( LOG_CRIT, "setuid - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "setuid - %m" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	/* Check for unnecessary security exposure. */
 	if ( ! do_chroot )
-	    syslog(
-		LOG_WARNING,
-		"started as root without requesting chroot(), warning only" );
+	{
+		#ifdef JI_SYSLOG
+			syslog(LOG_WARNING,"started as root without requesting chroot(), warning only" );
+		#endif
+	}
+	    
 	}
 
     /* Initialize our connections table. */
     connects = NEW( connecttab, max_connects );
     if ( connects == (connecttab*) 0 )
 	{
-	syslog( LOG_CRIT, "out of memory allocating a connecttab" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "out of memory allocating a connecttab" );
+		#endif
+	
 	exit( 1 );
 	}
     for ( cnum = 0; cnum < max_connects; ++cnum )
@@ -800,7 +894,10 @@ main( int argc, char** argv )
 	    {
 	    if ( errno == EINTR || errno == EAGAIN )
 		continue;       /* try again */
-	    syslog( LOG_ERR, "fdwatch - %m" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "fdwatch - %m" );
+		#endif
+	    
 	    exit( 1 );
 	    }
 	(void) gettimeofday( &tv, (struct timezone*) 0 );
@@ -869,7 +966,10 @@ main( int argc, char** argv )
 
     /* The main loop terminated. */
     shut_down();
-    syslog( LOG_NOTICE, "exiting" );
+	#ifdef JI_SYSLOG
+		syslog( LOG_NOTICE, "exiting" );
+	#endif
+    
     closelog();
     exit( 0 );
     }
@@ -1257,7 +1357,10 @@ e_strdup( char* oldstr )
     newstr = strdup( oldstr );
     if ( newstr == (char*) 0 )
 	{
-	syslog( LOG_CRIT, "out of memory copying a string" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "out of memory copying a string" );
+		#endif
+	
 	(void) fprintf( stderr, "%s: out of memory copying a string\n", argv0 );
 	exit( 1 );
 	}
@@ -1285,9 +1388,10 @@ lookup_hostname( httpd_sockaddr* sa4P, size_t sa4_len, int* gotv4P, httpd_sockad
     (void) snprintf( portstr, sizeof(portstr), "%d", (int) port );
     if ( (gaierr = getaddrinfo( hostname, portstr, &hints, &ai )) != 0 )
 	{
-	syslog(
-	    LOG_CRIT, "getaddrinfo %.80s - %.80s",
-	    hostname, gai_strerror( gaierr ) );
+		#ifdef JI_SYSLOG
+			syslog(LOG_CRIT, "getaddrinfo %.80s - %.80s",hostname, gai_strerror( gaierr ) );
+		#endif
+	
 	(void) fprintf(
 	    stderr, "%s: getaddrinfo %s - %s\n",
 	    argv0, hostname, gai_strerror( gaierr ) );
@@ -1318,10 +1422,10 @@ lookup_hostname( httpd_sockaddr* sa4P, size_t sa4_len, int* gotv4P, httpd_sockad
 	{
 	if ( sa6_len < aiv6->ai_addrlen )
 	    {
-	    syslog(
-		LOG_CRIT, "%.80s - sockaddr too small (%lu < %lu)",
-		hostname, (unsigned long) sa6_len,
-		(unsigned long) aiv6->ai_addrlen );
+			#ifdef JI_SYSLOG
+				syslog(LOG_CRIT, "%.80s - sockaddr too small (%lu < %lu)",hostname, (unsigned long) sa6_len,(unsigned long) aiv6->ai_addrlen );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	(void) memset( sa6P, 0, sa6_len );
@@ -1335,10 +1439,10 @@ lookup_hostname( httpd_sockaddr* sa4P, size_t sa4_len, int* gotv4P, httpd_sockad
 	{
 	if ( sa4_len < aiv4->ai_addrlen )
 	    {
-	    syslog(
-		LOG_CRIT, "%.80s - sockaddr too small (%lu < %lu)",
-		hostname, (unsigned long) sa4_len,
-		(unsigned long) aiv4->ai_addrlen );
+			#ifdef JI_SYSLOG
+				syslog(LOG_CRIT, "%.80s - sockaddr too small (%lu < %lu)",hostname, (unsigned long) sa4_len,(unsigned long) aiv4->ai_addrlen );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	(void) memset( sa4P, 0, sa4_len );
@@ -1367,14 +1471,18 @@ lookup_hostname( httpd_sockaddr* sa4P, size_t sa4_len, int* gotv4P, httpd_sockad
 	    if ( he == (struct hostent*) 0 )
 		{
 #ifdef HAVE_HSTRERROR
-		syslog(
-		    LOG_CRIT, "gethostbyname %.80s - %.80s",
-		    hostname, hstrerror( h_errno ) );
+			#ifdef JI_SYSLOG
+				syslog(LOG_CRIT, "gethostbyname %.80s - %.80s",hostname, hstrerror( h_errno ) );
+			#endif
+		
 		(void) fprintf(
 		    stderr, "%s: gethostbyname %s - %s\n",
 		    argv0, hostname, hstrerror( h_errno ) );
 #else /* HAVE_HSTRERROR */
-		syslog( LOG_CRIT, "gethostbyname %.80s failed", hostname );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "gethostbyname %.80s failed", hostname );
+			#endif
+		
 		(void) fprintf(
 		    stderr, "%s: gethostbyname %s failed\n", argv0, hostname );
 #endif /* HAVE_HSTRERROR */
@@ -1382,7 +1490,10 @@ lookup_hostname( httpd_sockaddr* sa4P, size_t sa4_len, int* gotv4P, httpd_sockad
 		}
 	    if ( he->h_addrtype != AF_INET )
 		{
-		syslog( LOG_CRIT, "%.80s - non-IP network address", hostname );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "%.80s - non-IP network address", hostname );
+			#endif
+		
 		(void) fprintf(
 		    stderr, "%s: %s - non-IP network address\n",
 		    argv0, hostname );
@@ -1413,7 +1524,10 @@ read_throttlefile( char* tf )
     fp = fopen( tf, "r" );
     if ( fp == (FILE*) 0 )
 	{
-	syslog( LOG_CRIT, "%.80s - %m", tf );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "%.80s - %m", tf );
+		#endif
+	
 	perror( tf );
 	exit( 1 );
 	}
@@ -1445,8 +1559,10 @@ read_throttlefile( char* tf )
 	    min_limit = 0;
 	else
 	    {
-	    syslog( LOG_CRIT,
-		"unparsable line in %.80s - %.80s", tf, buf );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT,"unparsable line in %.80s - %.80s", tf, buf );
+			#endif
+	    
 	    (void) fprintf( stderr,
 		"%s: unparsable line in %.80s - %.80s\n",
 		argv0, tf, buf );
@@ -1474,7 +1590,10 @@ read_throttlefile( char* tf )
 		}
 	    if ( throttles == (throttletab*) 0 )
 		{
-		syslog( LOG_CRIT, "out of memory allocating a throttletab" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "out of memory allocating a throttletab" );
+			#endif
+		
 		(void) fprintf(
 		    stderr, "%s: out of memory allocating a throttletab\n",
 		    argv0 );
@@ -1557,14 +1676,20 @@ handle_newconnect( struct timeval* tvP, int listen_fd )
 	    ** existing connections, and maybe we'll free up a slot
 	    ** by the time we get back here.
 	    */
-	    syslog( LOG_WARNING, "too many connections!" );
+	    #ifdef JI_SYSLOG
+			syslog( LOG_WARNING, "too many connections!" );
+		#endif
+	   
 	    tmr_run( tvP );
 	    return 0;
 	    }
 	/* Get the first free connection entry off the free list. */
 	if ( first_free_connect == -1 || connects[first_free_connect].conn_state != CNST_FREE )
 	    {
-	    syslog( LOG_CRIT, "the connects free list is messed up" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "the connects free list is messed up" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	c = &connects[first_free_connect];
@@ -1574,7 +1699,10 @@ handle_newconnect( struct timeval* tvP, int listen_fd )
 	    c->hc = NEW( httpd_conn, 1 );
 	    if ( c->hc == (httpd_conn*) 0 )
 		{
-		syslog( LOG_CRIT, "out of memory allocating an httpd_conn" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "out of memory allocating an httpd_conn" );
+			#endif
+		
 		exit( 1 );
 		}
 	    c->hc->initialized = 0;
@@ -1799,12 +1927,20 @@ handle_send( connecttab* c, struct timeval* tvP )
 	fdwatch_del_fd( hc->conn_fd );
 	client_data.p = c;
 	if ( c->wakeup_timer != (Timer*) 0 )
-	    syslog( LOG_ERR, "replacing non-null wakeup_timer!" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "replacing non-null wakeup_timer!" );
+		#endif
+	}
+	    
 	c->wakeup_timer = tmr_create(
 	    tvP, wakeup_connection, client_data, c->wouldblock_delay, 0 );
 	if ( c->wakeup_timer == (Timer*) 0 )
 	    {
-	    syslog( LOG_CRIT, "tmr_create(wakeup_connection) failed" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "tmr_create(wakeup_connection) failed" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	return;
@@ -1824,7 +1960,12 @@ handle_send( connecttab* c, struct timeval* tvP )
 	** And ECONNRESET isn't interesting either.
 	*/
 	if ( errno != EPIPE && errno != EINVAL && errno != ECONNRESET )
-	    syslog( LOG_ERR, "write - %m sending %.80s", hc->encodedurl );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "write - %m sending %.80s", hc->encodedurl );
+		#endif
+	}
+	    
 	clear_connection( c, tvP );
 	return;
 	}
@@ -1884,13 +2025,21 @@ handle_send( connecttab* c, struct timeval* tvP )
 	    coast = c->hc->bytes_sent / c->max_limit - elapsed;
 	    client_data.p = c;
 	    if ( c->wakeup_timer != (Timer*) 0 )
-		syslog( LOG_ERR, "replacing non-null wakeup_timer!" );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "replacing non-null wakeup_timer!" );
+			#endif
+		}
+		
 	    c->wakeup_timer = tmr_create(
 		tvP, wakeup_connection, client_data,
 		coast > 0 ? ( coast * 1000L ) : 500L, 0 );
 	    if ( c->wakeup_timer == (Timer*) 0 )
 		{
-		syslog( LOG_CRIT, "tmr_create(wakeup_connection) failed" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "tmr_create(wakeup_connection) failed" );
+			#endif
+		
 		exit( 1 );
 		}
 	    }
@@ -1936,7 +2085,10 @@ check_throttles( connecttab* c )
 		return 0;
 	    if ( throttles[tnum].num_sending < 0 )
 		{
-		syslog( LOG_ERR, "throttle sending count was negative - shouldn't happen!" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "throttle sending count was negative - shouldn't happen!" );
+			#endif
+		
 		throttles[tnum].num_sending = 0;
 		}
 	    c->tnums[c->numtnums++] = tnum;
@@ -1985,13 +2137,26 @@ update_throttles( ClientData client_data, struct timeval* nowP )
 	if ( throttles[tnum].rate > throttles[tnum].max_limit && throttles[tnum].num_sending != 0 )
 	    {
 	    if ( throttles[tnum].rate > throttles[tnum].max_limit * 2 )
-		syslog( LOG_NOTICE, "throttle #%d '%.80s' rate %ld greatly exceeding limit %ld; %d sending", tnum, throttles[tnum].pattern, throttles[tnum].rate, throttles[tnum].max_limit, throttles[tnum].num_sending );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_NOTICE, "throttle #%d '%.80s' rate %ld greatly exceeding limit %ld; %d sending", tnum, throttles[tnum].pattern, throttles[tnum].rate, throttles[tnum].max_limit, throttles[tnum].num_sending );
+			#endif
+		}
+		
 	    else
-		syslog( LOG_INFO, "throttle #%d '%.80s' rate %ld exceeding limit %ld; %d sending", tnum, throttles[tnum].pattern, throttles[tnum].rate, throttles[tnum].max_limit, throttles[tnum].num_sending );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_INFO, "throttle #%d '%.80s' rate %ld exceeding limit %ld; %d sending", tnum, throttles[tnum].pattern, throttles[tnum].rate, throttles[tnum].max_limit, throttles[tnum].num_sending );
+			#endif
+		}
+		
 	    }
 	if ( throttles[tnum].rate < throttles[tnum].min_limit && throttles[tnum].num_sending != 0 )
 	    {
-	    syslog( LOG_NOTICE, "throttle #%d '%.80s' rate %ld lower than minimum %ld; %d sending", tnum, throttles[tnum].pattern, throttles[tnum].rate, throttles[tnum].min_limit, throttles[tnum].num_sending );
+			#ifdef JI_SYSLOG
+				syslog( LOG_NOTICE, "throttle #%d '%.80s' rate %ld lower than minimum %ld; %d sending", tnum, throttles[tnum].pattern, throttles[tnum].rate, throttles[tnum].min_limit, throttles[tnum].num_sending );
+			#endif
+	    
 	    }
 	}
 
@@ -2067,12 +2232,20 @@ clear_connection( connecttab* c, struct timeval* tvP )
 	fdwatch_add_fd( c->hc->conn_fd, c, FDW_READ );
 	client_data.p = c;
 	if ( c->linger_timer != (Timer*) 0 )
-	    syslog( LOG_ERR, "replacing non-null linger_timer!" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "replacing non-null linger_timer!" );
+		#endif
+	}
+	    
 	c->linger_timer = tmr_create(
 	    tvP, linger_clear_connection, client_data, LINGER_TIME, 0 );
 	if ( c->linger_timer == (Timer*) 0 )
 	    {
-	    syslog( LOG_CRIT, "tmr_create(linger_clear_connection) failed" );
+			#ifdef JI_SYSLOG
+				 syslog( LOG_CRIT, "tmr_create(linger_clear_connection) failed" );
+			#endif
+	   
 	    exit( 1 );
 	    }
 	}
@@ -2115,9 +2288,10 @@ idle( ClientData client_data, struct timeval* nowP )
 	    case CNST_READING:
 	    if ( nowP->tv_sec - c->active_at >= IDLE_READ_TIMELIMIT )
 		{
-		syslog( LOG_INFO,
-		    "%.80s connection timed out reading",
-		    httpd_ntoa( &c->hc->client_addr ) );
+			#ifdef JI_SYSLOG
+				syslog( LOG_INFO,"%.80s connection timed out reading",httpd_ntoa( &c->hc->client_addr ) );
+			#endif
+		
 		httpd_send_err(
 		    c->hc, 408, httpd_err408title, "", httpd_err408form, "" );
 		finish_connection( c, nowP );
@@ -2127,9 +2301,10 @@ idle( ClientData client_data, struct timeval* nowP )
 	    case CNST_PAUSING:
 	    if ( nowP->tv_sec - c->active_at >= IDLE_SEND_TIMELIMIT )
 		{
-		syslog( LOG_INFO,
-		    "%.80s connection timed out sending",
-		    httpd_ntoa( &c->hc->client_addr ) );
+			#ifdef JI_SYSLOG
+				syslog( LOG_INFO,"%.80s connection timed out sending",httpd_ntoa( &c->hc->client_addr ) );
+			#endif
+		
 		clear_connection( c, nowP );
 		}
 	    break;
@@ -2200,8 +2375,10 @@ logstats( struct timeval* nowP )
     if ( stats_secs == 0 )
 	stats_secs = 1;	/* fudge */
     stats_time = now;
-    syslog( LOG_NOTICE,
-	"up %ld seconds, stats for %ld seconds:", up_secs, stats_secs );
+	#ifdef JI_SYSLOG
+		syslog( LOG_NOTICE,"up %ld seconds, stats for %ld seconds:", up_secs, stats_secs );
+	#endif
+    
 
     thttpd_logstats( stats_secs );
     httpd_logstats( stats_secs );
@@ -2216,11 +2393,12 @@ static void
 thttpd_logstats( long secs )
     {
     if ( secs > 0 )
-	syslog( LOG_NOTICE,
-	    "  thttpd - %ld connections (%g/sec), %d max simultaneous, %lld bytes (%g/sec), %d httpd_conns allocated",
-	    stats_connections, (float) stats_connections / secs,
-	    stats_simultaneous, (long long) stats_bytes,
-	    (float) stats_bytes / secs, httpd_conn_count );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_NOTICE,"  thttpd - %ld connections (%g/sec), %d max simultaneous, %lld bytes (%g/sec), %d httpd_conns allocated",stats_connections, (float) stats_connections / secs,stats_simultaneous, (long long) stats_bytes,(float) stats_bytes / secs, httpd_conn_count );
+		#endif
+	}
+	
     stats_connections = 0;
     stats_bytes = 0;
     stats_simultaneous = 0;

@@ -200,7 +200,9 @@ static void
 check_options( void )
     {
 #if defined(TILDE_MAP_1) && defined(TILDE_MAP_2)
-    syslog( LOG_CRIT, "both TILDE_MAP_1 and TILDE_MAP_2 are defined" );
+    #ifdef JI_SYSLOG
+		syslog( LOG_CRIT, "both TILDE_MAP_1 and TILDE_MAP_2 are defined" );
+	#endif
     exit( 1 );
 #endif /* both */
     }
@@ -244,7 +246,9 @@ httpd_initialize(
     hs = NEW( httpd_server, 1 );
     if ( hs == (httpd_server*) 0 )
 	{
-	syslog( LOG_CRIT, "out of memory allocating an httpd_server" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "out of memory allocating an httpd_server" );
+		#endif
 	return (httpd_server*) 0;
 	}
 
@@ -253,7 +257,9 @@ httpd_initialize(
 	hs->binding_hostname = strdup( hostname );
 	if ( hs->binding_hostname == (char*) 0 )
 	    {
-	    syslog( LOG_CRIT, "out of memory copying hostname" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "out of memory copying hostname" );
+			#endif
 	    return (httpd_server*) 0;
 	    }
 	hs->server_hostname = hs->binding_hostname;
@@ -290,7 +296,9 @@ httpd_initialize(
 	hs->cgi_pattern = strdup( cgi_pattern );
 	if ( hs->cgi_pattern == (char*) 0 )
 	    {
-	    syslog( LOG_CRIT, "out of memory copying cgi_pattern" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "out of memory copying cgi_pattern" );
+			#endif
 	    return (httpd_server*) 0;
 	    }
 	/* Nuke any leading slashes in the cgi pattern. */
@@ -305,7 +313,9 @@ httpd_initialize(
     hs->cwd = strdup( cwd );
     if ( hs->cwd == (char*) 0 )
 	{
-	syslog( LOG_CRIT, "out of memory copying cwd" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "out of memory copying cwd" );
+		#endif
 	return (httpd_server*) 0;
 	}
     if ( url_pattern == (char*) 0 )
@@ -315,7 +325,9 @@ httpd_initialize(
 	hs->url_pattern = strdup( url_pattern );
 	if ( hs->url_pattern == (char*) 0 )
 	    {
-	    syslog( LOG_CRIT, "out of memory copying url_pattern" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "out of memory copying url_pattern" );
+			#endif
 	    return (httpd_server*) 0;
 	    }
 	}
@@ -326,7 +338,9 @@ httpd_initialize(
 	hs->local_pattern = strdup( local_pattern );
 	if ( hs->local_pattern == (char*) 0 )
 	    {
-	    syslog( LOG_CRIT, "out of memory copying local_pattern" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "out of memory copying local_pattern" );
+			#endif
 	    return (httpd_server*) 0;
 	    }
 	}
@@ -362,11 +376,16 @@ httpd_initialize(
     /* Done initializing. */
     if ( hs->binding_hostname == (char*) 0 )
 	{
-		//syslogsyslog(LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,(int) hs->port );
+		#ifdef JI_SYSLOG
+			syslogsyslog(LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,(int) hs->port );
+		#endif
 	}
     else
 	{
-		//syslog(LOG_NOTICE, "%.80s starting on %.80s, port %d", SERVER_SOFTWARE,httpd_ntoa( hs->listen4_fd != -1 ? sa4P : sa6P ),(int) hs->port );
+		#ifdef JI_SYSLOG
+			syslog(LOG_NOTICE, "%.80s starting on %.80s, port %d", SERVER_SOFTWARE,httpd_ntoa( hs->listen4_fd != -1 ? sa4P : sa6P ),(int) hs->port );
+		#endif
+		
 	}
     return hs;
     }
@@ -381,7 +400,10 @@ initialize_listen_socket( httpd_sockaddr* saP )
     /* Check sockaddr. */
     if ( ! sockaddr_check( saP ) )
 	{
-	syslog( LOG_CRIT, "unknown sockaddr family on listen socket" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "unknown sockaddr family on listen socket" );
+		#endif
+	
 	return -1;
 	}
 
@@ -389,7 +411,9 @@ initialize_listen_socket( httpd_sockaddr* saP )
     listen_fd = socket( saP->sa.sa_family, SOCK_STREAM, 0 );
     if ( listen_fd < 0 )
 	{
-	//syslog( LOG_CRIT, "socket %.80s - %m", httpd_ntoa( saP ) );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "socket %.80s - %m", httpd_ntoa( saP ) );
+		#endif
 	return -1;
 	}
     (void) fcntl( listen_fd, F_SETFD, 1 );
@@ -399,12 +423,19 @@ initialize_listen_socket( httpd_sockaddr* saP )
     if ( setsockopt(
 	     listen_fd, SOL_SOCKET, SO_REUSEADDR, (char*) &on,
 	     sizeof(on) ) < 0 )
-	syslog( LOG_CRIT, "setsockopt SO_REUSEADDR - %m" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "setsockopt SO_REUSEADDR - %m" );
+		#endif
+	}
+	
 
     /* Bind to it. */
     if ( bind( listen_fd, &saP->sa, sockaddr_len( saP ) ) < 0 )
 	{
-	//syslog(LOG_CRIT, "bind %.80s - %m", httpd_ntoa( saP ) );
+		#ifdef JI_SYSLOG
+			syslog(LOG_CRIT, "bind %.80s - %m", httpd_ntoa( saP ) );
+		#endif
 	(void) close( listen_fd );
 	return -1;
 	}
@@ -413,13 +444,19 @@ initialize_listen_socket( httpd_sockaddr* saP )
     flags = fcntl( listen_fd, F_GETFL, 0 );
     if ( flags == -1 )
 	{
-	syslog( LOG_CRIT, "fcntl F_GETFL - %m" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "fcntl F_GETFL - %m" );
+		#endif
+	
 	(void) close( listen_fd );
 	return -1;
 	}
     if ( fcntl( listen_fd, F_SETFL, flags | O_NDELAY ) < 0 )
 	{
-	syslog( LOG_CRIT, "fcntl O_NDELAY - %m" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "fcntl O_NDELAY - %m" );
+		#endif
+	
 	(void) close( listen_fd );
 	return -1;
 	}
@@ -427,7 +464,10 @@ initialize_listen_socket( httpd_sockaddr* saP )
     /* Start a listen going. */
     if ( listen( listen_fd, LISTEN_BACKLOG ) < 0 )
 	{
-	syslog( LOG_CRIT, "listen - %m" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "listen - %m" );
+		#endif
+	
 	(void) close( listen_fd );
 	return -1;
 	}
@@ -729,9 +769,10 @@ httpd_realloc_str( char** strP, size_t* maxsizeP, size_t size )
 	return;
     if ( *strP == (char*) 0 )
 	{
-	syslog(
-	    LOG_ERR, "out of memory reallocating a string to %ld bytes",
-	    (long) *maxsizeP );
+		#ifdef JI_SYSLOG
+			syslog(LOG_ERR, "out of memory reallocating a string to %ld bytes",(long) *maxsizeP );
+		#endif
+	
 	exit( 1 );
 	}
     }
@@ -1105,9 +1146,10 @@ auth_check2( httpd_conn* hc, char* dirname  )
     if ( fp == (FILE*) 0 )
 	{
 	/* The file exists but we can't open it?  Disallow access. */
-	syslog(
-	    LOG_ERR, "%.80s auth file %.80s could not be opened - %m",
-	    httpd_ntoa( &hc->client_addr ), authpath );
+		#ifdef JI_SYSLOG
+			syslog(LOG_ERR, "%.80s auth file %.80s could not be opened - %m",httpd_ntoa( &hc->client_addr ), authpath );
+		#endif
+	
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "The requested URL '%.80s' is protected by an authentication file, but the authentication file cannot be opened.\n" ),
@@ -1385,7 +1427,10 @@ vhost_map( httpd_conn* hc )
 	sz = sizeof(sa);
 	if ( getsockname( hc->conn_fd, &sa.sa, &sz ) < 0 )
 	    {
-	    syslog( LOG_ERR, "getsockname - %m" );
+			#ifdef JI_SYSLOG
+				 syslog( LOG_ERR, "getsockname - %m" );
+			#endif
+	   
 	    return 0;
 	    }
 	hc->hostname = httpd_ntoa( &sa );
@@ -1614,13 +1659,19 @@ expand_symlinks( char* path, char** restP, int no_symlink_check, int tildemapped
 		    checked[prevcheckedlen] = '\0';
 		return checked;
 		}
-	    syslog( LOG_ERR, "readlink %.80s - %m", checked );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "readlink %.80s - %m", checked );
+		#endif
+	    
 	    return (char*) 0;
 	    }
 	++nlinks;
 	if ( nlinks > MAX_LINKS )
 	    {
-	    syslog( LOG_ERR, "too many symlinks in %.80s", path );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "too many symlinks in %.80s", path );
+			#endif
+	    
 	    return (char*) 0;
 	    }
 	lnk[linklen] = '\0';
@@ -1719,12 +1770,20 @@ httpd_get_conn( httpd_server* hs, int listen_fd, httpd_conn* hc )
 	** it was waiting in the listen queue.  It's not worth logging.
 	*/
 	if ( errno != ECONNABORTED )
-	    syslog( LOG_ERR, "accept - %m" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "accept - %m" );
+		#endif
+	}
+	    
 	return GC_FAIL;
 	}
     if ( ! sockaddr_check( &sa ) )
 	{
-	syslog( LOG_ERR, "unknown sockaddr family" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "unknown sockaddr family" );
+		#endif
+	
 	close( hc->conn_fd );
 	hc->conn_fd = -1;
 	return GC_FAIL;
@@ -2125,9 +2184,10 @@ httpd_parse_request( httpd_conn* hc )
 		    {
 		    if ( strlen( hc->accept ) > 5000 )
 			{
-			syslog(
-			    LOG_ERR, "%.80s way too much Accept: data",
-			    httpd_ntoa( &hc->client_addr ) );
+				#ifdef JI_SYSLOG
+					syslog(LOG_ERR, "%.80s way too much Accept: data",httpd_ntoa( &hc->client_addr ) );
+				#endif
+				
 			continue;
 			}
 		    httpd_realloc_str(
@@ -2148,9 +2208,10 @@ httpd_parse_request( httpd_conn* hc )
 		    {
 		    if ( strlen( hc->accepte ) > 5000 )
 			{
-			syslog(
-			    LOG_ERR, "%.80s way too much Accept-Encoding: data",
-			    httpd_ntoa( &hc->client_addr ) );
+				#ifdef JI_SYSLOG
+					syslog(LOG_ERR, "%.80s way too much Accept-Encoding: data",httpd_ntoa( &hc->client_addr ) );
+				#endif
+			
 			continue;
 			}
 		    httpd_realloc_str(
@@ -2174,7 +2235,12 @@ httpd_parse_request( httpd_conn* hc )
 		cp = &buf[18];
 		hc->if_modified_since = tdate_parse( cp );
 		if ( hc->if_modified_since == (time_t) -1 )
-		    syslog( LOG_DEBUG, "unparsable time: %.80s", cp );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_DEBUG, "unparsable time: %.80s", cp );
+			#endif
+		}
+		    
 		}
 	    else if ( strncasecmp( buf, "Cookie:", 7 ) == 0 )
 		{
@@ -2215,7 +2281,12 @@ httpd_parse_request( httpd_conn* hc )
 		cp = &buf[9];
 		hc->range_if = tdate_parse( cp );
 		if ( hc->range_if == (time_t) -1 )
-		    syslog( LOG_DEBUG, "unparsable time: %.80s", cp );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_DEBUG, "unparsable time: %.80s", cp );
+			#endif
+		}
+		    
 		}
 	    else if ( strncasecmp( buf, "Content-Type:", 13 ) == 0 )
 		{
@@ -2273,7 +2344,12 @@ httpd_parse_request( httpd_conn* hc )
 		      strncasecmp( buf, "X-", 2 ) == 0 )
 		; /* ignore */
 	    else
-		syslog( LOG_DEBUG, "unknown request header: %.80s", buf );
+		{
+			#ifdef JI_SYSLOG
+				syslog( LOG_DEBUG, "unknown request header: %.80s", buf );
+			#endif
+		}
+		
 #endif /* LOG_UNKNOWN_HEADERS */
 	    }
 	}
@@ -2381,9 +2457,10 @@ httpd_parse_request( httpd_conn* hc )
 #endif /* TILDE_MAP_2 */
 	else
 	    {
-	    syslog(
-		LOG_NOTICE, "%.80s URL \"%.80s\" goes outside the web tree",
-		httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#ifdef JI_SYSLOG
+				syslog(LOG_NOTICE, "%.80s URL \"%.80s\" goes outside the web tree",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#endif
+	    
 	    httpd_send_err(
 		hc, 403, err403title, "",
 		ERROR_FORM( err403form, "The requested URL '%.80s' resolves to a file outside the permitted web server directory tree.\n" ),
@@ -2670,7 +2747,12 @@ cgi_kill2( ClientData client_data, struct timeval* nowP )
 
     pid = (pid_t) client_data.i;
     if ( kill( pid, SIGKILL ) == 0 )
-	syslog( LOG_WARNING, "hard-killed CGI process %d", pid );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_WARNING, "hard-killed CGI process %d", pid );
+		#endif
+	}
+	
     }
 
 static void
@@ -2681,11 +2763,17 @@ cgi_kill( ClientData client_data, struct timeval* nowP )
     pid = (pid_t) client_data.i;
     if ( kill( pid, SIGINT ) == 0 )
 	{
-	syslog( LOG_WARNING, "killed CGI process %d", pid );
+		#ifdef JI_SYSLOG
+			syslog( LOG_WARNING, "killed CGI process %d", pid );
+		#endif
+	
 	/* In case this isn't enough, schedule an uncatchable kill. */
 	if ( tmr_create( nowP, cgi_kill2, client_data, 5 * 1000L, 0 ) == (Timer*) 0 )
 	    {
-	    syslog( LOG_CRIT, "tmr_create(cgi_kill2) failed" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "tmr_create(cgi_kill2) failed" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 	}
@@ -2737,7 +2825,10 @@ ls( httpd_conn* hc )
     dirp = opendir( hc->expnfilename );
     if ( dirp == (DIR*) 0 )
 	{
-	syslog( LOG_ERR, "opendir %.80s - %m", hc->expnfilename );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "opendir %.80s - %m", hc->expnfilename );
+		#endif
+	
 	httpd_send_err( hc, 404, err404title, "", err404form, hc->encodedurl );
 	return -1;
 	}
@@ -2763,7 +2854,10 @@ ls( httpd_conn* hc )
 	r = fork( );
 	if ( r < 0 )
 	    {
-	    syslog( LOG_ERR, "fork - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "fork - %m" );
+			#endif
+	    
 	    closedir( dirp );
 		printf("3");
 	    httpd_send_err(
@@ -2793,7 +2887,10 @@ ls( httpd_conn* hc )
 	    fp = fdopen( hc->conn_fd, "w" );
 	    if ( fp == (FILE*) 0 )
 		{
-		syslog( LOG_ERR, "fdopen - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "fdopen - %m" );
+			#endif
+		
 		printf("4");
 		httpd_send_err(
 		    hc, 500, err500title, "", err500form, hc->encodedurl );
@@ -2841,7 +2938,10 @@ mode  links    bytes  last-changed  name\n\
 			}
 		    if ( names == (char*) 0 || nameptrs == (char**) 0 )
 			{
-			syslog( LOG_ERR, "out of memory reallocating directory names" );
+				#ifdef JI_SYSLOG
+					syslog( LOG_ERR, "out of memory reallocating directory names" );
+				#endif
+			
 			exit( 1 );
 			}
 		    for ( i = 0; i < maxnames; ++i )
@@ -2979,13 +3079,19 @@ mode  links    bytes  last-changed  name\n\
 
 	/* Parent process. */
 	closedir( dirp );
-	syslog( LOG_DEBUG, "spawned indexing process %d for directory '%.200s'", r, hc->expnfilename );
+	#ifdef JI_SYSLOG
+		syslog( LOG_DEBUG, "spawned indexing process %d for directory '%.200s'", r, hc->expnfilename );
+	#endif
+	
 #ifdef CGI_TIMELIMIT
 	/* Schedule a kill for the child process, in case it runs too long */
 	client_data.i = r;
 	if ( tmr_create( (struct timeval*) 0, cgi_kill, client_data, CGI_TIMELIMIT * 1000L, 0 ) == (Timer*) 0 )
 	    {
-	    syslog( LOG_CRIT, "tmr_create(cgi_kill ls) failed" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_CRIT, "tmr_create(cgi_kill ls) failed" );
+			#endif
+	    
 	    exit( 1 );
 	    }
 #endif /* CGI_TIMELIMIT */
@@ -3022,7 +3128,10 @@ build_env( char* fmt, char* arg )
     cp = strdup( buf );
     if ( cp == (char*) 0 )
 	{
-	syslog( LOG_ERR, "out of memory copying environment variable" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "out of memory copying environment variable" );
+		#endif
+	
 	exit( 1 );
 	}
     return cp;
@@ -3531,7 +3640,10 @@ cgi_child( httpd_conn* hc )
 
 			if ( pipe( p ) < 0 )
 	    	{
-	    		syslog( LOG_ERR, "pipe - %m" );
+				#ifdef JI_SYSLOG
+					syslog( LOG_ERR, "pipe - %m" );
+				#endif
+	    		
 				printf("5");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
@@ -3540,7 +3652,10 @@ cgi_child( httpd_conn* hc )
 			r = fork( );
 			if ( r < 0 )
 	    	{
-	    		syslog( LOG_ERR, "fork - %m" );
+				#ifdef JI_SYSLOG
+					syslog( LOG_ERR, "fork - %m" );
+				#endif
+	    		
 				printf("6");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
@@ -3580,7 +3695,10 @@ cgi_child( httpd_conn* hc )
 
 			if ( pipe( p ) < 0 )
 	    	{
-	    		syslog( LOG_ERR, "pipe - %m" );
+				#ifdef JI_SYSLOG
+					syslog( LOG_ERR, "pipe - %m" );
+				#endif
+	    		
 				printf("7");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
@@ -3589,7 +3707,10 @@ cgi_child( httpd_conn* hc )
 			r = fork( );
 			if ( r < 0 )
 	    	{
-	    		syslog( LOG_ERR, "fork - %m" );
+				#ifdef JI_SYSLOG
+					syslog( LOG_ERR, "fork - %m" );
+				#endif
+	    		
 				printf("8");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
@@ -3658,7 +3779,10 @@ cgi_child( httpd_conn* hc )
     	(void) execve( binary, argp, envp );
 
     	/* Something went wrong. */
-    	syslog( LOG_ERR, "execve %.80s - %m", hc->expnfilename );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "execve %.80s - %m", hc->expnfilename );
+		#endif
+    	
 		printf("9");
     	httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
     	httpd_write_response( hc );
@@ -3686,7 +3810,10 @@ cgi( httpd_conn* hc )
     r = fork( );
     if ( r < 0 )
 	{
-	syslog( LOG_ERR, "fork - %m" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "fork - %m" );
+		#endif
+	
 	httpd_send_err(
 	    hc, 500, err500title, "", err500form, hc->encodedurl );
 	return -1;
@@ -3699,14 +3826,19 @@ cgi( httpd_conn* hc )
 	cgi_child( hc );
 	}
 
+    #ifdef JI_SYSLOG
+		syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
+	#endif
     
-    syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
 #ifdef CGI_TIMELIMIT
     
     client_data.i = r;
     if ( tmr_create( (struct timeval*) 0, cgi_kill, client_data, CGI_TIMELIMIT * 1000L, 0 ) == (Timer*) 0 )
 	{
-	syslog( LOG_CRIT, "tmr_create(cgi_kill child) failed" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_CRIT, "tmr_create(cgi_kill child) failed" );
+		#endif
+	
 	exit( 1 );
 	}
 #endif 
@@ -3751,10 +3883,10 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
     */
     if ( ! ( hc->sb.st_mode & ( S_IROTH | S_IXOTH ) ) )
 	{
-	syslog(
-	    LOG_INFO,
-	    "%.80s URL \"%.80s\" resolves to a non world-readable file",
-	    httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#ifdef JI_SYSLOG
+			syslog(LOG_INFO,"%.80s URL \"%.80s\" resolves to a non world-readable file",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#endif
+	
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "The requested URL '%.80s' resolves to a file that is not world-readable.\n" ),
@@ -3806,10 +3938,10 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	/* Directories must be readable for indexing. */
 	if ( ! ( hc->sb.st_mode & S_IROTH ) )
 	    {
-	    syslog(
-		LOG_INFO,
-		"%.80s URL \"%.80s\" tried to index a directory with indexing disabled",
-		httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#ifdef JI_SYSLOG
+				 syslog(LOG_INFO,"%.80s URL \"%.80s\" tried to index a directory with indexing disabled",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#endif
+	   
 	    httpd_send_err(
 		hc, 403, err403title, "",
 		ERROR_FORM( err403form, "The requested URL '%.80s' resolves to a directory that has indexing disabled.\n" ),
@@ -3827,9 +3959,10 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	/* Ok, generate an index. */
 	return ls( hc );
 #else /* GENERATE_INDEXES */
-	syslog(
-	    LOG_INFO, "%.80s URL \"%.80s\" tried to index a directory",
-	    httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+	#ifdef JI_SYSLOG
+		syslog(LOG_INFO, "%.80s URL \"%.80s\" tried to index a directory",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+	#endif
+	
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "The requested URL '%.80s' is a directory, and directory indexing is disabled on this server.\n" ),
@@ -3855,10 +3988,9 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	/* Now, is the index version world-readable or world-executable? */
 	if ( ! ( hc->sb.st_mode & ( S_IROTH | S_IXOTH ) ) )
 	    {
-	    syslog(
-		LOG_INFO,
-		"%.80s URL \"%.80s\" resolves to a non-world-readable index file",
-		httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#ifdef JI_SYSLOG
+				syslog(LOG_INFO,"%.80s URL \"%.80s\" resolves to a non-world-readable index file",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#endif 
 	    httpd_send_err(
 		hc, 403, err403title, "",
 		ERROR_FORM( err403form, "The requested URL '%.80s' resolves to an index file that is not world-readable.\n" ),
@@ -3884,10 +4016,10 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	{
 	if ( strcmp( hc->expnfilename, AUTH_FILE ) == 0 )
 	    {
-	    syslog(
-		LOG_NOTICE,
-		"%.80s URL \"%.80s\" tried to retrieve an auth file",
-		httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#ifdef JI_SYSLOG
+				syslog(LOG_NOTICE,"%.80s URL \"%.80s\" tried to retrieve an auth file",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+			#endif
+	    
 	    httpd_send_err(
 		hc, 403, err403title, "",
 		ERROR_FORM( err403form, "The requested URL '%.80s' is an authorization file, retrieving it is not permitted.\n" ),
@@ -3899,10 +4031,9 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	      strcmp( &(hc->expnfilename[expnlen - sizeof(AUTH_FILE) + 1]), AUTH_FILE ) == 0 &&
 	      hc->expnfilename[expnlen - sizeof(AUTH_FILE)] == '/' )
 	{
-	syslog(
-	    LOG_NOTICE,
-	    "%.80s URL \"%.80s\" tried to retrieve an auth file",
-	    httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#ifdef JI_SYSLOG
+			syslog(LOG_NOTICE,"%.80s URL \"%.80s\" tried to retrieve an auth file",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#endif
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "The requested URL '%.80s' is an authorization file, retrieving it is not permitted.\n" ),
@@ -3927,9 +4058,10 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
     */
     if ( hc->sb.st_mode & S_IXOTH )
 	{
-	syslog(
-	    LOG_NOTICE, "%.80s URL \"%.80s\" is executable but isn't CGI",
-	    httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#ifdef JI_SYSLOG
+			syslog(LOG_NOTICE, "%.80s URL \"%.80s\" is executable but isn't CGI",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#endif
+	
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "The requested URL '%.80s' resolves to a file which is marked executable but is not a CGI file; retrieving it is forbidden.\n" ),
@@ -3938,9 +4070,10 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	}
     if ( hc->pathinfo[0] != '\0' )
 	{
-	syslog(
-	    LOG_INFO, "%.80s URL \"%.80s\" has pathinfo but isn't CGI",
-	    httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#ifdef JI_SYSLOG
+			syslog(LOG_INFO, "%.80s URL \"%.80s\" has pathinfo but isn't CGI",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
+		#endif
+	
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "The requested URL '%.80s' resolves to a file plus CGI-style pathinfo, but the file is not a valid CGI file.\n" ),
@@ -4094,11 +4227,12 @@ make_log_entry( httpd_conn* hc, struct timeval* nowP )
 #endif
 	}
     else
-	syslog( LOG_INFO,
-	    "%.80s - %.80s \"%.80s %.200s %.80s\" %d %s \"%.200s\" \"%.200s\"",
-	    httpd_ntoa( &hc->client_addr ), ru,
-	    httpd_method_str( hc->method ), url, hc->protocol,
-	    hc->status, bytes, hc->referrer, hc->useragent );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_INFO,"%.80s - %.80s \"%.80s %.200s %.80s\" %d %s \"%.200s\" \"%.200s\"",httpd_ntoa( &hc->client_addr ), ru,httpd_method_str( hc->method ), url, hc->protocol,hc->status, bytes, hc->referrer, hc->useragent );
+		#endif
+	}
+	
     }
 
 
@@ -4123,9 +4257,10 @@ check_referrer( httpd_conn* hc )
 	    cp = hc->hs->server_hostname;
 	if ( cp == (char*) 0 )
 	    cp = "";
-	syslog(
-	    LOG_INFO, "%.80s non-local referrer \"%.80s%.80s\" \"%.80s\"",
-	    httpd_ntoa( &hc->client_addr ), cp, hc->encodedurl, hc->referrer );
+	#ifdef JI_SYSLOG
+		syslog(LOG_INFO, "%.80s non-local referrer \"%.80s%.80s\" \"%.80s\"",httpd_ntoa( &hc->client_addr ), cp, hc->encodedurl, hc->referrer );
+	#endif
+	
 	httpd_send_err(
 	    hc, 403, err403title, "",
 	    ERROR_FORM( err403form, "You must supply a local referrer to get URL '%.80s' from this server.\n" ),
@@ -4374,8 +4509,10 @@ void
 httpd_logstats( long secs )
     {
     if ( str_alloc_count > 0 )
-	syslog( LOG_NOTICE,
-	    "  libhttpd - %d strings allocated, %lu bytes (%g bytes/str)",
-	    str_alloc_count, (unsigned long) str_alloc_size,
-	    (float) str_alloc_size / str_alloc_count );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_NOTICE,"  libhttpd - %d strings allocated, %lu bytes (%g bytes/str)",str_alloc_count, (unsigned long) str_alloc_size,(float) str_alloc_size / str_alloc_count );
+		#endif
+	}
+	
     }

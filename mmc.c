@@ -1,6 +1,6 @@
 /* mmc.c - mmap cache
 **
-** Copyright © 1998,2001,2014 by Jef Poskanzer <jef@mail.acme.com>.
+** Copyright ï¿½ 1998,2001,2014 by Jef Poskanzer <jef@mail.acme.com>.
 ** All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@
 
 #include "mmc.h"
 #include "libhttpd.h"
-
+#include "version.h"
 #ifndef HAVE_INT64T
 typedef long long int64_t;
 #endif
@@ -126,7 +126,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
 	{
 	if ( stat( filename, &sb ) != 0 )
 	    {
-	    syslog( LOG_ERR, "stat - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "stat - %m" );
+			#endif
+	    
 	    return (void*) 0;
 	    }
 	}
@@ -140,7 +143,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
     /* See if we have it mapped already, via the hash table. */
     if ( check_hash_size() < 0 )
 	{
-	syslog( LOG_ERR, "check_hash_size() failure" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "check_hash_size() failure" );
+		#endif
+	
 	return (void*) 0;
 	}
     m = find_hash( sb.st_ino, sb.st_dev, sb.st_size, sb.st_ctime );
@@ -156,7 +162,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
     fd = open( filename, O_RDONLY );
     if ( fd < 0 )
 	{
-	syslog( LOG_ERR, "open - %m" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "open - %m" );
+		#endif
+	
 	return (void*) 0;
 	}
 
@@ -173,7 +182,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
 	if ( m == (Map*) 0 )
 	    {
 	    (void) close( fd );
-	    syslog( LOG_ERR, "out of memory allocating a Map" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "out of memory allocating a Map" );
+		#endif
+	    
 	    return (void*) 0;
 	    }
 	++alloc_count;
@@ -208,7 +220,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
 	    }
 	if ( m->addr == (void*) -1 )
 	    {
-	    syslog( LOG_ERR, "mmap - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "mmap - %m" );
+			#endif
+	    
 	    (void) close( fd );
 	    free( (void*) m );
 	    --alloc_count;
@@ -227,7 +242,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
 	    }
 	if ( m->addr == (void*) 0 )
 	    {
-	    syslog( LOG_ERR, "out of memory storing a file" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "out of memory storing a file" );
+			#endif
+	    
 	    (void) close( fd );
 	    free( (void*) m );
 	    --alloc_count;
@@ -235,7 +253,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
 	    }
 	if ( httpd_read_fully( fd, m->addr, size_size ) != size_size )
 	    {
-	    syslog( LOG_ERR, "read - %m" );
+			#ifdef JI_SYSLOG
+				syslog( LOG_ERR, "read - %m" );
+			#endif
+	    
 	    (void) close( fd );
 	    free( (void*) m );
 	    --alloc_count;
@@ -248,7 +269,10 @@ mmc_map( char* filename, struct stat* sbP, struct timeval* nowP )
     /* Put the Map into the hash table. */
     if ( add_hash( m ) < 0 )
 	{
-	syslog( LOG_ERR, "add_hash() failure" );
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "add_hash() failure" );
+		#endif
+	
 	free( (void*) m );
 	--alloc_count;
 	return (void*) 0;
@@ -285,9 +309,19 @@ mmc_unmap( void* addr, struct stat* sbP, struct timeval* nowP )
 	    if ( m->addr == addr )
 		break;
     if ( m == (Map*) 0 )
-	syslog( LOG_ERR, "mmc_unmap failed to find entry!" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "mmc_unmap failed to find entry!" );
+		#endif
+	}
+	
     else if ( m->refcount <= 0 )
-	syslog( LOG_ERR, "mmc_unmap found zero or negative refcount!" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "mmc_unmap found zero or negative refcount!" );
+		#endif
+	}
+	
     else
 	{
 	--m->refcount;
@@ -349,8 +383,10 @@ panic( void )
     {
     Map** mm;
     Map* m;
-
-    syslog( LOG_ERR, "mmc panic - freeing all unreferenced maps" );
+	#ifdef JI_SYSLOG
+		syslog( LOG_ERR, "mmc panic - freeing all unreferenced maps" );
+	#endif
+    
 
     /* Really unmap all unreferenced entries. */
     for ( mm = &maps; *mm != (Map*) 0; )
@@ -374,7 +410,12 @@ really_unmap( Map** mm )
 	{
 #ifdef HAVE_MMAP
 	if ( munmap( m->addr, m->size ) < 0 )
-	    syslog( LOG_ERR, "munmap - %m" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "munmap - %m" );
+		#endif
+	}
+	    
 #else /* HAVE_MMAP */
 	free( (void*) m->addr );
 #endif /* HAVE_MMAP */
@@ -522,10 +563,15 @@ hash( ino_t ino, dev_t dev, off_t size, time_t ct )
 void
 mmc_logstats( long secs )
     {
-    syslog(
-	LOG_NOTICE, "  map cache - %d allocated, %d active (%lld bytes), %d free; hash size: %d; expire age: %lld",
-	alloc_count, map_count, (long long) mapped_bytes, free_count, hash_size,
-	(long long) expire_age );
+		#ifdef JI_SYSLOG
+			syslog(LOG_NOTICE, "  map cache - %d allocated, %d active (%lld bytes), %d free; hash size: %d; expire age: %lld",alloc_count, map_count, (long long) mapped_bytes, free_count, hash_size,(long long) expire_age );
+		#endif	
+    
     if ( map_count + free_count != alloc_count )
-	syslog( LOG_ERR, "map counts don't add up!" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "map counts don't add up!" );
+		#endif
+	}
+	
     }
