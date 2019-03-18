@@ -404,8 +404,7 @@ initialize_listen_socket( httpd_sockaddr* saP )
     /* Bind to it. */
     if ( bind( listen_fd, &saP->sa, sockaddr_len( saP ) ) < 0 )
 	{
-	//syslog(
-	    LOG_CRIT, "bind %.80s - %m", httpd_ntoa( saP ) );
+	//syslog(LOG_CRIT, "bind %.80s - %m", httpd_ntoa( saP ) );
 	(void) close( listen_fd );
 	return -1;
 	}
