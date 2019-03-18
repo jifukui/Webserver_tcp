@@ -94,7 +94,7 @@ static int kqueue_check_fd( int fd );
 static int kqueue_get_fd( int ridx );
 
 #else /* HAVE_KQUEUE */
-#ifdef HAVE_DEVPOLL
+# ifdef HAVE_DEVPOLL
 
 #define WHICH                  "devpoll"
 #define INIT( nf )         devpoll_init( nf )
@@ -111,8 +111,8 @@ static int devpoll_watch( long timeout_msecs );
 static int devpoll_check_fd( int fd );
 static int devpoll_get_fd( int ridx );
 
-#else /* HAVE_DEVPOLL */
-#ifdef HAVE_POLL
+# else /* HAVE_DEVPOLL */
+#  ifdef HAVE_POLL
 
 #define WHICH                  "poll"
 #define INIT( nf )         poll_init( nf )
@@ -129,8 +129,8 @@ static int poll_watch( long timeout_msecs );
 static int poll_check_fd( int fd );
 static int poll_get_fd( int ridx );
 
-#else /* HAVE_POLL */
-#ifdef HAVE_SELECT
+#  else /* HAVE_POLL */
+#   ifdef HAVE_SELECT
 
 #define WHICH                  "select"
 #define INIT( nf )         select_init( nf )
