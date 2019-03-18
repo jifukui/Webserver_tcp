@@ -94,7 +94,7 @@ static int kqueue_check_fd( int fd );
 static int kqueue_get_fd( int ridx );
 
 #else /* HAVE_KQUEUE */
-# ifdef HAVE_DEVPOLL
+#ifdef HAVE_DEVPOLL
 
 #define WHICH                  "devpoll"
 #define INIT( nf )         devpoll_init( nf )
@@ -111,8 +111,8 @@ static int devpoll_watch( long timeout_msecs );
 static int devpoll_check_fd( int fd );
 static int devpoll_get_fd( int ridx );
 
-# else /* HAVE_DEVPOLL */
-#  ifdef HAVE_POLL
+#else /* HAVE_DEVPOLL */
+#ifdef HAVE_POLL
 
 #define WHICH                  "poll"
 #define INIT( nf )         poll_init( nf )
@@ -129,8 +129,8 @@ static int poll_watch( long timeout_msecs );
 static int poll_check_fd( int fd );
 static int poll_get_fd( int ridx );
 
-#  else /* HAVE_POLL */
-#   ifdef HAVE_SELECT
+#else /* HAVE_POLL */
+#ifdef HAVE_SELECT
 
 #define WHICH                  "select"
 #define INIT( nf )         select_init( nf )
@@ -208,10 +208,10 @@ fdwatch_add_fd( int fd, void* client_data, int rw )
     {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] != -1 )
 	{
-        #ifdef JI_SYSLOG
+#ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_add_fd!", fd );
-        #endif
-	return;
+#endif
+	    return;
 	}
     ADD_FD( fd, rw );
     fd_rw[fd] = rw;
@@ -225,10 +225,10 @@ fdwatch_del_fd( int fd )
     {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] == -1 )
 	{
-        #ifdef JI_SYSLOG
+#ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_del_fd!", fd );
-        #endif
-	return;
+#endif
+	    return;
 	}
     DEL_FD( fd );
     fd_rw[fd] = -1;
@@ -255,9 +255,9 @@ fdwatch_check_fd( int fd )
     {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] == -1 )
 	{
-        #ifdef JI_SYSLOG
+#ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_check_fd!", fd );
-        #endif
+#endif
 	return 0;
 	}
     return CHECK_FD( fd );
@@ -284,9 +284,9 @@ fdwatch_logstats( long secs )
     {
     if ( secs > 0 )
 	{
-        #ifdef JI_SYSLOG
+#ifdef JI_SYSLOG
             syslog(LOG_NOTICE, "  fdwatch - %ld %ss (%g/sec)",nwatches, WHICH, (float) nwatches / secs );
-        #endif
+#endif
     }
     nwatches = 0;
     }
