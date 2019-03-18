@@ -361,14 +361,18 @@ httpd_initialize(
 
     /* Done initializing. */
     if ( hs->binding_hostname == (char*) 0 )
-	syslog(
+	{
+		//syslogsyslog(
 	    LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,
 	    (int) hs->port );
+	}
     else
-	syslog(
+	{
+		//syslog(
 	    LOG_NOTICE, "%.80s starting on %.80s, port %d", SERVER_SOFTWARE,
 	    httpd_ntoa( hs->listen4_fd != -1 ? sa4P : sa6P ),
 	    (int) hs->port );
+	}
     return hs;
     }
 
@@ -390,7 +394,7 @@ initialize_listen_socket( httpd_sockaddr* saP )
     listen_fd = socket( saP->sa.sa_family, SOCK_STREAM, 0 );
     if ( listen_fd < 0 )
 	{
-	syslog( LOG_CRIT, "socket %.80s - %m", httpd_ntoa( saP ) );
+	//syslog( LOG_CRIT, "socket %.80s - %m", httpd_ntoa( saP ) );
 	return -1;
 	}
     (void) fcntl( listen_fd, F_SETFD, 1 );
@@ -405,7 +409,7 @@ initialize_listen_socket( httpd_sockaddr* saP )
     /* Bind to it. */
     if ( bind( listen_fd, &saP->sa, sockaddr_len( saP ) ) < 0 )
 	{
-	syslog(
+	//syslog(
 	    LOG_CRIT, "bind %.80s - %m", httpd_ntoa( saP ) );
 	(void) close( listen_fd );
 	return -1;
