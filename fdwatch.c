@@ -869,3 +869,4 @@ select_get_fd( int ridx )
 # endif /* HAVE_DEVPOLL */
 
 #endif /* HAVE_KQUEUE */
+#endif
