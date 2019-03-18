@@ -417,18 +417,17 @@ kqueue_check_fd( int fd )
     }
 
 
-static int
-kqueue_get_fd( int ridx )
-    {
+static int kqueue_get_fd( int ridx )
+{
     if ( ridx < 0 || ridx >= nfiles )
 	{
         #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad ridx (%d) in kqueue_get_fd!", ridx );
         #endif
-	return -1;
+	    return -1;
 	}
     return kqrevents[ridx].ident;
-    }
+}
 
 #else /* HAVE_KQUEUE */
 
