@@ -348,9 +348,9 @@ kqueue_del_fd( int fd )
     {
     if ( nkqevents >= maxkqevents )
 	{
-        #ifdef JI_SYSLOG
+//        #ifdef JI_SYSLOG
             syslog( LOG_ERR, "too many kqevents in kqueue_del_fd!" );
-        #endif
+//       #endif
 	return;
 	}
     kqevents[nkqevents].ident = fd;
@@ -397,9 +397,9 @@ kqueue_check_fd( int fd )
 
     if ( ridx < 0 || ridx >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+ //       #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad ridx (%d) in kqueue_check_fd!", ridx );
-        #endif
+ //       #endif
 	return 0;
 	}
     if ( ridx >= nreturned ) 
@@ -421,9 +421,9 @@ static int kqueue_get_fd( int ridx )
 {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+ //       #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad ridx (%d) in kqueue_get_fd!", ridx );
-        #endif
+ //       #endif
 	    return -1;
 	}
     return kqrevents[ridx].ident;
@@ -466,9 +466,9 @@ devpoll_add_fd( int fd, int rw )
     {
     if ( ndpevents >= maxdpevents )
 	{
-        #ifdef JI_SYSLOG
+ //       #ifdef JI_SYSLOG
             syslog( LOG_ERR, "too many fds in devpoll_add_fd!" );
-        #endif
+ //       #endif
 	return;
 	}
     dpevents[ndpevents].fd = fd;
@@ -487,9 +487,9 @@ devpoll_del_fd( int fd )
     {
     if ( ndpevents >= maxdpevents )
 	{
-        #ifdef JI_SYSLOG
+    //    #ifdef JI_SYSLOG
             syslog( LOG_ERR, "too many fds in devpoll_del_fd!" );
-        #endif
+   //     #endif
 	return;
 	}
     dpevents[ndpevents].fd = fd;
@@ -531,9 +531,9 @@ devpoll_check_fd( int fd )
 
     if ( ridx < 0 || ridx >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+       // #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad ridx (%d) in devpoll_check_fd!", ridx );
-        #endif
+      //  #endif
 	return 0;
 	}
     if ( ridx >= nreturned )
@@ -598,9 +598,9 @@ poll_add_fd( int fd, int rw )
     {
     if ( npoll_fds >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+        //#ifdef JI_SYSLOG
             syslog( LOG_ERR, "too many fds in poll_add_fd!" );
-        #endif
+        //#endif
 	return;
 	}
     pollfds[npoll_fds].fd = fd;
@@ -622,9 +622,9 @@ poll_del_fd( int fd )
 
     if ( idx < 0 || idx >= nfiles )
 	{
-        #ifdef
+        //#ifdef
             syslog( LOG_ERR, "bad idx (%d) in poll_del_fd!", idx );
-        #endif
+       // #endif
 	return;
 	}
     --npoll_fds;
@@ -665,9 +665,9 @@ poll_check_fd( int fd )
 
     if ( fdidx < 0 || fdidx >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+      //  #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad fdidx (%d) in poll_check_fd!", fdidx );
-        #endif
+      //  #endif
 	return 0;
 	}
     if ( pollfds[fdidx].revents & POLLERR )
@@ -738,9 +738,9 @@ select_add_fd( int fd, int rw )
     {
     if ( nselect_fds >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+    //    #ifdef JI_SYSLOG
             syslog( LOG_ERR, "too many fds in select_add_fd!" );
-        #endif
+    //    #endif
 	return;
 	}
     select_fds[nselect_fds] = fd;
@@ -764,9 +764,9 @@ select_del_fd( int fd )
 
     if ( idx < 0 || idx >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+  //      #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad idx (%d) in select_del_fd!", idx );
-        #endif
+  //      #endif
 	return;
 	}
 
@@ -854,9 +854,9 @@ select_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-        #ifdef JI_SYSLOG
+      //  #ifdef JI_SYSLOG
             syslog( LOG_ERR, "bad ridx (%d) in select_get_fd!", ridx );
-        #endif
+     //   #endif
 	return -1;
 	}
     return select_rfdidx[ridx];
