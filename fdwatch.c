@@ -58,9 +58,7 @@
 #endif /* HAVE_SYS_EVENT_H */
 
 #include "fdwatch.h"
-#ifdef JI_DEBUG
 #include "version.h"
-#endif
 #ifdef HAVE_SELECT
 #ifndef FD_SET
 #define NFDBITS         32
@@ -68,17 +66,15 @@
 #define FD_SET(n, p)    ((p)->fds_bits[(n)/NFDBITS] |= (1 << ((n) % NFDBITS)))
 #define FD_CLR(n, p)    ((p)->fds_bits[(n)/NFDBITS] &= ~(1 << ((n) % NFDBITS)))
 #define FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & (1 << ((n) % NFDBITS)))
-/**bzero函数的作用是将此处的数据设置为0*/
 #define FD_ZERO(p)      bzero((char*)(p), sizeof(*(p)))
 #endif /* !FD_SET */
 #endif /* HAVE_SELECT */
 
-static int nfiles;                  //最大支持的文件的数量
-static long nwatches;           
-static int* fd_rw;                  //
-static void** fd_data;              //
-static int nreturned;               //
-static int next_ridx;               //下一个需要读取的文件描述符的索引值
+static int nfiles;
+static long nwatches;
+static int* fd_rw;
+static void** fd_data;
+static int nreturned, next_ridx;
 
 #ifdef HAVE_KQUEUE
 
@@ -162,8 +158,9 @@ static int select_get_fd( int ridx );
 /* Figure out how many file descriptors the system allows, and
 ** initialize the fdwatch data structures.  Returns -1 on failure.
 */
-int fdwatch_get_nfiles( void )
-{
+int
+fdwatch_get_nfiles( void )
+    {
     int i;
 #ifdef RLIMIT_NOFILE
     struct rlimit rl;
@@ -175,19 +172,13 @@ int fdwatch_get_nfiles( void )
     /* If we have getrlimit(), use that, and attempt to raise the limit. */
     if ( getrlimit( RLIMIT_NOFILE, &rl ) == 0 )
 	{
+	nfiles = rl.rlim_cur;
+	if ( rl.rlim_max == RLIM_INFINITY )
+	    rl.rlim_cur = 8192;         /* arbitrary */
+	else if ( rl.rlim_max > rl.rlim_cur )
+	    rl.rlim_cur = rl.rlim_max;
+	if ( setrlimit( RLIMIT_NOFILE, &rl ) == 0 )
 	    nfiles = rl.rlim_cur;
-	    if ( rl.rlim_max == RLIM_INFINITY )
-	    {
-            rl.rlim_cur = 8192;         /* arbitrary */
-        }
-	    else if ( rl.rlim_max > rl.rlim_cur )
-	    {
-            rl.rlim_cur = rl.rlim_max;
-        }
-	    if ( setrlimit( RLIMIT_NOFILE, &rl ) == 0 )
-	    {
-            nfiles = rl.rlim_cur;
-        }
 	}
 #endif /* RLIMIT_NOFILE */
 
@@ -201,113 +192,104 @@ int fdwatch_get_nfiles( void )
     fd_rw = (int*) malloc( sizeof(int) * nfiles );
     fd_data = (void**) malloc( sizeof(void*) * nfiles );
     if ( fd_rw == (int*) 0 || fd_data == (void**) 0 )
-	{
-        return -1;
-    }
+	return -1;
     for ( i = 0; i < nfiles; ++i )
-	{
-        fd_rw[i] = -1;
-    }
+	fd_rw[i] = -1;
     if ( INIT( nfiles ) == -1 )
-	{
-        return -1;
-    }
+	return -1;
 
     return nfiles;
-}
+    }
 
 
 /* Add a descriptor to the watch list.  rw is either FDW_READ or FDW_WRITE.  */
-/**在文件队列中添加文件描述符
- * fd为文件描述符
- * client_data为传入的数据
- * rw为对鞋状态位
-*/
-void fdwatch_add_fd( int fd, void* client_data, int rw )
-{
-    /**对于错误的文件描述符的处理即文件描述符超出范围*/
+void
+fdwatch_add_fd( int fd, void* client_data, int rw )
+    {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] != -1 )
 	{
-	    syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_add_fd!", fd );
+//#ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_add_fd!", fd );
+//#endif
 	    return;
 	}
     ADD_FD( fd, rw );
     fd_rw[fd] = rw;
     fd_data[fd] = client_data;
-}
+    }
 
 
 /* Remove a descriptor from the watch list. */
-/**删除队列中的文件描述符*/
-void fdwatch_del_fd( int fd )
-{
+void
+fdwatch_del_fd( int fd )
+    {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] == -1 )
 	{
-	    syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_del_fd!", fd );
+//#ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_del_fd!", fd );
+//#endif
 	    return;
 	}
     DEL_FD( fd );
     fd_rw[fd] = -1;
     fd_data[fd] = (void*) 0;
-}
+    }
 
 /* Do the watch.  Return value is the number of descriptors that are ready,
 ** or 0 if the timeout expired, or -1 on errors.  A timeout of INFTIM means
 ** wait indefinitely.
 */
-/**检测当前准备好的文件描述符的数量，并返回当前可以使用的文件描述符的数量*/
-int fdwatch( long timeout_msecs )
-{
+int
+fdwatch( long timeout_msecs )
+    {
     ++nwatches;
     nreturned = WATCH( timeout_msecs );
     next_ridx = 0;
     return nreturned;
-}
+    }
 
 
 /* Check if a descriptor was ready. */
-/**检测连接的文件描述符是否是有效的文件描述符*/
-int fdwatch_check_fd( int fd )
-{
+int
+fdwatch_check_fd( int fd )
+    {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] == -1 )
 	{
-	    syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_check_fd!", fd );
-	    return 0;
+//#ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_check_fd!", fd );
+//#endif
+	return 0;
 	}
     return CHECK_FD( fd );
-}
+    }
 
-/**获取下一个需要处理的文件描述符的索引值
- * 判断下一个文件描述符的索引值是否正确
- * 对于正确的文件描述符索引值获取真正文件描述符的值
- * 根据文件描述符的值获取的用户数据存储的地址
-*/
-void* fdwatch_get_next_client_data( void )
-{
+
+void*
+fdwatch_get_next_client_data( void )
+    {
     int fd;
 
     if ( next_ridx >= nreturned )
-	{
-        return (void*) -1;
-    }
+	return (void*) -1;
     fd = GET_FD( next_ridx++ );
     if ( fd < 0 || fd >= nfiles )
-	{
-        return (void*) 0;
-    }
+	return (void*) 0;
     return fd_data[fd];
-}
+    }
 
 
 /* Generate debugging statistics syslog message. */
-void fdwatch_logstats( long secs )
-{
+void
+fdwatch_logstats( long secs )
+    {
     if ( secs > 0 )
 	{
-        syslog(LOG_NOTICE, "  fdwatch - %ld %ss (%g/sec)",nwatches, WHICH, (float) nwatches / secs );
+//#ifdef JI_SYSLOG
+            syslog(LOG_NOTICE, "  fdwatch - %ld %ss (%g/sec)",nwatches, WHICH, (float) nwatches / secs );
+//#endif
     }
     nwatches = 0;
-}
+    }
 
 
 #ifdef HAVE_KQUEUE
@@ -344,7 +326,9 @@ kqueue_add_fd( int fd, int rw )
     {
     if ( nkqevents >= maxkqevents )
 	{
-	syslog( LOG_ERR, "too many kqevents in kqueue_add_fd!" );
+        #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "too many kqevents in kqueue_add_fd!" );
+        #endif
 	return;
 	}
     kqevents[nkqevents].ident = fd;
@@ -364,7 +348,9 @@ kqueue_del_fd( int fd )
     {
     if ( nkqevents >= maxkqevents )
 	{
-	syslog( LOG_ERR, "too many kqevents in kqueue_del_fd!" );
+//        #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "too many kqevents in kqueue_del_fd!" );
+//       #endif
 	return;
 	}
     kqevents[nkqevents].ident = fd;
@@ -411,7 +397,9 @@ kqueue_check_fd( int fd )
 
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in kqueue_check_fd!", ridx );
+ //       #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad ridx (%d) in kqueue_check_fd!", ridx );
+ //       #endif
 	return 0;
 	}
     if ( ridx >= nreturned ) 
@@ -429,16 +417,17 @@ kqueue_check_fd( int fd )
     }
 
 
-static int
-kqueue_get_fd( int ridx )
-    {
+static int kqueue_get_fd( int ridx )
+{
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in kqueue_get_fd!", ridx );
-	return -1;
+ //       #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad ridx (%d) in kqueue_get_fd!", ridx );
+ //       #endif
+	    return -1;
 	}
     return kqrevents[ridx].ident;
-    }
+}
 
 #else /* HAVE_KQUEUE */
 
@@ -477,7 +466,9 @@ devpoll_add_fd( int fd, int rw )
     {
     if ( ndpevents >= maxdpevents )
 	{
-	syslog( LOG_ERR, "too many fds in devpoll_add_fd!" );
+ //       #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "too many fds in devpoll_add_fd!" );
+ //       #endif
 	return;
 	}
     dpevents[ndpevents].fd = fd;
@@ -496,7 +487,9 @@ devpoll_del_fd( int fd )
     {
     if ( ndpevents >= maxdpevents )
 	{
-	syslog( LOG_ERR, "too many fds in devpoll_del_fd!" );
+    //    #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "too many fds in devpoll_del_fd!" );
+   //     #endif
 	return;
 	}
     dpevents[ndpevents].fd = fd;
@@ -538,7 +531,9 @@ devpoll_check_fd( int fd )
 
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in devpoll_check_fd!", ridx );
+       // #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad ridx (%d) in devpoll_check_fd!", ridx );
+      //  #endif
 	return 0;
 	}
     if ( ridx >= nreturned )
@@ -561,7 +556,9 @@ devpoll_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in devpoll_get_fd!", ridx );
+        #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad ridx (%d) in devpoll_get_fd!", ridx );
+        #elif
 	return -1;
 	}
     return dprevents[ridx].fd;
@@ -601,7 +598,9 @@ poll_add_fd( int fd, int rw )
     {
     if ( npoll_fds >= nfiles )
 	{
-	syslog( LOG_ERR, "too many fds in poll_add_fd!" );
+        //#ifdef JI_SYSLOG
+            syslog( LOG_ERR, "too many fds in poll_add_fd!" );
+        //#endif
 	return;
 	}
     pollfds[npoll_fds].fd = fd;
@@ -623,7 +622,9 @@ poll_del_fd( int fd )
 
     if ( idx < 0 || idx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad idx (%d) in poll_del_fd!", idx );
+        //#ifdef
+            syslog( LOG_ERR, "bad idx (%d) in poll_del_fd!", idx );
+       // #endif
 	return;
 	}
     --npoll_fds;
@@ -664,7 +665,9 @@ poll_check_fd( int fd )
 
     if ( fdidx < 0 || fdidx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad fdidx (%d) in poll_check_fd!", fdidx );
+      //  #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad fdidx (%d) in poll_check_fd!", fdidx );
+      //  #endif
 	return 0;
 	}
     if ( pollfds[fdidx].revents & POLLERR )
@@ -683,17 +686,19 @@ poll_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in poll_get_fd!", ridx );
+        #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad ridx (%d) in poll_get_fd!", ridx );
+        #endif
 	return -1;
 	}
     return poll_rfdidx[ridx];
     }
 
-#  else /* HAVE_POLL */
+#  else  /* HAVE_POLL */
 
 
 #   ifdef HAVE_SELECT
-/**以下为select模型的相关实现*/
+
 static fd_set master_rfdset;
 static fd_set master_wfdset;
 static fd_set working_rfdset;
@@ -705,94 +710,66 @@ static int nselect_fds;
 static int maxfd;
 static int maxfd_changed;
 
-/**select初始化*/
-static int select_init( int nf )
-{
+
+static int
+select_init( int nf )
+    {
     int i;
-    /**将管理的读写文件描述符的值设置为0*/
+
     FD_ZERO( &master_rfdset );
     FD_ZERO( &master_wfdset );
-    /**为选择的文件描述符，选择的文件描述符索引选择的读文件描述符索引分配内存*/
     select_fds = (int*) malloc( sizeof(int) * nf );
     select_fdidx = (int*) malloc( sizeof(int) * nf );
     select_rfdidx = (int*) malloc( sizeof(int) * nf );
-    /**对内存分配失败进行处理*/
-    if ( select_fds == (int*) 0 || select_fdidx == (int*) 0 ||select_rfdidx == (int*) 0 )
-	{
-        return -1;
-    }
-    /**设置选择的文件描述符的数量最大的文件描述符和最大文件描述符改变的值，以及选择的文件描述符数组的值*/
+    if ( select_fds == (int*) 0 || select_fdidx == (int*) 0 ||
+	 select_rfdidx == (int*) 0 )
+	return -1;
     nselect_fds = 0;
     maxfd = -1;
     maxfd_changed = 0;
     for ( i = 0; i < nf; ++i )
-	{
-        select_fds[i] = select_fdidx[i] = -1;
-    }
+	select_fds[i] = select_fdidx[i] = -1;
     return 0;
-}
+    }
 
-/**添加select数组中的内容*/
-static void select_add_fd( int fd, int rw )
-{
-    /**如果当前使用的文件的数量大于等于支持的文件的数量处理*/
+
+static void
+select_add_fd( int fd, int rw )
+    {
     if ( nselect_fds >= nfiles )
 	{
-	    syslog( LOG_ERR, "too many fds in select_add_fd!" );
-	    return;
+    //    #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "too many fds in select_add_fd!" );
+    //    #endif
+	return;
 	}
-    /**对于当前使用的文件描述符的数量满足需求的处理
-     * 在select数组中添加此文件描述符
-     * 设置此文件描述符的状态值
-     * 对于文件描述符大于之前的最大文件描述符对象进行修改最大文件描述符的值
-     * 设置select索引数组此文件描述符在select数组中的值
-     * 修改当前使用的文件描述符的数量
-    */
     select_fds[nselect_fds] = fd;
     switch ( rw )
 	{
-	    case FDW_READ: 
-        {
-            FD_SET( fd, &master_rfdset ); 
-            break;
-        }
-	    case FDW_WRITE: 
-        {
-            FD_SET( fd, &master_wfdset ); 
-            break;
-        }
-	    default: 
-        {
-            break;
-        }
+	case FDW_READ: FD_SET( fd, &master_rfdset ); break;
+	case FDW_WRITE: FD_SET( fd, &master_wfdset ); break;
+	default: break;
 	}
     if ( fd > maxfd )
-	{
-        maxfd = fd;
-    }
+	maxfd = fd;
     select_fdidx[fd] = nselect_fds;
     ++nselect_fds;
-}
+    }
 
 
-static void select_del_fd( int fd )
-{
+static void
+select_del_fd( int fd )
+    {
     int idx = select_fdidx[fd];
-    /**根据获取的索引值，对于索引值错误进行处理*/
+
     if ( idx < 0 || idx >= nfiles )
 	{
-    	syslog( LOG_ERR, "bad idx (%d) in select_del_fd!", idx );
-	    return;
+  //      #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad idx (%d) in select_del_fd!", idx );
+  //      #endif
+	return;
 	}
-    /**对于索引值正确的处理
-     * 修改当前使用的文件描述符的数量
-     * 设置当前的选择的文件描述符的值为当前文件描述符的值为默认值
-     * 设置当前文件索引文件的文件描述符索引值的值为索引值
-     * 设置文件描述符下一个的描述符的值为-1
-     * 设置文件描述符索引为-1
-     * 清除此文件描述符的参数
-     * 对于文件描述符的值大于最大文件描述符的值设置最大文件描述符改变变量值的值为1
-    */
+
     --nselect_fds;
     select_fds[idx] = select_fds[nselect_fds];
     select_fdidx[select_fds[idx]] = idx;
@@ -803,111 +780,87 @@ static void select_del_fd( int fd )
     FD_CLR( fd, &master_wfdset );
 
     if ( fd >= maxfd )
-	{
-        maxfd_changed = 1;
+	maxfd_changed = 1;
     }
-}
 
-/**获取文件描述符的最大文件描述符值*/
-static int select_get_maxfd( void )
-{
+
+static int
+select_get_maxfd( void )
+    {
     if ( maxfd_changed )
 	{
-	    int i;
-	    maxfd = -1;
-        {
-            for ( i = 0; i < nselect_fds; ++i )
-            {
-                if ( select_fds[i] > maxfd )
-                {
-                    maxfd = select_fds[i];
-                }
-            }
-        }
-	    maxfd_changed = 0;
+	int i;
+	maxfd = -1;
+	for ( i = 0; i < nselect_fds; ++i )
+	    if ( select_fds[i] > maxfd )
+		maxfd = select_fds[i];
+	maxfd_changed = 0;
 	}
     return maxfd;
-}
+    }
 
-/**检测当前处于可用状态的文件描述符，并返回可用的文件描述符的数量*/
-static int select_watch( long timeout_msecs )
-{
+
+static int
+select_watch( long timeout_msecs )
+    {
     int mfd;
     int r, idx, ridx;
 
     working_rfdset = master_rfdset;
     working_wfdset = master_wfdset;
     mfd = select_get_maxfd();
-    /**对于计时器数组错误的处理*/
     if ( timeout_msecs == INFTIM )
-    {
-         r = select(
+       r = select(
            mfd + 1, &working_rfdset, &working_wfdset, (fd_set*) 0,
            (struct timeval*) 0 );
-    } 
-    /**对于计时器数组正确的处理*/ 
     else
 	{
-	    struct timeval timeout;
-	    timeout.tv_sec = timeout_msecs / 1000L;
-	    timeout.tv_usec = ( timeout_msecs % 1000L ) * 1000L;
-	    r = select(mfd + 1, &working_rfdset, &working_wfdset, (fd_set*) 0, &timeout );
+	struct timeval timeout;
+	timeout.tv_sec = timeout_msecs / 1000L;
+	timeout.tv_usec = ( timeout_msecs % 1000L ) * 1000L;
+	r = select(
+	   mfd + 1, &working_rfdset, &working_wfdset, (fd_set*) 0, &timeout );
 	}
-    /**上述r表示为已经准备好的文件描述符的数量-1表示描述符集清0,0表示超时，其他大于0的值表示可用的文件描述符的数量*/
     if ( r <= 0 )
-	{
-        return r;
-    }
+	return r;
 
     ridx = 0;
-    /**查看当前可用的文件描述符*/
     for ( idx = 0; idx < nselect_fds; ++idx )
-	{
-        /**对于文件描述符可用
-         * 设置select_rfdidx数组的值
-        */
-        if ( select_check_fd( select_fds[idx] ) )
+	if ( select_check_fd( select_fds[idx] ) )
 	    {
-	        select_rfdidx[ridx++] = select_fds[idx];
-	        if ( ridx == r )
-            {
-                break;
-            }
+	    select_rfdidx[ridx++] = select_fds[idx];
+	    if ( ridx == r )
+		break;
 	    }
-    }
-    return ridx;	/* should be equal to r */
-}
 
-/**根据传入的数据获取文件描述符的状态*/
-static int select_check_fd( int fd )
-{
+    return ridx;	/* should be equal to r */
+    }
+
+
+static int
+select_check_fd( int fd )
+    {
     switch ( fd_rw[fd] )
 	{
-	    case FDW_READ: 
-        {
-            return FD_ISSET( fd, &working_rfdset );
-        }
-	    case FDW_WRITE: 
-        {
-            return FD_ISSET( fd, &working_wfdset );
-        }
-	    default: 
-        {
-            return 0;
-        }
+	case FDW_READ: return FD_ISSET( fd, &working_rfdset );
+	case FDW_WRITE: return FD_ISSET( fd, &working_wfdset );
+	default: return 0;
 	}
-}
+    }
 
-/**根据索引值*/
-static int select_get_fd( int ridx )
-{
+
+static int
+select_get_fd( int ridx )
+    {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	    syslog( LOG_ERR, "bad ridx (%d) in select_get_fd!", ridx );
-	    return -1;
+      //  #ifdef JI_SYSLOG
+            syslog( LOG_ERR, "bad ridx (%d) in select_get_fd!", ridx );
+     //   #endif
+	return -1;
 	}
     return select_rfdidx[ridx];
-}
+    }
 
 #   endif /* HAVE_SELECT */
 
