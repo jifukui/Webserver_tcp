@@ -362,16 +362,11 @@ httpd_initialize(
     /* Done initializing. */
     if ( hs->binding_hostname == (char*) 0 )
 	{
-		//syslogsyslog(
-	    LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,
-	    (int) hs->port );
+		//syslogsyslog(LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,(int) hs->port );
 	}
     else
 	{
-		//syslog(
-	    LOG_NOTICE, "%.80s starting on %.80s, port %d", SERVER_SOFTWARE,
-	    httpd_ntoa( hs->listen4_fd != -1 ? sa4P : sa6P ),
-	    (int) hs->port );
+		//syslog(LOG_NOTICE, "%.80s starting on %.80s, port %d", SERVER_SOFTWARE,httpd_ntoa( hs->listen4_fd != -1 ? sa4P : sa6P ),(int) hs->port );
 	}
     return hs;
     }
