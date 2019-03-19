@@ -1,6 +1,6 @@
 /* timers.c - simple timer routines
 **
-** Copyright © 1995,1998,2000,2014 by Jef Poskanzer <jef@mail.acme.com>.
+** Copyright ï¿½ 1995,1998,2000,2014 by Jef Poskanzer <jef@mail.acme.com>.
 ** All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@
 #include <syslog.h>
 
 #include "timers.h"
-
+#include "version.h"
 
 #define HASH_SIZE 67
 static Timer* timers[HASH_SIZE];
@@ -343,9 +343,15 @@ tmr_term( void )
 void
 tmr_logstats( long secs )
     {
-    syslog(
-	LOG_NOTICE, "  timers - %d allocated, %d active, %d free",
-	alloc_count, active_count, free_count );
+		#ifdef JI_SYSLOG
+			syslog(LOG_NOTICE, "  timers - %d allocated, %d active, %d free",alloc_count, active_count, free_count );
+		#endif
+    
     if ( active_count + free_count != alloc_count )
-	syslog( LOG_ERR, "timer counts don't add up!" );
+	{
+		#ifdef JI_SYSLOG
+			syslog( LOG_ERR, "timer counts don't add up!" );
+		#endif
+	}
+	
     }
