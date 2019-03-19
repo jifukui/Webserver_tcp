@@ -425,7 +425,10 @@ main( int argc, char** argv )
 	{
 		printf("get data error\n");
 	}
-	nice(10);
+	if(LigPortNum==64)
+	{
+		nice(5);
+	}
 	sockfd=lig_pip_open(0);
 	
 

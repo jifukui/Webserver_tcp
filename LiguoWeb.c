@@ -346,20 +346,15 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	if(length>0)
 	{
 		length=0;
-		if(LigPortNum==64)
-		{
-			usleep(40000);
-		}
 		//gettimeofday(&start,NULL);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
-		printf("The length 1 is %d\n",length);
+		
 		if(LigPortNum==64)
 		{
 			//usleep(20000);
 			do{
-				usleep(20000);
 				status=lig_pip_read_bytes(sockfd,&rx[length],len-length-1);
 				length+=status;
 				printf("The length  2 is %d\n",length);
