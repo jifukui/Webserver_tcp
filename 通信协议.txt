@@ -411,3 +411,33 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（14）设置DHCP状态
+{
+    "cmd":"SetDHCPStatus",
+	"Data":{
+		"dhcp":0,1//0 关闭 1打开
+	}
+	]
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDHCPStatus",
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetDHCPStatus",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}

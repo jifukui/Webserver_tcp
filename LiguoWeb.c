@@ -50,7 +50,7 @@ STATIC uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 LoadEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetNetwork(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr);
-
+STATIC uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -71,6 +71,7 @@ LigCommandHandler CommandHandler[]={
 	{"LoadEDID",&LoadEDID},
 	{"SetNetwork",&SetNetwork},
 	{"SetPortFunc",&SetPortFunc},
+	{"SetDHCPStatus",&SetDHCPStatus},
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -982,16 +983,16 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 									}
 								}
 							}
-							printf("the in is %d\n",in);
-							printf("The type is %d\n",type);
-							printf("The bit map is %0xllx\n",bitmap);
+							//printf("the in is %d\n",in);
+							//printf("The type is %d\n",type);
+							//printf("The bit map is %0xllx\n",bitmap);
 							if(bitmap)
 							{
 								sprintf(str,"#CPEDID %d,%d,0,0x%llx\r\n",type,in,bitmap);
 								PiPHandler(str,buf,sizeof(buf));
 								//printf("The buf is :%s \n",buf);
 								status=sscanf(&buf[START],"CPEDID ERR,%d\r\n",&type);
-								printf("The status is %d\n",status);
+								//printf("The status is %d\n",status);
 								flag=!status;
 							}
 							else
@@ -1259,9 +1260,9 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 									if(JsonGetInteger(obj,&value))
 									{
 										sprintf(str,"#MODULE-FUNC %d,%d,%d,%d\r\n",sid,dir,index,value);
-										printf("The str is %s\n",str);
+										//printf("The str is %s\n",str);
 										PiPHandler(str,buf,sizeof(buf));
-										printf("The buf is %s\n",buf);
+										//printf("The buf is %s\n",buf);
 										if(strstr(buf,"ERR"))
 										{
 											strcpy(estr,"set Module function error");
@@ -1302,6 +1303,47 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 		else
 		{
 			strcpy(estr,"Data is not array");
+		}
+	}
+	else
+	{
+		strcpy(estr,"error get Data");
+	}
+	return flag;
+}
+
+uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint32 dhcp;
+	json_t * obj;
+	uint8 str[100];
+	uint8 buf[100];
+	if(cmd)
+	{
+		obj=json_object_get(cmd,"dhcp");
+		if(JsonGetInteger(obj,&dhcp))
+		{
+			if(dhcp)
+			{
+				dhcp=1;
+			}
+			sprintf(str,"#NET-DHCP %d",dhcp);
+			printf("The data is %s\n",str);
+			PiPHandler(str,buf,sizeof(buf));
+			printf("The str is %s\n",buf);
+			if(strstr(buf,"ERR"))
+			{
+				strcpy(estr,"set Module function error");
+			}
+			else
+			{
+				flag=1;
+			}
+		}
+		else
+		{
+			strcpy(estr,"Data is not integer");
 		}
 	}
 	else
