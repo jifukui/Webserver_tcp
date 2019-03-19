@@ -1289,6 +1289,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 	portinfo=json_object();
 	uint8 i,n;
 	uint32 status;
+	uint32 index;
 	if(portarr&&portinfo)
 	{
 		json_object_set_new(portinfo,"HDCPStatus",json_false());
@@ -1325,10 +1326,10 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 					if(data[1]==1)
 					{
 						index=PortImage(data[1],data[0]);
-						json_object_set(portinfo,"PortIndedx",json_integer(i+1));
+						json_object_set(portinfo,"PortIndedx",json_integer(index));
 						json_object_set(portinfo,"HDCPStatus",json_true());
 						copy=json_deep_copy(portinfo);
-						json_array_set(portarr,i,copy);
+						json_array_set(portarr,index-1,copy);
 					}
 				}
 			}
