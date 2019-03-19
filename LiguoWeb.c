@@ -825,7 +825,7 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 			{
 				if(attr==2)
 				{
-					port=port/(LigPortNum/8);
+					port=(port+1)/(LigPortNum/8);
 				}
 				else
 				{
@@ -1324,7 +1324,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				}
 				if(data[0]==n&&data[1]==(i+1))
 				{
-					if(data[1]==1)
+					if(data[2]==1)
 					{
 						index=PortImage(data[1],data[0]);
 						json_object_set(portinfo,"PortIndedx",json_integer(index));
