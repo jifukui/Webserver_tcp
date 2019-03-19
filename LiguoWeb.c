@@ -1328,7 +1328,7 @@ uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr)
 			{
 				dhcp=1;
 			}
-			sprintf(str,"#NET-DHCP %d",dhcp);
+			sprintf(str,"#NET-DHCP %d\r\n",dhcp);
 			printf("The data is %s\n",str);
 			PiPHandler(str,buf,sizeof(buf));
 			printf("The str is %s\n",buf);
