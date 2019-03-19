@@ -346,7 +346,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		length=0;
 		if(LigPortNum==64)
 		{
-			usleep(20000);
+			usleep(40000);
 		}
 		//gettimeofday(&start,NULL);
 		do{
