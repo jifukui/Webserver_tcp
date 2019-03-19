@@ -1322,7 +1322,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 					data[1]=i+1;
 					data[2]=0;
 				}
-				ptintf("%d,%d,%d\n",data[0],data[1],data[2]);
+				printf("%d,%d,%d\n",data[0],data[1],data[2]);
 				if(data[0]==n&&data[1]==(i+1))
 				{
 					if(data[2]==1)
