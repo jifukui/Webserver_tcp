@@ -425,7 +425,7 @@ main( int argc, char** argv )
 	{
 		printf("get data error\n");
 	}
-	nice(3);
+	nice(10);
 	sockfd=lig_pip_open(0);
 	
 
