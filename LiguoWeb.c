@@ -1302,7 +1302,8 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 		}
 		for(n=0;n<2;n++)
 		{
-			sprintf("#HDCP-STAT? %d,*\r\n",n);
+			sprintf(str,"#HDCP-STAT? %d,*\r\n",n);
+			PiPHandler(str,buf,sizeof(buf));
 			for(i=0;i<=LigPortNum;i++)
 			{
 				flag=CmdStrHandler("HDCP-STAT",buf);
