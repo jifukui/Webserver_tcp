@@ -1280,7 +1280,7 @@ uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr)
 uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
-	uint32 data[3];
+	uint32 data[3]={7,7,7};
     char buf[MAXBYTE];
     char str[30];
 	json_t *portarr;
@@ -1310,7 +1310,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				flag=CmdStrHandler("HDCP-STAT",buf);
 				if(flag)
 				{
-					status=sscanf(&buf[flag],"%d,%d,&d\r\n",&data[0],&data[1],&data[2]);
+					status=sscanf(&buf[flag],"%d,%d,&d",&data[0],&data[1],&data[2]);
 					memmove(buf,&buf[flag],sizeof(buf[flag]));
 				}
 				else
