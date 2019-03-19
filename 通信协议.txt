@@ -441,3 +441,38 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（15）获取输入输出信号HDCP状态
+{
+    "cmd":"GetHDCPStatus",
+	"Data":{}
+	]
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetHDCPStatus",
+			"Data":[
+				{
+					"PortIndex":xx,
+					"HDCPStatus":true/false
+				},
+				....
+			]
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetHDCPStatus",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}

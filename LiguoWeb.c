@@ -53,6 +53,7 @@ STATIC uint8 LoadEDID(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetNetwork(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -74,6 +75,7 @@ LigCommandHandler CommandHandler[]={
 	{"SetNetwork",&SetNetwork},
 	{"SetPortFunc",&SetPortFunc},
 	{"SetDHCPStatus",&SetDHCPStatus},
+	{"GetHDCPStatus",&GetHDCPStatus},
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -1271,6 +1273,67 @@ uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr)
 	else
 	{
 		strcpy(estr,"error get Data");
+	}
+	return flag;
+}
+
+uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint32 data[3];
+    char buf[MAXBYTE];
+    char str[30];
+	json_t *portarr;
+	json_t *portinfo,*copy;
+	portarr=json_array();
+	portinfo=json_object();
+	uint8 i,n;
+	uint32 status;
+	if(portarr&&portinfo)
+	{
+		json_object_set_new(portinfo,"HDCPStatus",json_false());
+		json_object_set_new(portinfo,"PortIndedx",json_integer(0));
+		for(i=0;i<(LigPortNum*2)+EXTPORT;i++)
+		{
+			json_object_set(portinfo,"PortIndedx",json_integer(i+1));
+			copy=json_deep_copy(portinfo);
+			json_array_append(portarr,copy);
+		}
+		for(n=0;n<2;n++)
+		{
+			sprintf("#HDCP-STAT? %d,*\r\n",n);
+			for(i=0;i<=LigPortNum;i++)
+			{
+				flag=CmdStrHandler("HDCP-STAT",buf);
+				if(flag)
+				{
+					status=sscanf(&buf[flag],"%d,%d,&d\r\n",&data[0],&data[1],&data[2]);
+					memmove(buf,&buf[flag],sizeof(buf[flag]));
+				}
+				else
+				{
+					status=0;
+				}
+				if(status!=(sizeof(data)/sizeof(uint32)))
+				{
+					data[0]=n;
+					data[1]=i+1;
+					data[2]=0;
+				}
+				if(data[0]==n&&data[1]==(i+1))
+				{
+					if(data[1]==1)
+					{
+						index=PortImage(data[1],data[0]);
+						json_object_set(portinfo,"PortIndedx",json_integer(i+1));
+						json_object_set(portinfo,"HDCPStatus",json_true());
+						copy=json_deep_copy(portinfo);
+						json_array_set(portarr,i,copy);
+					}
+				}
+			}
+		}
+		json_object_set(json,"HDCPStatus",portarr1);
 	}
 	return flag;
 }
