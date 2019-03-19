@@ -575,6 +575,7 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 			}
+			printf("the buf is %s\n",buf);
 			printf("The status is %d\n",status);
 			if(status!=(sizeof(data)/sizeof(uint32)))
 			{
