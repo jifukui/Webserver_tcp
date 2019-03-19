@@ -347,6 +347,10 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	{
 		length=0;
 		//gettimeofday(&start,NULL);
+		if(LigPortNum==64)
+		{
+			usleep(100000)
+		}
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
@@ -593,15 +597,15 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 			}
-			printf("the buf is %s\n",buf);
-			printf("The status is %d\n",status);
+			//printf("the buf is %s\n",buf);
+			//printf("The status is %d\n",status);
 			if(status!=(sizeof(data)/sizeof(uint32)))
 			{
 				data[0]=4;
 				data[1]=4;
 				data[2]=4;
 			}
-			printf("The 3 is %d\n",data[2]);
+			//printf("The 3 is %d\n",data[2]);
 			for(flag=1;flag<=PortNum;flag++)
 			{
 				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag-1));

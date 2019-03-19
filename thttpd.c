@@ -427,7 +427,7 @@ main( int argc, char** argv )
 	}
 	if(LigPortNum==64)
 	{
-		nice(10);
+		nice(2);
 	}
 	sockfd=lig_pip_open(0);
 	
