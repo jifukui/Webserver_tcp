@@ -398,67 +398,6 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		strcpy(estr,"Not Get Model Name");
 	}
 	return flag;
-	
-/*
-	uint8 flag=0;
-	uint8 i;
-    uint8 buf[300];
-    uint8 str[]="#MODEL?\r\n#VERSION?\r\n#SN?\r\n";	
-	uint8 data[300];
-	uint8 *status=NULL;
-	PiPHandler(str,buf,sizeof(buf));
-	memmove(buf,&buf[START],strlen(&buf[flag]));
-	buf[strlen(buf)-2]=NULL;
-	flag=CmdStrHandler("MODEL",buf);
-	if(flag)
-	{
-		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
-		status=strstr(buf,"~01@");
-		if(status)
-		{
-			buf[status-buf-2]=NULL;
-			json_object_set_new(json,"name",json_string(&buf[flag]));
-			memmove(buf,status+4,strlen(status+4));
-			flag=CmdStrHandler("VERSION",buf);
-			if(flag)
-			{
-				status=strstr(buf,"~01@");
-				if(status)
-				{
-					buf[status-buf-2]=NULL;
-					json_object_set_new(json,"version",json_string(&buf[flag]));
-					memmove(buf,status+4,strlen(status+4));
-					flag=CmdStrHandler("SN",buf);
-					if(flag)
-					{
-						json_object_set_new(json,"sn",json_string(&buf[flag]));
-					}
-					else
-					{
-						strcpy(estr,"Get SN Error");
-					}
-					
-				}
-				else
-				{
-					strcpy(estr,"Get SN Error");
-				}
-			}
-			else
-			{
-				strcpy(estr,"Get Version Error");
-			}
-		}
-		else
-		{
-			strcpy(estr,"Get Version Error");
-		}
-	}
-	else
-	{
-		strcpy(estr,"Not Get Model Name");
-	}
-	return flag;*/
 }
 
 uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
@@ -636,12 +575,14 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 			}
+			printf("The status is %d\n",status);
 			if(status!=(sizeof(data)/sizeof(uint32)))
 			{
 				data[0]=4;
 				data[1]=4;
 				data[2]=4;
 			}
+			printf("The 3 is %d\n",data[2]);
 			for(flag=1;flag<=PortNum;flag++)
 			{
 				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag-1));
