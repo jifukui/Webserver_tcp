@@ -19,6 +19,7 @@ typedef long long int64;
 #define STATIC static
 #define START 4
 #define EXTPORT 2
+#define MAXBYTE 8192
 extern int sockfd;
 extern unsigned int LigPortNum;
 
@@ -343,10 +344,10 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	if(length>0)
 	{
 		length=0;
-		if(LigPortNum==64)
+		/*if(LigPortNum==64)
 		{
 			usleep(20000);
-		}
+		}*/
 		//gettimeofday(&start,NULL);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
@@ -412,7 +413,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=0;
 	uint32 data[2];
-    char buf[4096];
+    char buf[MAXBYTE];
     char str[30]="#SIGNAL? *\r\n";
 	uint8 i;
 	uint8 index;
@@ -553,7 +554,7 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 	uint32 data[3];
 	uint8 status;
 	uint8 index=1;
-    char buf[4096];
+    char buf[MAXBYTE];
     char str[30]="#MODULE-TYPE? *\r\n";
 	char buffer[80];
 	uint8 i;
@@ -625,8 +626,8 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 		json_t *Outport;
 		json_t *port;
 		uint32 in,out;
-		uint8 str[4096];
-		uint8 buf[4096];
+		uint8 str[MAXBYTE];
+		uint8 buf[MAXBYTE];
 		uint8 cmdbuf[80];
 		uint8 length;
 		uint8 i;
