@@ -330,11 +330,14 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 
 uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
-	uint32 length;
+	uint32 length=0;
 	//struct timeval start,end;
 	//unsigned long time;
+	do{
+		length=lig_pip_read_bytes(sockfd,rx,len);
+	}while(length);
 	bzero(rx,len);
-	//printf("The send buf is %s\n",tx);
+	printf("The send buf is %s\n",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
@@ -349,7 +352,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	//printf("The recieve buf is %s\n",rx);
+	printf("The recieve buf is %s\n",rx);
 	return length;
 }
 
