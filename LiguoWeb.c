@@ -832,10 +832,10 @@ uint8 SetDeviceReset(json_t *json,json_t* cmd,char *estr)
 uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag=1;
-	char buf[256]="#FACTORT\r\n";
+	char buf[256]="#FACTORY\r\n";
 	char data[256];
 	PiPHandler(buf,data,sizeof(data));
-	printf("The data is %s\n",data);
+	//printf("The data is %s\n",data);
 	return flag;
 }
 
