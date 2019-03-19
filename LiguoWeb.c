@@ -835,6 +835,7 @@ uint8 SetDeviceFactory(json_t *json,json_t* cmd,char *estr)
 	char buf[256]="#FACTORT\r\n";
 	char data[256];
 	PiPHandler(buf,data,sizeof(data));
+	printf("The data is %s\n",data);
 	return flag;
 }
 
