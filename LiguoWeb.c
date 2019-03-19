@@ -1317,7 +1317,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				{
 					status=0;
 				}
-				ptintf("status is %d\n",status);
+				printf("status is %d\n",status);
 				if(status!=(sizeof(data)/sizeof(uint32)))
 				{
 					data[0]=n;
