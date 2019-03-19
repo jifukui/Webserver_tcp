@@ -344,10 +344,10 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	if(length>0)
 	{
 		length=0;
-		/*if(LigPortNum==64)
+		if(LigPortNum==64)
 		{
 			usleep(20000);
-		}*/
+		}
 		//gettimeofday(&start,NULL);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
