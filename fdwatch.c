@@ -257,7 +257,10 @@ fdwatch_check_fd( int fd )
     {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] == -1 )
 	{
-	syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_check_fd!", fd );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_check_fd!", fd );
+		#endif
+	
 	return 0;
 	}
     return CHECK_FD( fd );
@@ -283,9 +286,12 @@ void
 fdwatch_logstats( long secs )
     {
     if ( secs > 0 )
-	syslog(
-	    LOG_NOTICE, "  fdwatch - %ld %ss (%g/sec)",
-	    nwatches, WHICH, (float) nwatches / secs );
+    {
+        #ifdef JI_SYSLOG
+			syslog(LOG_NOTICE, "  fdwatch - %ld %ss (%g/sec)",nwatches, WHICH, (float) nwatches / secs );
+		#endif
+    }
+	
     nwatches = 0;
     }
 
@@ -324,7 +330,10 @@ kqueue_add_fd( int fd, int rw )
     {
     if ( nkqevents >= maxkqevents )
 	{
-	syslog( LOG_ERR, "too many kqevents in kqueue_add_fd!" );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "too many kqevents in kqueue_add_fd!" );
+		#endif
+	
 	return;
 	}
     kqevents[nkqevents].ident = fd;
@@ -344,7 +353,10 @@ kqueue_del_fd( int fd )
     {
     if ( nkqevents >= maxkqevents )
 	{
-	syslog( LOG_ERR, "too many kqevents in kqueue_del_fd!" );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "too many kqevents in kqueue_del_fd!" );
+		#endif
+	
 	return;
 	}
     kqevents[nkqevents].ident = fd;
@@ -391,7 +403,10 @@ kqueue_check_fd( int fd )
 
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in kqueue_check_fd!", ridx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad ridx (%d) in kqueue_check_fd!", ridx );
+		#endif
+	
 	return 0;
 	}
     if ( ridx >= nreturned ) 
@@ -414,7 +429,10 @@ kqueue_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in kqueue_get_fd!", ridx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad ridx (%d) in kqueue_get_fd!", ridx );
+		#endif
+	
 	return -1;
 	}
     return kqrevents[ridx].ident;
@@ -457,7 +475,10 @@ devpoll_add_fd( int fd, int rw )
     {
     if ( ndpevents >= maxdpevents )
 	{
-	syslog( LOG_ERR, "too many fds in devpoll_add_fd!" );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "too many fds in devpoll_add_fd!" );
+		#endif
+	
 	return;
 	}
     dpevents[ndpevents].fd = fd;
@@ -476,7 +497,10 @@ devpoll_del_fd( int fd )
     {
     if ( ndpevents >= maxdpevents )
 	{
-	syslog( LOG_ERR, "too many fds in devpoll_del_fd!" );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "too many fds in devpoll_del_fd!" );
+		#endif
+	
 	return;
 	}
     dpevents[ndpevents].fd = fd;
