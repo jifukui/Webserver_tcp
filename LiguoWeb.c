@@ -246,7 +246,6 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 			{
 				flag=i;
 				strcpy(buf,data);
-				//printf("The buf is %s\n",buf);
 				data=NULL;
 				break;
 			}
@@ -277,13 +276,8 @@ uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 {
-	uint8 flag;
-	//pid_t pid;
-	//pid=getpid();
-	//printf("The father pid is %d \n",pid);
+	uint8 flag=0;
 	flag=CommandHandle(sstr,json,estr);
-	//pid=getpid();
-	//printf("end pid is %d \n",pid);
 	return flag;
 }
 
@@ -337,27 +331,25 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length;
-	struct timeval start,end;
-	//pid_t pid;
-	unsigned long time;
+	//struct timeval start,end;
+	//unsigned long time;
 	bzero(rx,len);
-	//slig_pip_read_bytes(sockfd,rx,len);
-	printf("The send buf is %s\n",tx);
+	//printf("The send buf is %s\n",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
 		length=0;
-		gettimeofday(&start,NULL);
+		//gettimeofday(&start,NULL);
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
-		gettimeofday(&end,NULL);
-		time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
-		printf("The time is %d\n",time);
+		//gettimeofday(&end,NULL);
+		//time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
+		//printf("The time is %d\n",time);
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	printf("The recieve buf is %s\n",rx);
+	//printf("The recieve buf is %s\n",rx);
 	return length;
 }
 
@@ -519,7 +511,6 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				if(data[1]==1)
 				{
-					//printf("The port is %d\n",data[0]);
 					index=PortImage(data[0],0);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
@@ -551,7 +542,6 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				if(data[1]>0)
 				{
-					//printf("The port is %d\n",data[0]);
 					index=PortImage(data[0],1);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
 					json_object_set(portinfo,"Linkstatus",json_true());
@@ -702,14 +692,12 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 					if(json_typeof(Outport)==JSON_ARRAY)
 					{
 						length=json_array_size(Outport);
-						//printf("The length is %d\n",length);
 						if(length==0)
 						{
 							flag=1;
 						}
 						else
 						{
-							//printf("start buf\n");
 							strcpy(str,"#VID ");
 							for(i=0;i<length;i++)
 							{
@@ -726,14 +714,11 @@ uint8 VideoSwitch(json_t *json,json_t* cmd,char *estr)
 							}
 							if(status)
 							{
-								//printf("good this\n");
 								str[strlen(str)-1]=NULL;
 								strcat(str,"\r\n");
-								//printf("The str is %s\n",str);
 								PiPHandler(str,buf,sizeof(buf));
 								flag=CmdStrHandler("VID",buf);
 								flag=CmdStrHandler("ERR",&buf[flag]);
-								//printf("The err is %d\n",flag);
 								flag=!flag;
 							}
 							else
@@ -879,13 +864,9 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					port=Port2Phy(port);
 				}
-				
 				sprintf(str,"#GEDID %d,%d\r\n",attr,port);
-				printf("The str is %s\n",str);
 				PiPHandler(str,buf,sizeof(buf));
-				printf("The buf is :%s \n",buf);
 				status=sscanf(&buf[START],"GEDID %d,%d,%d\r\n",&attr,&port,&len);
-				printf("The status is %d\n",status);
 				if(status==3)
 				{
 					if(attr==2)
@@ -898,7 +879,6 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 								break;
 							}
 						}
-						printf("The flag is %d \n",flag);
 						memmove(buf,&buf[flag],len);
 					}
 					else
@@ -983,16 +963,11 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 									}
 								}
 							}
-							//printf("the in is %d\n",in);
-							//printf("The type is %d\n",type);
-							//printf("The bit map is %0xllx\n",bitmap);
 							if(bitmap)
 							{
 								sprintf(str,"#CPEDID %d,%d,0,0x%llx\r\n",type,in,bitmap);
 								PiPHandler(str,buf,sizeof(buf));
-								//printf("The buf is :%s \n",buf);
 								status=sscanf(&buf[START],"CPEDID ERR,%d\r\n",&type);
-								//printf("The status is %d\n",status);
 								flag=!status;
 							}
 							else
@@ -1070,14 +1045,11 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 				if(JsonGetString(obj,data))
 				{
 					len=strlen(data)/2;
-					printf("The len is %d\n",len);
 					StringtoUint8(&edid[4],data);
 					sprintf(str,"#LDEDID 0,0x%llx,%d,1\r\n",bitmap,len);
 					PiPHandler(str,buf,sizeof(buf));
-					printf("The Buffer is %s\n",buf);
 					if(strstr(buf,"READY"))
 					{
-						printf("good for first\n");
 						bzero(str,sizeof(str));
 						edid[0]=0;
 						edid[1]=1;
@@ -1085,20 +1057,14 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						edid[3]=(len+2)%256;
 						edid[len+4]=0xAA;
 						edid[len+5]=0x55;
-						for(i=0;i<len+6;i++)
-						{
-							printf("The data %d is %02x\n",i,edid[i]);
-						}
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
 						if(len)
 						{
-							printf("The len is %d\n",len);
 							len=0;
 							do{
 								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 								if(len>0)
 								{
-									printf("The buf is %s\n",buf);
 									if(strstr(buf,"ERR"))
 									{
 										strcpy(estr,"second command error");
@@ -1111,7 +1077,6 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 									}
 								}
 							}while(1);
-							printf("end of ldedid\n");
 						}
 						else
 						{
@@ -1177,7 +1142,6 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 		{
 			sprintf(str,"#NET-CONFIG 0,%s,%s,%s\r\n",ip,mask,gateway);
 			PiPHandler(str,buf,sizeof(buf));
-			printf("The buf is %s\n",buf);
 			if(strstr(buf,"ERR"))
 			{
 				strcpy(estr,"set net work error");
@@ -1186,10 +1150,8 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 		obj=json_object_get(cmd,"tcp");
 		if(JsonGetInteger(obj,&tcp))
 		{
-			printf("The tcp is %d\n",tcp);
 			sprintf(str,"#ETH-PORT TCP,%d\r\n",tcp);
 			PiPHandler(str,buf,sizeof(buf));
-			printf("The buf is %s\n",buf);
 			if(strstr(buf,"ERR"))
 			{
 				strcpy(estr,"set tcp error");
@@ -1204,7 +1166,6 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 		{
 			sprintf(str,"#ETH-PORT UDP,%d\r\n",tcp);
 			PiPHandler(str,buf,sizeof(buf));
-			printf("The buf is %s\n",buf);
 			if(strstr(buf,"ERR"))
 			{
 				strcpy(estr,"set UDP error");
@@ -1260,9 +1221,7 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 									if(JsonGetInteger(obj,&value))
 									{
 										sprintf(str,"#MODULE-FUNC %d,%d,%d,%d\r\n",sid,dir,index,value);
-										//printf("The str is %s\n",str);
 										PiPHandler(str,buf,sizeof(buf));
-										//printf("The buf is %s\n",buf);
 										if(strstr(buf,"ERR"))
 										{
 											strcpy(estr,"set Module function error");
@@ -1298,7 +1257,7 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 					strcpy(estr,"Data index is not Object");
 				}
 			}
-			printf("The i is %d\n",i);
+			
 		}
 		else
 		{
@@ -1329,9 +1288,7 @@ uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr)
 				dhcp=1;
 			}
 			sprintf(str,"#NET-DHCP %d\r\n",dhcp);
-			printf("The data is %s\n",str);
 			PiPHandler(str,buf,sizeof(buf));
-			printf("The str is %s\n",buf);
 			if(strstr(buf,"ERR"))
 			{
 				strcpy(estr,"set Module function error");
