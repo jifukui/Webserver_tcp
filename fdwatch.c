@@ -208,7 +208,10 @@ fdwatch_add_fd( int fd, void* client_data, int rw )
     {
     if ( fd < 0 || fd >= nfiles || fd_rw[fd] != -1 )
 	{
-	syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_add_fd!", fd );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad fd (%d) passed to fdwatch_add_fd!", fd );
+		#endif
+	
 	return;
 	}
     ADD_FD( fd, rw );
