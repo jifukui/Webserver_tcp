@@ -1333,7 +1333,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				}
 			}
 		}
-		json_object_set(json,"HDCPStatus",portarr1);
+		json_object_set(json,"HDCPStatus",portarr);
 	}
 	return flag;
 }
