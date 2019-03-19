@@ -335,12 +335,12 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	uint32 length=0;
 	//struct timeval start,end;
 	//unsigned long time;
-	/*do{
+	do{
 		length=lig_pip_read_bytes(sockfd,rx,len);
-	}while(length);*/
-	//printf("The length is %d\n",length);
+	}while(length);
+	printf("The length is %d\n",length);
 	bzero(rx,len);
-	//printf("The send buf is %s\n",tx);
+	printf("The send buf is %s\n",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
@@ -355,6 +355,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		}while(length==0);
 		if(LigPortNum==64)
 		{
+			usleep(20000);
 			lig_pip_read_bytes(sockfd,&rx[length],len-length-1);
 		}
 		//gettimeofday(&end,NULL);
