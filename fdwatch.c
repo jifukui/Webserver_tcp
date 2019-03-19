@@ -542,7 +542,10 @@ devpoll_check_fd( int fd )
 
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in devpoll_check_fd!", ridx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad ridx (%d) in devpoll_check_fd!", ridx );
+		#endif
+	
 	return 0;
 	}
     if ( ridx >= nreturned )
@@ -565,7 +568,10 @@ devpoll_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in devpoll_get_fd!", ridx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad ridx (%d) in devpoll_get_fd!", ridx );
+		#endif
+	
 	return -1;
 	}
     return dprevents[ridx].fd;
@@ -605,7 +611,10 @@ poll_add_fd( int fd, int rw )
     {
     if ( npoll_fds >= nfiles )
 	{
-	syslog( LOG_ERR, "too many fds in poll_add_fd!" );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "too many fds in poll_add_fd!" );
+		#endif
+	
 	return;
 	}
     pollfds[npoll_fds].fd = fd;
@@ -627,7 +636,10 @@ poll_del_fd( int fd )
 
     if ( idx < 0 || idx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad idx (%d) in poll_del_fd!", idx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad idx (%d) in poll_del_fd!", idx );
+		#endif
+	
 	return;
 	}
     --npoll_fds;
@@ -668,7 +680,10 @@ poll_check_fd( int fd )
 
     if ( fdidx < 0 || fdidx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad fdidx (%d) in poll_check_fd!", fdidx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad fdidx (%d) in poll_check_fd!", fdidx );
+		#endif
+	
 	return 0;
 	}
     if ( pollfds[fdidx].revents & POLLERR )
@@ -687,7 +702,10 @@ poll_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in poll_get_fd!", ridx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad ridx (%d) in poll_get_fd!", ridx );
+		#endif
+	
 	return -1;
 	}
     return poll_rfdidx[ridx];
@@ -737,7 +755,10 @@ select_add_fd( int fd, int rw )
     {
     if ( nselect_fds >= nfiles )
 	{
-	syslog( LOG_ERR, "too many fds in select_add_fd!" );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "too many fds in select_add_fd!" );
+		#endif
+	
 	return;
 	}
     select_fds[nselect_fds] = fd;
@@ -761,7 +782,10 @@ select_del_fd( int fd )
 
     if ( idx < 0 || idx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad idx (%d) in select_del_fd!", idx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad idx (%d) in select_del_fd!", idx );
+		#endif
+	
 	return;
 	}
 
@@ -849,7 +873,10 @@ select_get_fd( int ridx )
     {
     if ( ridx < 0 || ridx >= nfiles )
 	{
-	syslog( LOG_ERR, "bad ridx (%d) in select_get_fd!", ridx );
+        #ifdef JI_SYSLOG
+			syslog( LOG_ERR, "bad ridx (%d) in select_get_fd!", ridx );
+		#endif
+	
 	return -1;
 	}
     return select_rfdidx[ridx];
