@@ -333,6 +333,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length=0;
+	uint32 status=0;
 	//struct timeval start,end;
 	//unsigned long time;
 	do{
@@ -353,11 +354,17 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
+		printf("The length 1 is %d\n",length);
 		if(LigPortNum==64)
 		{
-			usleep(20000);
-			lig_pip_read_bytes(sockfd,&rx[length],len-length-1);
+			//usleep(20000);
+			do{
+				status=lig_pip_read_bytes(sockfd,&rx[length],len-length-1);
+				length+=status;
+				printf("The length  2 is %d\n",length);
+			}while(status);
 		}
+		printf("The length  3 is %d\n",length);
 		//gettimeofday(&end,NULL);
 		//time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
 		//printf("The time is %d\n",time);
