@@ -454,7 +454,7 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	{
         "result":{
             "cmd":"GetHDCPStatus",
-			"Data":[
+			"HDCPStatus":[
 				{
 					"PortIndex":xx,
 					"HDCPStatus":true/false

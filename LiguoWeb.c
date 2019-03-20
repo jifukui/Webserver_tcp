@@ -825,7 +825,7 @@ uint8 GetPortEDID(json_t *json,json_t* cmd,char *estr)
 			{
 				if(attr==2)
 				{
-					port=(port+1)/(LigPortNum/8);
+					port=(port-1)/(LigPortNum/8)-1;
 				}
 				else
 				{
