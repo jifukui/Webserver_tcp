@@ -3846,7 +3846,9 @@ cgi( httpd_conn* hc )
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;
 */
+	sub_process = 1;
 	cgi_child( hc );
+	httpd_unlisten( hc->hs );
     return 0;
     }
 
