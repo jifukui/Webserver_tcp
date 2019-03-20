@@ -351,7 +351,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//gettimeofday(&start,NULL);
 		if(LigPortNum==64)
 		{
-			usleep(80000);
+			usleep(150000);
 			/*if(JiErrorFlag)
 			{
 				sleep(1);
