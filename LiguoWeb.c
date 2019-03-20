@@ -343,7 +343,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	}while(length);
 	//printf("The length is %d\n",length);
 	bzero(rx,len);
-	//printf("The send buf is %s\n",tx);
+	printf("The send buf is %s",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
@@ -366,14 +366,14 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 				printf("The length  2 is %d\n",length);
 			}while(status);
 		}*/
-		//printf("The length  3 is %d\n",length);
+		printf("The length  3 is %d\n",length);
 		//gettimeofday(&end,NULL);
 		//time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
 		//printf("The time is %d\n",time);
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	//printf("The recieve buf is %s\n",rx);
+	printf("The recieve buf is %s",rx);
 	return length;
 }
 
