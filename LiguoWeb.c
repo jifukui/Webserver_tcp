@@ -355,6 +355,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 			if(JiErrorFlag)
 			{
 				sleep(1);
+				JiErrorFlag=0;
 			}
 		}
 		do{
