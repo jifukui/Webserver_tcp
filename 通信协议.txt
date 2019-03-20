@@ -445,7 +445,6 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 {
     "cmd":"GetHDCPStatus",
 	"Data":{}
-	]
 }
 成功返回
 {

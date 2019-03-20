@@ -464,6 +464,8 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			else
 			{
 				status=0;
+				strcpy(estr,"Get Data Error");
+				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
 			{
@@ -495,6 +497,8 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			else
 			{
 				status=0;
+				strcpy(estr,"Get Data Error");
+				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
 			{
@@ -537,6 +541,8 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			else
 			{
 				status=0;
+				strcpy(estr,"Get Data Error");
+				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
 			{
@@ -598,6 +604,8 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			else
 			{
 				status=0;
+				strcpy(estr,"Get Data Error");
+				return flag;
 			}
 			//printf("the buf is %s\n",buf);
 			//printf("The status is %d\n",status);
@@ -1316,6 +1324,8 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				else
 				{
 					status=0;
+					strcpy(estr,"Get Data Error");
+					return flag;
 				}
 				printf("status is %d\n",status);
 				if(status!=(sizeof(data)/sizeof(uint32)))
