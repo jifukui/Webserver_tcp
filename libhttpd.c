@@ -377,7 +377,7 @@ httpd_initialize(
     if ( hs->binding_hostname == (char*) 0 )
 	{
 		#ifdef JI_SYSLOG
-			syslogsyslog(LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,(int) hs->port );
+			syslog(LOG_NOTICE, "%.80s starting on port %d", SERVER_SOFTWARE,(int) hs->port );
 		#endif
 	}
     else
