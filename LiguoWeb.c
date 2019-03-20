@@ -22,7 +22,7 @@ typedef long long int64;
 #define MAXBYTE 8192
 extern int sockfd;
 extern unsigned int LigPortNum;
-
+STATIC uint8 JiErrorFlag=0;
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
@@ -352,6 +352,10 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		if(LigPortNum==64)
 		{
 			usleep(100000);
+			if(JiErrorFlag)
+			{
+				sleep(1);
+			}
 		}
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
@@ -465,6 +469,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
+				JiErrorFlag=1;
 				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
@@ -498,6 +503,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
+				JiErrorFlag=1;
 				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
@@ -542,6 +548,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
+				JiErrorFlag=1;
 				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
@@ -605,6 +612,7 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
+				JiErrorFlag=1;
 				return flag;
 			}
 			//printf("the buf is %s\n",buf);
@@ -1312,7 +1320,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 		{
 			sprintf(str,"#HDCP-STAT? %d,*\r\n",n);
 			PiPHandler(str,buf,sizeof(buf));
-			printf("The buf is %s\n",buf);
+			//printf("The buf is %s\n",buf);
 			for(i=0;i<=LigPortNum;i++)
 			{
 				flag=CmdStrHandler("HDCP-STAT",buf);
@@ -1325,16 +1333,17 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				{
 					status=0;
 					strcpy(estr,"Get Data Error");
+					JiErrorFlag=1;
 					return flag;
 				}
-				printf("status is %d\n",status);
+				//printf("status is %d\n",status);
 				if(status!=(sizeof(data)/sizeof(uint32)))
 				{
 					data[0]=n;
 					data[1]=i+1;
 					data[2]=0;
 				}
-				printf("%d,%d,%d\n",data[0],data[1],data[2]);
+				//printf("%d,%d,%d\n",data[0],data[1],data[2]);
 				if(data[0]==n&&data[1]==(i+1))
 				{
 					if(data[2]==1)
