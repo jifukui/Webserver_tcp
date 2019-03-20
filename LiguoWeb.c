@@ -19,7 +19,7 @@ typedef long long int64;
 #define STATIC static
 #define START 4
 #define EXTPORT 2
-#define MAXBYTE 8192
+#define MAXBYTE 1400
 extern int sockfd;
 extern unsigned int LigPortNum;
 STATIC uint8 JiErrorFlag=0;
@@ -351,7 +351,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//gettimeofday(&start,NULL);
 		if(LigPortNum==64)
 		{
-			usleep(150000);
+			usleep(120000);
 			/*if(JiErrorFlag)
 			{
 				sleep(1);
