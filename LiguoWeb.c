@@ -351,12 +351,12 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//gettimeofday(&start,NULL);
 		if(LigPortNum==64)
 		{
-			usleep(100000);
-			if(JiErrorFlag)
+			usleep(80000);
+			/*if(JiErrorFlag)
 			{
 				sleep(1);
-				JiErrorFlag=0;
-			}
+				JiErrorFlag
+			}*/
 		}
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
