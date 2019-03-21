@@ -306,9 +306,9 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
         if(JsonGetString(cmd,str))
         {	
 			json_error_t error;
-			cpy=json_string(str);
-			json_object_set_new(json,"cmd",cpy);
-			json_decref(cpy);
+			//cpy=json_string(str);
+			json_object_set_new(json,"cmd",json_string(str));
+			//json_decref(cpy);
 			for(i=0;i<length;i++)
 			{
 				if(!strcmp(str,CommandHandler[i].CommandName))
