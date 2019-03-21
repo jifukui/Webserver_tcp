@@ -356,7 +356,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//gettimeofday(&start,NULL);
 		if(LigPortNum==64)
 		{
-			usleep(120000);
+			usleep(90000);
 			/*if(JiErrorFlag)
 			{
 				sleep(1);
@@ -600,7 +600,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			}
 		}
 		json_object_set(json,"VideoRouting",portarr1);
-		json_decref()
+		//json_decref()
 		flag=1;	
 	}
 	else
