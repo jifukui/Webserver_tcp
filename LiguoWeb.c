@@ -618,11 +618,11 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			if(data[0]<(LigPortNum+EXTPORT)&&data[1]<(LigPortNum+EXTPORT))
 			{
 				index=PortImage(data[0],0);
-				index1=PortImage(data[1],1);
 				copy=json_integer(index);
 				json_object_set(portinfo1,"InPort",json_integer(index));
 				json_decref(copy);
 				//json_object_set(portinfo1,"InPort",json_integer(index));
+				index1=PortImage(data[1],1);
 				copy=json_integer(index1);
 				json_object_set(portinfo1,"OutPort",copy);
 				json_decref(copy);
