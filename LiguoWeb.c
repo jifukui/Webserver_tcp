@@ -394,7 +394,8 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
-		json_t *cpy;
+		json_t *cpy=NULL;
+		json_t *data=NULL;
 		cpy=json_string(&buf[flag]);
 		json_object_set_new(json,"name",cpy);
 		json_decref(cpy);
@@ -417,7 +418,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 				printf("version error\n");
 			}
 			json_object_set_new(json,"version",cpy);
-			//json_decref(cpy);
+			json_decref(cpy);
 			//json_object_set_new(json,"version",json_string(&buf[flag]));
 
 			strcpy(str,"#SN?\r\n");
