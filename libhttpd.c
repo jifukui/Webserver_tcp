@@ -3844,7 +3844,7 @@ cgi( httpd_conn* hc )
     hc->should_linger = 0;
 
 	//cgi_child( hc );
-	while(!Process);
+	while(Process);
     return 0;
     }
 
