@@ -3609,9 +3609,10 @@ cgi_child( httpd_conn* hc )
 		str=json_dumps(jsonobj,JSON_PRESERVE_ORDER);
 		add_response(hc,str);
     	httpd_write_response( hc );
-		json_decref(jsonres);
-		json_decref(jsonecho);
-		json_decref(jsonobj);
+		printf("end of this \n");
+		//json_decref(jsonres);
+		//json_decref(jsonecho);
+		//json_decref(jsonobj);
 		free(str);
 		if(str!=NULL)
 		{
