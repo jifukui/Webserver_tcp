@@ -417,7 +417,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 				printf("version error\n");
 			}
 			json_object_set_new(json,"version",cpy);
-			json_decref(cpy);
+			//json_decref(cpy);
 			//json_object_set_new(json,"version",json_string(&buf[flag]));
 
 			strcpy(str,"#SN?\r\n");
