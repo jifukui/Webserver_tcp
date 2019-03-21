@@ -421,10 +421,10 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			flag=CmdStrHandler("SN",buf);
 			if(flag)
 			{
-				cpy=json_string(&buf[flag]);
+				/*cpy=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",cpy);
-				json_decref(cpy);
-				//json_object_set_new(json,"sn",json_string(&buf[flag]));
+				json_decref(cpy);*/
+				json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
 			{
