@@ -297,9 +297,9 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 	length=((sizeof(CommandHandler)/sizeof(LigCommandHandler)));
     if(jsonget)
     {
-        json_t *cmd;
-		json_t *command;
-		json_t *cpy;
+        json_t *cmd=NULL;
+		json_t *command=NULL;
+		json_t *cpy=NULL;
         cmd=json_object_get(jsonget,"cmd");
 		command=json_object_get(jsonget,"Data");
 		char str[30];
