@@ -411,10 +411,11 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		flag=CmdStrHandler("VERSION",buf);
 		if(flag)
 		{
-			cpy=json_string(&buf[flag]);
+			/**下面这两段有错误需要进行测试*/
+			/*cpy=json_string(&buf[flag]);
 			json_object_set_new(json,"version",cpy);
-			json_decref(cpy);
-			//json_object_set_new(json,"version",json_string(&buf[flag]));
+			json_decref(cpy);*/
+			json_object_set_new(json,"version",json_string(&buf[flag]));
 
 			strcpy(str,"#SN?\r\n");
 			PiPHandler(str,buf,sizeof(buf));
@@ -422,10 +423,10 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			flag=CmdStrHandler("SN",buf);
 			if(flag)
 			{
-				cpy=json_string(&buf[flag]);
+				/*cpy=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",cpy);
-				json_decref(cpy);
-				//json_object_set_new(json,"sn",json_string(&buf[flag]));
+				json_decref(cpy);*/
+				json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
 			{
