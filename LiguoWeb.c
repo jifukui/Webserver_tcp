@@ -1017,12 +1017,12 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 										}
 										else
 										{
-											bitmap[1]|=1<<(out-32);
+											bitmap[1]|=1<<(out-31);
 										}
 									}
 								}
 							}
-							if(bitmap)
+							if(bitmap[0]||bitmap[1])
 							{
 								sprintf(str,"#CPEDID %d,%d,0,0x%08x%08x\r\n",type,in,bitmap[1],bitmap[0]);
 								PiPHandler(str,buf,sizeof(buf));
@@ -1100,13 +1100,13 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						}
 						else
 						{
-							bitmap[1]|=1<<(in-32);
+							bitmap[1]|=1<<(in-31);
 						}
 						//bitmap|=(1<<in);
 					}
 				}
 			}
-			if(bitmap)
+			if(bitmap[0]||bitmap[1])
 			{
 				obj=json_object_get(cmd,"EDID");
 				if(JsonGetString(obj,data))
