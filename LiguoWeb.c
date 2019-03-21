@@ -299,13 +299,16 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
     {
         json_t *cmd;
 		json_t *command;
+		json_t *cpy;
         cmd=json_object_get(jsonget,"cmd");
 		command=json_object_get(jsonget,"Data");
 		char str[30];
         if(JsonGetString(cmd,str))
         {	
 			json_error_t error;
-			json_object_set_new(json,"cmd",json_string(str));
+			cpy=json_string(str);
+			json_object_set_new(json,"cmd",cpy);
+			json_decref(cpy);
 			for(i=0;i<length;i++)
 			{
 				if(!strcmp(str,CommandHandler[i].CommandName))
@@ -324,6 +327,8 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
             strcpy(estr,"No the key of cmd");
         }
         json_decref(cmd);
+		json_decref(command);
+		json_decref(jsonget);
     }
     else
     {
@@ -394,22 +399,31 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	flag=CmdStrHandler("MODEL",buf);
 	if(flag)
 	{
+		//json_t *cpy;
+		//cpy=json_string(&buf[flag]);
 		json_object_set_new(json,"name",json_string(&buf[flag]));
-		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
+		//json_decref(cpy);
+		//cpy=json_integer(LigPortNum);
+		json_object_set_new(json,"PortNumber",json_integer(LigPortNum););
+		//json_decref(cpy);
 		strcpy(str,"#VERSION?\r\n");
 		PiPHandler(str,buf,sizeof(buf));
 		buf[strlen(buf)-2]=NULL;
 		flag=CmdStrHandler("VERSION",buf);
 		if(flag)
 		{
+			//cpy=json_string(&buf[flag]);
 			json_object_set_new(json,"version",json_string(&buf[flag]));
+			//json_decref(cpy);
 			strcpy(str,"#SN?\r\n");
 			PiPHandler(str,buf,sizeof(buf));
 			buf[strlen(buf)-2]=NULL;
 			flag=CmdStrHandler("SN",buf);
 			if(flag)
 			{
+				//cpy=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",json_string(&buf[flag]));
+				//json_decref(cpy);
 			}
 			else
 			{
@@ -449,14 +463,21 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 	portinfo1=json_object();
 	if(portarr!=NULL&&portinfo!=NULL&&portinfo1!=NULL&&portarr1!=NULL)
 	{
+		//copy=json_false();
 		json_object_set_new(portinfo,"Linkstatus",json_false());
+		//json_decref(copy);
+		//copy=json_integer(0);
 		json_object_set_new(portinfo,"PortIndedx",json_integer(0));
+		//json_decref(copy);
 		PiPHandler(str,buf,sizeof(buf));
 		for(i=0;i<(LigPortNum*2)+EXTPORT;i++)
 		{
-			json_object_set(portinfo,"PortIndedx",json_integer(i+1));
+			//copy=json_integer(i+1);
+			json_object_set(portinfo,"PortIndedx",copy);
+			//json_decref(copy);
 			copy=json_deep_copy(portinfo);
 			json_array_append(portarr,copy);
+			//json_decref(copy);
 		}
 		for(i=0;i<=LigPortNum;i++)
 		{
@@ -483,10 +504,15 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				if(data[1]==1)
 				{
 					index=PortImage(data[0],0);
+					//copy=json_integer(index);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
+					//json_decref(copy);
+					//copy=json_true();
 					json_object_set(portinfo,"Linkstatus",json_true());
+					//json_decref(copy);
 					copy=json_deep_copy(portinfo);
 					json_array_set(portarr,index-1,copy);
+					//json_decref(copy);
 				}
 			}
 		}
@@ -517,15 +543,21 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				if(data[1]>0)
 				{
 					index=PortImage(data[0],1);
+					//copy=json_integer(index);
 					json_object_set(portinfo,"PortIndedx",json_integer(index));
+					//json_decref(copy);
+					//copy=json_true();
 					json_object_set(portinfo,"Linkstatus",json_true());
+					//json_decref(copy);
 					copy=json_deep_copy(portinfo);
 					json_array_set(portarr,index-1,copy);
+					//json_decref(copy);
 				}
 			}
 		}
 		json_object_set(json,"LinkStatus",portarr);
 		strcpy(str,"#VID? *\r\n");
+		//copy=json_integer(0);
 		json_object_set_new(portinfo1,"InPort",json_integer(0));
 		json_object_set_new(portinfo1,"OutPort",json_integer(0));
 		PiPHandler(str,buf,sizeof(buf));
@@ -568,6 +600,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			}
 		}
 		json_object_set(json,"VideoRouting",portarr1);
+		json_decref()
 		flag=1;	
 	}
 	else

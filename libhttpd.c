@@ -3523,10 +3523,6 @@ cgi_child( httpd_conn* hc )
 	if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
 	{
 		send_mime(hc,200,"","","","application/json;charset=utf-8",(off_t)-1,(time_t)0);
-#ifdef CGI_NICE
-    /* Set priority. */
-    	//(void) nice( CGI_NICE );
-#endif /* CGI_NICE */
 		char *instr=NULL,errstr[200];
 		json_t *jsonobj;
 		json_t *jsonecho;
@@ -3613,13 +3609,14 @@ cgi_child( httpd_conn* hc )
 		str=json_dumps(jsonobj,JSON_PRESERVE_ORDER);
 		add_response(hc,str);
     	httpd_write_response( hc );
+		json_decref(jsonres);
+		json_decref(jsonecho);
 		json_decref(jsonobj);
 		free(str);
 		if(str!=NULL)
 		{
 			str=NULL;
 		}
-    	//_exit( 0 );
 		return 0;
 	}
 	else
@@ -3644,7 +3641,6 @@ cgi_child( httpd_conn* hc )
 					syslog( LOG_ERR, "pipe - %m" );
 				#endif
 	    		
-				printf("5");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3656,7 +3652,6 @@ cgi_child( httpd_conn* hc )
 					syslog( LOG_ERR, "fork - %m" );
 				#endif
 	    		
-				printf("6");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3699,7 +3694,6 @@ cgi_child( httpd_conn* hc )
 					syslog( LOG_ERR, "pipe - %m" );
 				#endif
 	    		
-				printf("7");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3711,7 +3705,6 @@ cgi_child( httpd_conn* hc )
 					syslog( LOG_ERR, "fork - %m" );
 				#endif
 	    		
-				printf("8");
 	    		httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
 	    		httpd_write_response( hc );
 	    		exit( 1 );
@@ -3751,7 +3744,6 @@ cgi_child( httpd_conn* hc )
 				(void) dup2( hc->conn_fd, STDERR_FILENO );
 			}
 		}
-		(void) nice( 10 );
 		directory = strdup( hc->expnfilename );
     	if ( directory == (char*) 0 )
 		{
@@ -3783,7 +3775,6 @@ cgi_child( httpd_conn* hc )
 			syslog( LOG_ERR, "execve %.80s - %m", hc->expnfilename );
 		#endif
     	
-		printf("9");
     	httpd_send_err( hc, 500, err500title, "", err500form, hc->encodedurl );
     	httpd_write_response( hc );
     	_exit( 1 );
@@ -3846,9 +3837,7 @@ cgi( httpd_conn* hc )
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;
 */
-	sub_process = 1;
 	cgi_child( hc );
-	httpd_unlisten( hc->hs );
     return 0;
     }
 
