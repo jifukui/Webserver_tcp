@@ -3610,9 +3610,9 @@ cgi_child( httpd_conn* hc )
 		add_response(hc,str);
     	httpd_write_response( hc );
 		printf("end of this \n");
-		//json_decref(jsonres);
-		//json_decref(jsonecho);
-		//json_decref(jsonobj);
+		json_decref(jsonres);
+		json_decref(jsonecho);
+		json_decref(jsonobj);
 		free(str);
 		if(str!=NULL)
 		{
