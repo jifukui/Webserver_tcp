@@ -404,7 +404,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		//json_decref(cpy);
 		//cpy=json_integer(LigPortNum);
-		json_object_set_new(json,"PortNumber",json_integer(LigPortNum););
+		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 		//json_decref(cpy);
 		strcpy(str,"#VERSION?\r\n");
 		PiPHandler(str,buf,sizeof(buf));
