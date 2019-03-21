@@ -522,7 +522,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 					index=PortImage(data[0],0);
 					copy=json_integer(index);
 					json_object_set(portinfo,"PortIndedx",copy);
-					json_decref(copy);
+					//json_decref(copy);
 					//json_object_set(portinfo,"PortIndedx",json_integer(index));
 					copy=json_true();
 					json_object_set(portinfo,"Linkstatus",copy);
@@ -562,11 +562,11 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 					index=PortImage(data[0],1);
 					copy=json_integer(index);
 					json_object_set(portinfo,"PortIndedx",copy);
-					json_decref(copy);
+					//json_decref(copy);
 					//json_object_set(portinfo,"PortIndedx",json_integer(index));
 					copy=json_true();
 					json_object_set(portinfo,"Linkstatus",json_true());
-					json_decref(copy);
+					//json_decref(copy);
 					//json_object_set(portinfo,"Linkstatus",json_true());
 					copy=json_deep_copy(portinfo);
 					json_array_set(portarr,index-1,copy);
@@ -621,11 +621,11 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				index1=PortImage(data[1],1);
 				copy=json_integer(index);
 				json_object_set(portinfo1,"InPort",json_integer(index));
-				json_decref(copy);
+				//json_decref(copy);
 				//json_object_set(portinfo1,"InPort",json_integer(index));
 				copy=json_integer(index1);
 				json_object_set(portinfo1,"OutPort",copy);
-				json_decref(copy);
+				//json_decref(copy);
 				//json_object_set(portinfo1,"OutPort",json_integer(index1));
 				copy=json_deep_copy(portinfo1);
 				json_array_append(portarr1,copy);
