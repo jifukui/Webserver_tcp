@@ -443,7 +443,10 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		{
 			strcpy(estr,"Get Version Error");
 		}
-		
+		json_decref(portnum);
+		json_decref(sn);
+		json_decref(name);
+		json_decref(version);
 		
 	}
 	else
