@@ -326,9 +326,9 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
         {
             strcpy(estr,"No the key of cmd");
         }
-        //json_decref(cmd);
-		//json_decref(command);
-		//json_decref(jsonget);
+        json_decref(cmd);
+		json_decref(command);
+		json_decref(jsonget);
     }
     else
     {
