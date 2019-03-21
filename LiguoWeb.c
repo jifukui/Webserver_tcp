@@ -629,6 +629,10 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				//json_object_set(portinfo1,"OutPort",json_integer(index1));
 				copy=json_deep_copy(portinfo1);
 				json_array_append(portarr1,copy);
+				if(i==0)
+				{
+					printf("data is %d,%d\n",index,index1);
+				}
 			}
 		}
 		json_object_set(json,"VideoRouting",portarr1);
