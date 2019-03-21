@@ -378,7 +378,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	printf("The recieve buf is %s",rx);
+	//printf("The recieve buf is %s",rx);
 	return length;
 }
 

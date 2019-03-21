@@ -3797,6 +3797,7 @@ cgi( httpd_conn* hc )
 	}
     ++hc->hs->cgi_count;
     httpd_clear_ndelay( hc->conn_fd );
+	printf("start\n");
 	while(Process);
     r = fork( );
     if ( r < 0 )
@@ -3816,6 +3817,7 @@ cgi( httpd_conn* hc )
 	Process=1;
 	httpd_unlisten( hc->hs );
 	cgi_child( hc );
+	printf("end\n");
 	Process=0;
 	}
 
