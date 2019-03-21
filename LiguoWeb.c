@@ -530,7 +530,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 					//json_object_set(portinfo,"Linkstatus",json_true());
 					copy=json_deep_copy(portinfo);
 					json_array_set(portarr,index-1,copy);
-					json_decref(copy);
+					//json_decref(copy);
 				}
 			}
 		}
