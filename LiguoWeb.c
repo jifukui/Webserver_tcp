@@ -329,6 +329,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
         json_decref(cmd);
 		json_decref(command);
 		json_decref(jsonget);
+		json_decref(cpy);
     }
     else
     {
