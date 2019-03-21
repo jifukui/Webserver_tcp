@@ -1024,7 +1024,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 							}
 							if(bitmap)
 							{
-								sprintf(str,"#CPEDID %d,%d,0,0x%08%08x\r\n",type,in,bitmap[1],bitmap[0]);
+								sprintf(str,"#CPEDID %d,%d,0,0x%08x%08x\r\n",type,in,bitmap[1],bitmap[0]);
 								PiPHandler(str,buf,sizeof(buf));
 								status=sscanf(&buf[START],"CPEDID ERR,%d\r\n",&type);
 								flag=!status;
@@ -1113,7 +1113,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					len=strlen(data)/2;
 					StringtoUint8(&edid[4],data);
-					sprintf(str,"#LDEDID 0,0x%08%08x,%d,1\r\n",bitmap[1],bitmap[0],len);
+					sprintf(str,"#LDEDID 0,0x%08x%08x,%d,1\r\n",bitmap[1],bitmap[0],len);
 					PiPHandler(str,buf,sizeof(buf));
 					if(strstr(buf,"READY"))
 					{
