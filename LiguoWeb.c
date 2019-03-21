@@ -1017,7 +1017,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 										}
 										else
 										{
-											bitmap[1]|=1<<(out-31);
+											bitmap[1]|=1<<(out-32);
 										}
 									}
 								}
@@ -1100,7 +1100,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						}
 						else
 						{
-							bitmap[1]|=1<<(in-31);
+							bitmap[1]|=1<<(in-32);
 						}
 						//bitmap|=(1<<in);
 					}
