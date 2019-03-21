@@ -3819,7 +3819,7 @@ cgi( httpd_conn* hc )
 	printf("CGI\n");
 	cgi_child( hc );
 	printf("end\n");
-	Process=0;
+	exit(0);
 	}
 	wait();
 	printf("wait\n");
