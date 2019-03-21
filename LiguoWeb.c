@@ -348,7 +348,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	}while(length);
 	//printf("The length is %d\n",length);
 	bzero(rx,len);
-	printf("The send buf is %s",tx);
+	//printf("The send buf is %s",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{

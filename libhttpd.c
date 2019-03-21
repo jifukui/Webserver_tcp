@@ -3832,7 +3832,7 @@ cgi( httpd_conn* hc )
 #ifdef CGI_TIMELIMIT
     if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
 	{
-		Jtimer=8*1000;
+		Jtimer=30*1000;
 	}
 	else
 	{
