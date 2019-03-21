@@ -423,7 +423,6 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			{
 				cpy=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",cpy);
-				json_decref(cpy);
 				//json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
@@ -440,6 +439,10 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	else
 	{
 		strcpy(estr,"Not Get Model Name");
+	}
+	if(cpy)
+	{
+		json_decref(cpy);
 	}
 	return flag;
 }
