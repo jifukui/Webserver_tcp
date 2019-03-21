@@ -22,7 +22,7 @@ typedef long long int64;
 #define MAXBYTE 1400
 extern int sockfd;
 extern unsigned int LigPortNum;
-STATIC uint8 JiErrorFlag=0;
+
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
@@ -348,7 +348,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	}while(length);
 	//printf("The length is %d\n",length);
 	bzero(rx,len);
-	//printf("The send buf is %s",tx);
+	printf("The send buf is %s",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
@@ -357,11 +357,6 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		if(LigPortNum==64)
 		{
 			usleep(90000);
-			/*if(JiErrorFlag)
-			{
-				sleep(1);
-				JiErrorFlag
-			}*/
 		}
 		do{
         	length=lig_pip_read_bytes(sockfd,rx,len);
@@ -491,7 +486,6 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
-				JiErrorFlag=1;
 				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
@@ -530,7 +524,6 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
-				JiErrorFlag=1;
 				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
@@ -581,7 +574,6 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
-				JiErrorFlag=1;
 				return flag;
 			}
 			if(status!=(sizeof(data)/sizeof(uint32)))
@@ -646,7 +638,6 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			{
 				status=0;
 				strcpy(estr,"Get Data Error");
-				JiErrorFlag=1;
 				return flag;
 			}
 			//printf("the buf is %s\n",buf);
@@ -1367,7 +1358,6 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 				{
 					status=0;
 					strcpy(estr,"Get Data Error");
-					JiErrorFlag=1;
 					return flag;
 				}
 				//printf("status is %d\n",status);
