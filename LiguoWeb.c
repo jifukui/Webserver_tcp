@@ -477,21 +477,24 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 	portinfo1=json_object();
 	if(portarr!=NULL&&portinfo!=NULL&&portinfo1!=NULL&&portarr1!=NULL)
 	{
-		//copy=json_false();
-		json_object_set_new(portinfo,"Linkstatus",json_false());
-		//json_decref(copy);
-		//copy=json_integer(0);
-		json_object_set_new(portinfo,"PortIndedx",json_integer(0));
-		//json_decref(copy);
+		copy=json_false();
+		json_object_set_new(portinfo,"Linkstatus",copy);
+		json_decref(copy);
+		//json_object_set_new(portinfo,"Linkstatus",json_false());
+		copy=json_integer(0);
+		json_object_set_new(portinfo,"PortIndedx",copy);
+		json_decref(copy);
+		//json_object_set_new(portinfo,"PortIndedx",json_integer(0));
 		PiPHandler(str,buf,sizeof(buf));
 		for(i=0;i<(LigPortNum*2)+EXTPORT;i++)
 		{
-			//copy=json_integer(i+1);
+			copy=json_integer(i+1);
 			json_object_set(portinfo,"PortIndedx",copy);
-			//json_decref(copy);
+			json_decref(copy);
+			//json_object_set(portinfo,"PortIndedx",json_integer(i+1));
 			copy=json_deep_copy(portinfo);
 			json_array_append(portarr,copy);
-			//json_decref(copy);
+			json_decref(copy);
 		}
 		for(i=0;i<=LigPortNum;i++)
 		{
@@ -517,15 +520,17 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				if(data[1]==1)
 				{
 					index=PortImage(data[0],0);
-					//copy=json_integer(index);
-					json_object_set(portinfo,"PortIndedx",json_integer(index));
-					//json_decref(copy);
-					//copy=json_true();
-					json_object_set(portinfo,"Linkstatus",json_true());
-					//json_decref(copy);
+					copy=json_integer(index);
+					json_object_set(portinfo,"PortIndedx",copy);
+					json_decref(copy);
+					//json_object_set(portinfo,"PortIndedx",json_integer(index));
+					copy=json_true();
+					json_object_set(portinfo,"Linkstatus",copy);
+					json_decref(copy);
+					//json_object_set(portinfo,"Linkstatus",json_true());
 					copy=json_deep_copy(portinfo);
 					json_array_set(portarr,index-1,copy);
-					//json_decref(copy);
+					json_decref(copy);
 				}
 			}
 		}
@@ -555,12 +560,14 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				if(data[1]>0)
 				{
 					index=PortImage(data[0],1);
-					//copy=json_integer(index);
-					json_object_set(portinfo,"PortIndedx",json_integer(index));
-					//json_decref(copy);
-					//copy=json_true();
+					copy=json_integer(index);
+					json_object_set(portinfo,"PortIndedx",copy);
+					json_decref(copy);
+					//json_object_set(portinfo,"PortIndedx",json_integer(index));
+					copy=json_true();
 					json_object_set(portinfo,"Linkstatus",json_true());
-					//json_decref(copy);
+					json_decref(copy);
+					//json_object_set(portinfo,"Linkstatus",json_true());
 					copy=json_deep_copy(portinfo);
 					json_array_set(portarr,index-1,copy);
 					//json_decref(copy);
@@ -569,9 +576,17 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 		}
 		json_object_set(json,"LinkStatus",portarr);
 		strcpy(str,"#VID? *\r\n");
-		//copy=json_integer(0);
-		json_object_set_new(portinfo1,"InPort",json_integer(0));
-		json_object_set_new(portinfo1,"OutPort",json_integer(0));
+		copy=json_integer(0);
+		json_object_set_new(portinfo1,"InPort",copy);
+		json_object_set_new(portinfo1,"OutPort",copy);
+		json_decref(copy);
+		//json_object_set_new(portinfo1,"InPort",json_integer(0));
+		//json_object_set_new(portinfo1,"OutPort",json_integer(0));
+		copy=json_true();
+		json_object_set(portinfo,"Linkstatus",copy);
+		json_decref(copy);
+		//json_object_set(portinfo,"Linkstatus",json_true());
+		
 		PiPHandler(str,buf,sizeof(buf));
 		for(i=0;i<=LigPortNum;i++)
 		{
@@ -604,14 +619,24 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 			{
 				index=PortImage(data[0],0);
 				index1=PortImage(data[1],1);
+				copy=json_integer(index);
 				json_object_set(portinfo1,"InPort",json_integer(index));
-				json_object_set(portinfo1,"OutPort",json_integer(index1));
+				json_decref(copy);
+				//json_object_set(portinfo1,"InPort",json_integer(index));
+				copy=json_integer(index1);
+				json_object_set(portinfo1,"OutPort",copy);
+				json_decref(copy);
+				//json_object_set(portinfo1,"OutPort",json_integer(index1));
 				copy=json_deep_copy(portinfo1);
 				json_array_append(portarr1,copy);
 			}
 		}
 		json_object_set(json,"VideoRouting",portarr1);
-		//json_decref()
+		json_decref(copy);
+		json_decref(portarr);
+		json_decref(portarr1);
+		json_decref(portinfo);
+		json_decref(portinfo1);
 		flag=1;	
 	}
 	else
