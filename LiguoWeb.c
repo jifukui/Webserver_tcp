@@ -395,15 +395,15 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	if(flag)
 	{
 		json_t *cpy;
-		cpy=json_string(&buf[flag]);
+		/*cpy=json_string(&buf[flag]);
 		json_object_set_new(json,"name",cpy);
-		json_decref(cpy);
-		//json_object_set_new(json,"name",json_string(&buf[flag]));
+		json_decref(cpy);*/
+		json_object_set_new(json,"name",json_string(&buf[flag]));
 		
-		cpy=json_integer(LigPortNum);
+		/*cpy=json_integer(LigPortNum);
 		json_object_set_new(json,"PortNumber",cpy);
-		json_decref(cpy);
-		//json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
+		json_decref(cpy);*/
+		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 		
 		strcpy(str,"#VERSION?\r\n");
 		PiPHandler(str,buf,sizeof(buf));
@@ -411,10 +411,10 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		flag=CmdStrHandler("VERSION",buf);
 		if(flag)
 		{
-			cpy=json_string(&buf[flag]);
+			/*cpy=json_string(&buf[flag]);
 			json_object_set_new(json,"version",cpy);
-			json_decref(cpy);
-			//json_object_set_new(json,"version",json_string(&buf[flag]));
+			json_decref(cpy);*/
+			json_object_set_new(json,"version",json_string(&buf[flag]));
 			strcpy(str,"#SN?\r\n");
 			PiPHandler(str,buf,sizeof(buf));
 			buf[strlen(buf)-2]=NULL;
