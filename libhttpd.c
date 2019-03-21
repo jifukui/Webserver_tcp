@@ -3797,7 +3797,7 @@ cgi( httpd_conn* hc )
 	}
     ++hc->hs->cgi_count;
     httpd_clear_ndelay( hc->conn_fd );
-	printf("start\n");
+	//printf("start\n");
 	//while(Process);
     r = fork( );
     if ( r < 0 )
@@ -3816,13 +3816,13 @@ cgi( httpd_conn* hc )
 	sub_process = 1;
 	Process=1;
 	httpd_unlisten( hc->hs );
-	printf("CGI\n");
+	//printf("CGI\n");
 	cgi_child( hc );
-	printf("end\n");
+	//printf("end\n");
 	exit(0);
 	}
 	wait();
-	printf("wait\n");
+	//printf("wait\n");
 /*
     #ifdef JI_SYSLOG
 		syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
