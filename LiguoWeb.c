@@ -482,16 +482,16 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 		json_decref(copy);*/
 		json_object_set_new(portinfo,"Linkstatus",json_false());
 		/*copy=json_integer(0);
-		json_object_set_new(portinfo,"PortIndedx",copy);
+		json_object_set_new(portinfo,"PortIndex",copy);
 		json_decref(copy);*/
-		json_object_set_new(portinfo,"PortIndedx",json_integer(0));
+		json_object_set_new(portinfo,"PortIndex",json_integer(0));
 		PiPHandler(str,buf,sizeof(buf));
 		for(i=0;i<(LigPortNum*2)+EXTPORT;i++)
 		{
 			/*copy=json_integer(i+1);
-			json_object_set(portinfo,"PortIndedx",copy);
+			json_object_set(portinfo,"PortIndex",copy);
 			json_decref(copy);*/
-			json_object_set(portinfo,"PortIndedx",json_integer(i+1));
+			json_object_set(portinfo,"PortIndex",json_integer(i+1));
 			copy=json_deep_copy(portinfo);
 			json_array_append(portarr,copy);
 			//json_decref(copy);
@@ -521,9 +521,9 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				{
 					index=PortImage(data[0],0);
 					/*copy=json_integer(index);
-					json_object_set(portinfo,"PortIndedx",copy);
+					json_object_set(portinfo,"PortIndex",copy);
 					json_decref(copy);*/
-					json_object_set(portinfo,"PortIndedx",json_integer(index));
+					json_object_set(portinfo,"PortIndex",json_integer(index));
 					/*copy=json_true();
 					json_object_set(portinfo,"Linkstatus",copy);
 					json_decref(copy);*/
@@ -561,9 +561,9 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 				{
 					index=PortImage(data[0],1);
 					/*copy=json_integer(index);
-					json_object_set(portinfo,"PortIndedx",copy);
+					json_object_set(portinfo,"PortIndex",copy);
 					json_decref(copy);*/
-					json_object_set(portinfo,"PortIndedx",json_integer(index));
+					json_object_set(portinfo,"PortIndex",json_integer(index));
 					/*copy=json_true();
 					json_object_set(portinfo,"Linkstatus",json_true());
 					json_decref(copy);*/
@@ -695,7 +695,7 @@ uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr)
 			//printf("The 3 is %d\n",data[2]);
 			for(flag=1;flag<=PortNum;flag++)
 			{
-				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag-1));
+				json_object_set(portinfo,"PortIndex",json_integer(PortNum*i+flag));
 				if(data[2]==0)
 				{
 					json_object_set(portinfo,"OnlineStatus",json_true());
@@ -981,7 +981,7 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 	uint32 in;
 	uint32 type;
 	uint32 out=0;
-	uint64 bitmap=0;
+	uint32 bitmap[2]={0,0};
 	uint32 status;
 	json_t *obj;
 	json_t * arr;
@@ -1011,13 +1011,20 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 									if(out)
 									{
 										out-=1;
-										bitmap|=(1<<out);
+										if(out<32)
+										{
+											bitmap[0]|=1<<out;
+										}
+										else
+										{
+											bitmap[1]|=1<<(out-32);
+										}
 									}
 								}
 							}
 							if(bitmap)
 							{
-								sprintf(str,"#CPEDID %d,%d,0,0x%llx\r\n",type,in,bitmap);
+								sprintf(str,"#CPEDID %d,%d,0,0x%08x08x\r\n",type,in,bitmap[1],bitmap[0]);
 								PiPHandler(str,buf,sizeof(buf));
 								status=sscanf(&buf[START],"CPEDID ERR,%d\r\n",&type);
 								flag=!status;
@@ -1067,7 +1074,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 	uint8 edid[1024];
 	uint8 buf[80];
 	uint32 in;
-	uint64 bitmap=0;
+	uint32 bitmap[2]={0,0};
 	uint32 status;
 	uint32 len;
 	json_t *obj;
@@ -1087,7 +1094,15 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					if(in)
 					{
 						in-=1;
-						bitmap|=(1<<in);
+						if(in<32)
+						{
+							bitmap[0]|=1<<in;
+						}
+						else
+						{
+							bitmap[1]|=1<<(in-32);
+						}
+						//bitmap|=(1<<in);
 					}
 				}
 			}
@@ -1098,7 +1113,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					len=strlen(data)/2;
 					StringtoUint8(&edid[4],data);
-					sprintf(str,"#LDEDID 0,0x%llx,%d,1\r\n",bitmap,len);
+					sprintf(str,"#LDEDID 0,0x%08%08x,%d,1\r\n",bitmap[1],bitmap[0],len);
 					PiPHandler(str,buf,sizeof(buf));
 					if(strstr(buf,"READY"))
 					{
@@ -1378,10 +1393,10 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 	if(portarr&&portinfo)
 	{
 		json_object_set_new(portinfo,"HDCPStatus",json_false());
-		json_object_set_new(portinfo,"PortIndedx",json_integer(0));
+		json_object_set_new(portinfo,"PortIndex",json_integer(0));
 		for(i=0;i<(LigPortNum*2)+EXTPORT;i++)
 		{
-			json_object_set(portinfo,"PortIndedx",json_integer(i+1));
+			json_object_set(portinfo,"PortIndex",json_integer(i+1));
 			copy=json_deep_copy(portinfo);
 			json_array_append(portarr,copy);
 		}
@@ -1417,7 +1432,7 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 					if(data[2]==1)
 					{
 						index=PortImage(data[1],data[0]);
-						json_object_set(portinfo,"PortIndedx",json_integer(index));
+						json_object_set(portinfo,"PortIndex",json_integer(index));
 						json_object_set(portinfo,"HDCPStatus",json_true());
 						copy=json_deep_copy(portinfo);
 						json_array_set(portarr,index-1,copy);
