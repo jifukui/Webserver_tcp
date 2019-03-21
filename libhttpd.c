@@ -194,7 +194,7 @@ static long long atoll( const char* str );
 ** of a hack but it seems to do the right thing.
 */
 static int sub_process = 0;
-
+static int Process=0;
 
 static void
 check_options( void )
@@ -3797,7 +3797,7 @@ cgi( httpd_conn* hc )
 	}
     ++hc->hs->cgi_count;
     httpd_clear_ndelay( hc->conn_fd );
-	/*
+	while(Process);
     r = fork( );
     if ( r < 0 )
 	{
@@ -3813,8 +3813,10 @@ cgi( httpd_conn* hc )
 	{
 	
 	sub_process = 1;
+	Process=1;
 	httpd_unlisten( hc->hs );
 	cgi_child( hc );
+	Process=0;
 	}
 
     #ifdef JI_SYSLOG
@@ -3828,6 +3830,7 @@ cgi( httpd_conn* hc )
 	{
 		#ifdef JI_SYSLOG
 			syslog( LOG_CRIT, "tmr_create(cgi_kill child) failed" );
+			Process=0;
 		#endif
 	
 	exit( 1 );
@@ -3836,8 +3839,8 @@ cgi( httpd_conn* hc )
     hc->status = 200;
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;
-*/
-	cgi_child( hc );
+
+	//cgi_child( hc );
     return 0;
     }
 
