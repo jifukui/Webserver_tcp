@@ -396,6 +396,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 	{
 		json_t *cpy=NULL;
 		json_t *data=NULL;
+		json_t *sn=NULL;
 		cpy=json_string(&buf[flag]);
 		json_object_set_new(json,"name",cpy);
 		json_decref(cpy);
@@ -423,9 +424,9 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			flag=CmdStrHandler("SN",buf);
 			if(flag)
 			{
-				data=json_string(&buf[flag]);
-				json_object_set_new(json,"sn",data);
-				json_decref(data);
+				sn=json_string(&buf[flag]);
+				json_object_set_new(json,"sn",sn);
+				json_decref(sn);
 				//json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
