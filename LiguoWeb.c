@@ -326,9 +326,9 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
         {
             strcpy(estr,"No the key of cmd");
         }
-        json_decref(cmd);
-		json_decref(command);
-		json_decref(jsonget);
+        //json_decref(cmd);
+		//json_decref(command);
+		//json_decref(jsonget);
     }
     else
     {
@@ -418,7 +418,6 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			{
 				//cpy=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",json_string(&buf[flag]));
-				printf("good for this \n");
 				//json_decref(cpy);
 			}
 			else
