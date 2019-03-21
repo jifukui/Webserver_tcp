@@ -490,7 +490,7 @@ uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr)
 		{
 			copy=json_integer(i+1);
 			json_object_set(portinfo,"PortIndedx",copy);
-			json_decref(copy);
+			//json_decref(copy);
 			//json_object_set(portinfo,"PortIndedx",json_integer(i+1));
 			copy=json_deep_copy(portinfo);
 			json_array_append(portarr,copy);
