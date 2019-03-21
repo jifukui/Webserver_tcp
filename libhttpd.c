@@ -3816,6 +3816,7 @@ cgi( httpd_conn* hc )
 	sub_process = 1;
 	Process=1;
 	httpd_unlisten( hc->hs );
+	printf("CGI\n");
 	cgi_child( hc );
 	printf("end\n");
 	Process=0;
@@ -3835,7 +3836,7 @@ cgi( httpd_conn* hc )
 			Process=0;
 		#endif
 	
-	exit( 1 );
+		exit( 1 );
 	}
 #endif 
     hc->status = 200;
@@ -3843,6 +3844,7 @@ cgi( httpd_conn* hc )
     hc->should_linger = 0;
 
 	//cgi_child( hc );
+	while(!Process);
     return 0;
     }
 
