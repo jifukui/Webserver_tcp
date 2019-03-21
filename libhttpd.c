@@ -3823,7 +3823,7 @@ cgi( httpd_conn* hc )
 	}
 	wait();
 	//printf("wait\n");
-/*
+
     #ifdef JI_SYSLOG
 		syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
 	#endif
@@ -3835,7 +3835,7 @@ cgi( httpd_conn* hc )
 	{
 		#ifdef JI_SYSLOG
 			syslog( LOG_CRIT, "tmr_create(cgi_kill child) failed" );
-			Process=0;
+			printf("Have killed\n");
 		#endif
 	
 		exit( 1 );
@@ -3844,9 +3844,6 @@ cgi( httpd_conn* hc )
     hc->status = 200;
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;
-*/
-	//cgi_child( hc );
-	//while(Process);
     return 0;
     }
 
