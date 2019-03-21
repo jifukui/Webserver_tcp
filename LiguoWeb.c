@@ -378,7 +378,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	//printf("The recieve buf is %s",rx);
+	printf("The recieve buf is %s",rx);
 	return length;
 }
 
@@ -411,7 +411,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		flag=CmdStrHandler("VERSION",buf);
 		if(flag)
 		{
-			/**下面这两段有错误需要进行测试*/
+			/**下面这两段有错误需要进行*/
 			/*cpy=json_string(&buf[flag]);
 			json_object_set_new(json,"version",cpy);
 			json_decref(cpy);*/
