@@ -400,7 +400,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		json_t *sn=NULL;
 		name=json_string(&buf[flag]);
 		json_object_set_new(json,"name",name);
-		json_decref(name);
+		//json_decref(name);
 		//json_object_set_new(json,"name",json_string(&buf[flag]));
 		
 		portnum=json_integer(LigPortNum);
@@ -417,7 +417,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			/**下面这两段有错误需要进行*/
 			version=json_string(&buf[flag]);
 			json_object_set_new(json,"version",version);
-			json_decref(version);
+			//json_decref(version);
 			//json_object_set_new(json,"version",json_string(&buf[flag]));
 
 			strcpy(str,"#SN?\r\n");
@@ -429,6 +429,8 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 				sn=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",sn);
 				json_decref(sn);
+				json_decref(name);
+				json_decref(version);
 				//json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
