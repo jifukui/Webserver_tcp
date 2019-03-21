@@ -3785,6 +3785,7 @@ cgi_child( httpd_conn* hc )
 static int
 cgi( httpd_conn* hc )
     {
+		int Jtimer=0;
     int r;
     ClientData client_data;
 
@@ -3829,9 +3830,16 @@ cgi( httpd_conn* hc )
 	#endif
     
 #ifdef CGI_TIMELIMIT
-    
+    if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
+	{
+		Jtimer=8*1000;
+	}
+	else
+	{
+		Jtimer=100*1000;
+	}
     client_data.i = r;
-    if ( tmr_create( (struct timeval*) 0, cgi_kill, client_data, CGI_TIMELIMIT * 1000L, 0 ) == (Timer*) 0 )
+    if ( tmr_create( (struct timeval*) 0, cgi_kill, client_data, Jtimer, 0 ) == (Timer*) 0 )
 	{
 		#ifdef JI_SYSLOG
 			syslog( LOG_CRIT, "tmr_create(cgi_kill child) failed" );
