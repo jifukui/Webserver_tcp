@@ -401,7 +401,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		//json_object_set_new(json,"name",json_string(&buf[flag]));
 		
 		cpy=json_integer(LigPortNum);
-		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
+		json_object_set_new(json,"PortNumber",cpy);
 		json_decref(cpy);
 		//json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 		
@@ -423,7 +423,7 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 			{
 				cpy=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",cpy);
-				//json_decref(cpy);
+				json_decref(cpy);
 				//json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
