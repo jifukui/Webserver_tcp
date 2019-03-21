@@ -429,8 +429,8 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 				sn=json_string(&buf[flag]);
 				json_object_set_new(json,"sn",sn);
 				json_decref(sn);
-				json_decref(name);
-				json_decref(version);
+				//json_decref(name);
+				//json_decref(version);
 				//json_object_set_new(json,"sn",json_string(&buf[flag]));
 			}
 			else
