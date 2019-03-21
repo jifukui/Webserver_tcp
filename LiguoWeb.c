@@ -434,16 +434,16 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		{
 			strcpy(estr,"Get Version Error");
 		}
-		
+		if(cpy)
+		{
+			json_decref(cpy);
+		}
 	}
 	else
 	{
 		strcpy(estr,"Not Get Model Name");
 	}
-	if(cpy)
-	{
-		json_decref(cpy);
-	}
+	
 	return flag;
 }
 
