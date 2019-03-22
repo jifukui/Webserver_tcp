@@ -19,7 +19,7 @@ typedef long long int64;
 #define STATIC static
 #define START 4
 #define EXTPORT 2
-#define MAXBYTE 1400
+#define MAXBYTE 2048
 extern int sockfd;
 extern unsigned int LigPortNum;
 
