@@ -1469,6 +1469,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 	uint8 untarfilename[1024];
 	uint8 newfilename[1024];
 	uint8 newpath[1024];
+	char *str;
 	json_t *untar;
 	json_t *file;
 	if(cmd)
@@ -1476,15 +1477,24 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 		file=json_object_get(cmd,"Filename");
 		if(JsonGetString(file,filename))
 		{
-			FILE * fstream;
-			sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp  > /dev/null && ls -t /tmp/www/ | grep \".k[pm][pt][tw]\"",filename);
-			if(NULL==(fstream=popen(untarfilename,"r"))||NULL==fgets(untarfilename,sizeof(untarfilename), fstream))    
-			{    
-				strcpy(estr,"untar file failed");
-				return flag;	
+			str=strrchr(filename,'.');
+			if(strcasecmp(str,".kmpt"))
+			{
+				printf("match kmpt\n");
 			}
-			pclose(fstream);
-			untarfilename[strlen(untarfilename)-1]=NULL;
+			else
+			{
+				FILE * fstream;
+				sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp  > /dev/null && ls -t /tmp/www/ | grep -i \".k[pm][pt][tw]\"",filename);
+				if(NULL==(fstream=popen(untarfilename,"r"))||NULL==fgets(untarfilename,sizeof(untarfilename), fstream))    
+				{    
+					strcpy(estr,"untar file failed");
+					return flag;	
+				}
+				pclose(fstream);
+				untarfilename[strlen(untarfilename)-1]=NULL;
+			}
+			
 			J2Uppercase(untarfilename,newfilename);
 			printf("The new filename is %s\n",newfilename);
 			sprintf(filename,"/tmp/www/%s",untarfilename);
