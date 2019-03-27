@@ -1545,7 +1545,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	uint8 str[256];
 	uint8 buf[256];
 	struct stat jistat;
-	uint32 jifile;
+	uint32 jifile=0;
 	uint32 length;
 	json_t *file;
 	if(cmd)
@@ -1564,6 +1564,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 				printf("the old path is %s\n",oldpath);
 				printf("the new path is %s\n",newpath);
 				jifile=rename(oldpath,newpath);
+				printf("The jifile is %d\n",jifile);
 				if(jifile)
 				{
 					strcpy(estr,"rename file name error");
