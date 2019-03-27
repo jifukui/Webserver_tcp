@@ -270,8 +270,8 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 	while(*str)
 	{
 		*buf=(*str)&0xdf;
-		printf("buf is %s\n",*buf);
-		printf("str is %s\n",*str);
+		printf("buf is %c\n",*buf);
+		printf("str is %c\n",*str);
 		str++;
 		buf++;
 	}
