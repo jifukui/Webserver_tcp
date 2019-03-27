@@ -277,8 +277,6 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 		{
 			*buf=*str;
 		}
-		printf("str is %c\n",*str);
-		printf("buf is %c\n",*buf);
 		str++;
 		buf++;
 	}
@@ -1511,6 +1509,8 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			printf("The new filename is %s\n",newfilename);
 			sprintf(filename,"/tmp/www/%s",untarfilename);
 			sprintf(newpath,"/tmp/www/%s",newfilename);
+			printf("The old file path is %s\n",filename);
+			printf("The new file path is %s\n",newpath);
 			if(rename(filename,newpath))
 			{
 				strcpy(estr,"rename error");
