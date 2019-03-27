@@ -269,9 +269,16 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 	uint16 i=0;
 	while(*str)
 	{
-		*buf=(*str)&0xdf;
-		printf("buf is %c\n",*buf);
+		if(*str>='a'&&*str<='z')
+		{
+			*buf=(*str)&0xdf;
+		}
+		else
+		{
+			*buf=*str;
+		}
 		printf("str is %c\n",*str);
+		printf("buf is %c\n",*buf);
 		str++;
 		buf++;
 	}
