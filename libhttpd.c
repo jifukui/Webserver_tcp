@@ -3798,8 +3798,6 @@ cgi( httpd_conn* hc )
 	}
     ++hc->hs->cgi_count;
     httpd_clear_ndelay( hc->conn_fd );
-	//printf("start\n");
-	//while(Process);
     r = fork( );
     if ( r < 0 )
 	{
@@ -3817,13 +3815,13 @@ cgi( httpd_conn* hc )
 	sub_process = 1;
 	Process=1;
 	httpd_unlisten( hc->hs );
-	//printf("CGI\n");
+	
 	cgi_child( hc );
-	//printf("end\n");
+	
 	exit(0);
 	}
 	wait();
-	//printf("wait\n");
+	
 
     #ifdef JI_SYSLOG
 		syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
@@ -3832,11 +3830,11 @@ cgi( httpd_conn* hc )
 #ifdef CGI_TIMELIMIT
     if(!strcmp(hc->expnfilename,"cgi-bin/ligline.cgi"))
 	{
-		Jtimer=30*1000;
+		Jtimer=100*1000;
 	}
 	else
 	{
-		Jtimer=100*1000;
+		Jtimer=300*1000;
 	}
     client_data.i = r;
     if ( tmr_create( (struct timeval*) 0, cgi_kill, client_data, Jtimer, 0 ) == (Timer*) 0 )
