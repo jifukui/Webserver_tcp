@@ -1555,21 +1555,21 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	json_t *file;
 	if(cmd)
 	{
-		printf("upgrade\n");
+		//printf("upgrade\n");
 		file=json_object_get(cmd,"oldfile");
 		if(JsonGetString(file,oldfilename))
 		{
-			printf("The old file name is %s\n",oldfilename);
+			//printf("The old file name is %s\n",oldfilename);
 			file=json_object_get(cmd,"newfile");
 			if(JsonGetString(file,newfilename))
 			{
-				printf("The new file name is %s\n",newfilename);
+				//printf("The new file name is %s\n",newfilename);
 				sprintf(oldpath,"/tmp/www/%s",oldfilename);
 				sprintf(newpath,"/tmp/www/%s",newfilename);
-				printf("the old path is %s\n",oldpath);
-				printf("the new path is %s\n",newpath);
+				//printf("the old path is %s\n",oldpath);
+				//printf("the new path is %s\n",newpath);
 				jifile=rename(oldpath,newpath);
-				printf("The jifile is %d\n",jifile);
+				//printf("The jifile is %d\n",jifile);
 				if(jifile)
 				{
 					strcpy(estr,"rename file name error");
@@ -1583,7 +1583,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 					else
 					{
 						sprintf(str,"#MODULE-LOAD %s,%d\r\n",newfilename,jistat.st_size);
-						printf("the str is %s\n",str);
+						//printf("the str is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
 						printf("The first return is %s\n",buf);
 						if(strstr(buf,"START"))

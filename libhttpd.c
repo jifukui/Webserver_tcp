@@ -3821,7 +3821,8 @@ cgi( httpd_conn* hc )
 	exit(0);
 	}
 	wait();
-	
+	printf("have wait\n");
+/*	
 
     #ifdef JI_SYSLOG
 		syslog( LOG_DEBUG, "spawned CGI process %d for file '%.200s'", r, hc->expnfilename );
@@ -3849,7 +3850,7 @@ cgi( httpd_conn* hc )
 #endif 
     hc->status = 200;
     hc->bytes_sent = CGI_BYTECOUNT;
-    hc->should_linger = 0;
+    hc->should_linger = 0;*/
     return 0;
     }
 
