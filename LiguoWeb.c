@@ -1482,12 +1482,12 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			str=strrchr(filename,'.');
 			if(strcasecmp(str,".kmpt"))
 			{
-				printf("match kmpt\n");
+				printf("not match kmpt\n");
 			}
 			else
 			{
 				FILE * fstream;
-				sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp  > /dev/null && ls -t /tmp/www/ | grep -i \".k[pm][pt][tw]\"",filename);
+				sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp/www  > /dev/null && ls -t /tmp/www/ | grep -i \".k[pm][pt][tw]\"",filename);
 				if(NULL==(fstream=popen(untarfilename,"r"))||NULL==fgets(untarfilename,sizeof(untarfilename), fstream))    
 				{    
 					strcpy(estr,"untar file failed");
