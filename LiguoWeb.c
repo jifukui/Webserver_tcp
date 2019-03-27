@@ -1561,7 +1561,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 						PiPHandler(str,buf,sizeof(buf));
 						if(strstr(buf,"START"))
 						{
-							if(strstr(newfilename,"VS-1616DN-EM"))
+							if(strstr(newfilename,"VS-1616DN-EM_VS-3232DN-EM_VS-6464DN-EM"))
 							{
 								flag=1;
 							}
