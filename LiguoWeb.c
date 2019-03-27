@@ -1540,8 +1540,8 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	uint8 flag=0;
 	uint8 oldpath[512];
 	uint8 newpath[512];
-	uint8 oldfilename[64];
-	uint8 newfilename[64];
+	uint8 oldfilename[256];
+	uint8 newfilename[256];
 	uint8 str[256];
 	uint8 buf[256];
 	struct stat jistat;
@@ -1578,6 +1578,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 					else
 					{
 						sprintf(str,"#MODULE-LOAD %s,%d\r\n",newfilename,jistat.st_size);
+						printf("the str is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
 						printf("The first return is %s\n",buf);
 						if(strstr(buf,"START"))
