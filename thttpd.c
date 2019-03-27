@@ -425,9 +425,9 @@ main( int argc, char** argv )
 	{
 		printf("get data error\n");
 	}
-	if(LigPortNum==64)
+	if(!mkdir("/tmp/www",0777))
 	{
-		nice(0);
+		printf("good for creat dir\n");
 	}
 	sockfd=lig_pip_open(0);
 	

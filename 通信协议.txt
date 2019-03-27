@@ -475,3 +475,64 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（16）获取升级文件名称
+{
+    "cmd":"GetUpgradeFileName",
+	"Data":{
+		"Filename":"xxxxx"
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetUpgradeFileName",
+			"Filename":"XXXX"
+				
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetUpgradeFileName",
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（17）开始升级
+{
+    "cmd":"Upgrade",
+	"Data":{
+		"newfile":"xxxxx",
+		"oldfile":"xxxxxx"
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"Upgrade"		
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"Upgrade"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}

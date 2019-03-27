@@ -38,6 +38,7 @@ STATIC uint8 JsonFromFile(uint8 *filepath,uint8 *data);
 STATIC uint8 PortImage(uint8 port,uint8 flag);
 STATIC uint8 Port2Phy(uint8 port);
 STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
+STATIC void J2Uppercase(uint8 *str,uint8 *buf);
 
 STATIC uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr);
@@ -54,6 +55,8 @@ STATIC uint8 SetNetwork(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 Upgrade(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -76,6 +79,8 @@ LigCommandHandler CommandHandler[]={
 	{"SetPortFunc",&SetPortFunc},
 	{"SetDHCPStatus",&SetDHCPStatus},
 	{"GetHDCPStatus",&GetHDCPStatus},
+	{"GetUpgradeFileName",&GetUpgradeFileName},
+	{"Upgrade",&Upgrade},
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -256,6 +261,17 @@ uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 		}
 	}
 	return flag;
+}
+
+void J2Uppercase(uint8 *str,uint8 *buf)
+{
+	uint16 i=0;
+	while(*str)
+	{
+		*buf=*str&0xdf;
+		str++;
+		buf++;
+	}
 }
 
 
@@ -1441,6 +1457,151 @@ uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr)
 			}
 		}
 		json_object_set(json,"HDCPStatus",portarr);
+	}
+	return flag;
+}
+
+uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint8 filename[1024];
+	uint8 untarfilename[1024];
+	uint8 newfilename[1024];
+	uint8 newpath[1024];
+	json_t *untar;
+	json_t *file;
+	if(cmd)
+	{
+		file=json_object_get(cmd,"Filename");
+		if(JsonGetString(file,filename))
+		{
+			FILE * fstream;
+			sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp  > /dev/null && ls -t /tmp/www/ | grep \".k[pm][pt][tw]\"",filename);
+			if(NULL==(fstream=popen(untarfilename,"r"))||NULL==fgets(untarfilename,sizeof(untarfilename), fstream))    
+			{    
+				strcpy(estr,"untar file failed");
+				return flag;	
+			}
+			pclose(fstream);
+			untarfilename[strlen(untarfilename)-1]=NULL;
+			J2Uppercase(untarfilename,newfilename);
+			printf("The new filename is %s\n",newfilename);
+			sprintf(filename,"/tmp/www/%s",untarfilename);
+			sprintf(newpath,"/tmp/www/%s",newfilename);
+			if(rename(filename,newpath))
+			{
+				strcpy(estr,"rename error");
+			}
+			else
+			{
+				json_object_set(json,"Filename",newfilename);
+				flag=1;
+			}
+		}
+		else
+		{
+			strcpy(estr,"Get File Name have a error");
+		}
+	}
+	else
+	{
+		strcpy(estr,"not the file name");
+	}
+	return flag;
+}
+
+uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag;
+	uint8 oldpath[512];
+	uint8 newpath[512];
+	uint8 oldfilename[64];
+	uint8 newfilename[64];
+	uint8 str[256];
+	uint8 buf[256];
+	struct stat jistat;
+	uing32 jifile;
+	json_t *file;
+	if(cmd)
+	{
+		file=json_object_get(cmd,"oldfile");
+		if(JsonGetString(file,oldfilename))
+		{
+			file=json_object_get(cmd,"newfile");
+			if(JsonGetString(file,"newfile"))
+			{
+				sprintf(oldpath,"/tmp/www/%s",oldfilename);
+				sprintf(newpath,"/tmp/www/%s",newfilename);
+				jifile=rename(oldpath,newpath);
+				if(jifile)
+				{
+					strcpy(estr,"rename file name error");
+				}
+				else
+				{
+					if(stat(newpath,&jistat))
+					{
+						strcpy(estr,"get file attribute error");
+					}
+					else
+					{
+						sprintf(str,"#MODULE-LOAD %s,%d\r\n",newfilename,jistat.st_size);
+						PiPHandler(str,buf,sizeof(buf));
+						if(strstr(buf,"START"))
+						{
+							if(strstr(newfilename,"VS-1616DN-EM_VS-3232DN-EM_VS-6464DN-EM"))
+							{
+								return 1;
+							}
+							else
+							{
+								bzero(buf,sizeof(buf));
+								do{
+        							length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+								}while(length==0);
+								printf("The first file is %s\n",buf);
+								if(strstr(buf,"OK"))
+								{
+									bzero(buf,sizeof(buf));
+									do{
+        								length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+									}while(length==0);
+									printf("The first file is %s\n",buf);
+									if(strstr(buf,"OK"))
+									{
+										flag=1;
+									}
+									else
+									{
+										strcpy(estr,"upgrade2 failed");
+									}
+								}
+								else
+								{
+									strcpy(estr,"upgrade failed");
+								}
+							}
+						}
+						else
+						{
+							strcpy(estr,"upgrade start error");
+						}
+					}
+				}
+			}
+			else
+			{
+				strcpy(estr,"get new file name error");
+			}
+		}
+		else
+		{
+			strcpy(estr,"get old file name error");
+		}
+	}
+	else
+	{
+		strcpy(estr,"not the file name");
 	}
 	return flag;
 }
