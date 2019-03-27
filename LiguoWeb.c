@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <jansson.h>
 #include <unistd.h>
@@ -1520,7 +1521,8 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	uint8 str[256];
 	uint8 buf[256];
 	struct stat jistat;
-	uing32 jifile;
+	uint32 jifile;
+	uint32 length;
 	json_t *file;
 	if(cmd)
 	{
