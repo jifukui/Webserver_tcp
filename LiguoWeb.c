@@ -1550,6 +1550,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	json_t *file;
 	if(cmd)
 	{
+		printf("upgrade\n");
 		file=json_object_get(cmd,"oldfile");
 		if(JsonGetString(file,oldfilename))
 		{
