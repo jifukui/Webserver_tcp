@@ -1496,6 +1496,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 				pclose(fstream);
 				untarfilename[strlen(untarfilename)-1]=NULL;
 			}
+			printf("The untarfilename is %s\n",untarfilename);
 			J2Uppercase(untarfilename,newfilename);
 			printf("The new filename is %s\n",newfilename);
 			sprintf(filename,"/tmp/www/%s",untarfilename);
