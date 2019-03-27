@@ -269,7 +269,9 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 	uint16 i=0;
 	while(*str)
 	{
-		*buf=*str&0xdf;
+		*buf=(*str)&0xdf;
+		printf("buf is %s\n",*buf);
+		printf("str is %s\n",*str);
 		str++;
 		buf++;
 	}
@@ -1494,7 +1496,6 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 				pclose(fstream);
 				untarfilename[strlen(untarfilename)-1]=NULL;
 			}
-			
 			J2Uppercase(untarfilename,newfilename);
 			printf("The new filename is %s\n",newfilename);
 			sprintf(filename,"/tmp/www/%s",untarfilename);
