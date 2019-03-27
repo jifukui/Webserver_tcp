@@ -1519,7 +1519,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			else
 			{
 				printf("good for this \n");
-				json_object_set(json,"Filename",newfilename);
+				json_object_set(json,"Filename",json_string(newfilename));
 				flag=1;
 			}
 		}
