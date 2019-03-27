@@ -1576,14 +1576,17 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 					{
 						sprintf(str,"#MODULE-LOAD %s,%d\r\n",newfilename,jistat.st_size);
 						PiPHandler(str,buf,sizeof(buf));
+						printf("The first return is %s\n",buf);
 						if(strstr(buf,"START"))
 						{
 							if(strstr(newfilename,"VS-1616DN-EM_VS-3232DN-EM_VS-6464DN-EM"))
 							{
+								printf("ctrl\n");
 								flag=1;
 							}
 							else
 							{
+								printf("board\n");
 								bzero(buf,sizeof(buf));
 								do{
         							length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
@@ -1595,7 +1598,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 									do{
         								length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 									}while(length==0);
-									printf("The first file is %s\n",buf);
+									printf("The second file is %s\n",buf);
 									if(strstr(buf,"OK"))
 									{
 										flag=1;
