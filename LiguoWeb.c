@@ -1554,9 +1554,11 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 		file=json_object_get(cmd,"oldfile");
 		if(JsonGetString(file,oldfilename))
 		{
+			printf("The old file name is %s\n",oldfilename);
 			file=json_object_get(cmd,"newfile");
-			if(JsonGetString(file,"newfile"))
+			if(JsonGetString(file,newfilename))
 			{
+				printf("The new file name is %s\n",newfilename);
 				sprintf(oldpath,"/tmp/www/%s",oldfilename);
 				sprintf(newpath,"/tmp/www/%s",newfilename);
 				jifile=rename(oldpath,newpath);
