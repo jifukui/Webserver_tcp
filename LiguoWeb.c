@@ -1480,9 +1480,10 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 		if(JsonGetString(file,filename))
 		{
 			str=strrchr(filename,'.');
-			if(strcasecmp(str,".kmpt"))
+			if(!strcasecmp(str,".kmpt"))
 			{
-				printf("not match kmpt\n");
+				printf("match kmpt\n");
+				memcpy(untarfilename,filename,sizeof(filename));
 			}
 			else
 			{
