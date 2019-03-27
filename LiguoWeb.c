@@ -1537,7 +1537,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 
 uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 {
-	uint8 flag;
+	uint8 flag=0;
 	uint8 oldpath[512];
 	uint8 newpath[512];
 	uint8 oldfilename[64];
@@ -1561,6 +1561,8 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 				printf("The new file name is %s\n",newfilename);
 				sprintf(oldpath,"/tmp/www/%s",oldfilename);
 				sprintf(newpath,"/tmp/www/%s",newfilename);
+				printf("the old path is %s\n",oldpath);
+				printf("the new path is %s\n",newpath);
 				jifile=rename(oldpath,newpath);
 				if(jifile)
 				{
