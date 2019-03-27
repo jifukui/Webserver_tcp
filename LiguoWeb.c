@@ -1488,6 +1488,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			{
 				FILE * fstream;
 				sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp/www  > /dev/null && ls -t /tmp/www/ | grep -i \".k[pm][pt][tw]\"",filename);
+				printf("The untarfilename is %s\n",untarfilename);
 				if(NULL==(fstream=popen(untarfilename,"r"))||NULL==fgets(untarfilename,sizeof(untarfilename), fstream))    
 				{    
 					strcpy(estr,"untar file failed");
@@ -1496,6 +1497,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 				pclose(fstream);
 				untarfilename[strlen(untarfilename)-1]=NULL;
 			}
+			printf("the str is %d\n",strlen(untarfilename));
 			printf("The untarfilename is %s\n",untarfilename);
 			J2Uppercase(untarfilename,newfilename);
 			printf("The new filename is %s\n",newfilename);
