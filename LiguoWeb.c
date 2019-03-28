@@ -379,7 +379,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	}while(length);
 	//printf("The length is %d\n",length);
 	bzero(rx,len);
-	//printf("The send buf is %s",tx);
+	printf("The send buf is %s",tx);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
@@ -409,7 +409,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	//printf("The recieve buf is %s",rx);
+	printf("The recieve buf is %s",rx);
 	return length;
 }
 
@@ -1612,6 +1612,8 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 									{
 										//memmove(buf,&buf[flag],sizeof(buf[flag]));
 										sprintf(str,"LOAD %s,%d OK",newfilename,jistat.st_size);
+										printf("buf is %s\n",buf);
+										printf("str is %s\n",str);
 										if(strstr(buf,str))
 										{
 											flag=1;
