@@ -286,6 +286,7 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 		str++;
 		buf++;
 	}
+	*buf=NULL;
 }
 
 
