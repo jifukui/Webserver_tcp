@@ -3821,7 +3821,7 @@ cgi( httpd_conn* hc )
 	exit(0);
 	}
 	wait();
-	printf("have wait\n");
+	//printf("have wait\n");
 /*	
 
     #ifdef JI_SYSLOG

@@ -282,7 +282,7 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 		{
 			*buf=*str;
 		}
-		printf("The old is %c new is %c\n",*str,*buf);
+		//printf("The old is %c new is %c\n",*str,*buf);
 		str++;
 		buf++;
 	}
@@ -1552,6 +1552,8 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	struct stat jistat;
 	uint32 jifile=0;
 	uint32 length;
+	uint32 data[3];
+	uint32 status=0;
 	json_t *file;
 	if(cmd)
 	{
@@ -1601,6 +1603,32 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
         							length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 								}while(length==0);
 								printf("The first file is %s\n",buf);
+								flag=CmdStrHandler("LOAD",buf);
+								if(flag)
+								{
+									status=sscanf(&buf[flag],"%d,%d,%d %[OK]\r\n",&data[0],&data[1],&data[2],oldfilename);
+									if(status==4)
+									{
+										//memmove(buf,&buf[flag],sizeof(buf[flag]));
+										sprintf(str,"LOAD %s,%d OK",newfilename,jistat.st_size);
+										if(strstr(buf,str))
+										{
+											flag=1;
+										}
+										else
+										{
+											strcpy(estr,"upgrade2 failed");
+										}
+										
+									}
+									else
+									{
+										strcpy(estr,"upgrade1 failed");
+									}
+									
+									
+								}
+								/*
 								if(strstr(buf,"OK"))
 								{
 									bzero(buf,sizeof(buf));
@@ -1616,7 +1644,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 									{
 										strcpy(estr,"upgrade2 failed");
 									}
-								}
+								}*/
 								else
 								{
 									strcpy(estr,"upgrade failed");
