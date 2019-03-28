@@ -1587,7 +1587,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 						sprintf(str,"#MODULE-LOAD %s,%d\r\n",newfilename,jistat.st_size);
 						//printf("the str is %s\n",str);
 						PiPHandler(str,buf,sizeof(buf));
-						printf("The first return is %s\n",buf);
+						printf("The first return is %s",buf);
 						if(strstr(buf,"START"))
 						{
 							if(strstr(newfilename,"VS-1616DN-EM_VS-3232DN-EM_VS-6464DN-EM"))
@@ -1602,7 +1602,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 								do{
         							length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 								}while(length==0);
-								printf("The first file is %s\n",buf);
+								printf("The first file is %s",buf);
 								flag=CmdStrHandler("LOAD",buf);
 								if(flag)
 								{
@@ -1618,33 +1618,13 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 										else
 										{
 											strcpy(estr,"upgrade2 failed");
-										}
-										
+										}	
 									}
 									else
 									{
 										strcpy(estr,"upgrade1 failed");
-									}
-									
-									
+									}	
 								}
-								/*
-								if(strstr(buf,"OK"))
-								{
-									bzero(buf,sizeof(buf));
-									do{
-        								length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-									}while(length==0);
-									printf("The second file is %s\n",buf);
-									if(strstr(buf,"OK"))
-									{
-										flag=1;
-									}
-									else
-									{
-										strcpy(estr,"upgrade2 failed");
-									}
-								}*/
 								else
 								{
 									strcpy(estr,"upgrade failed");
