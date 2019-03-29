@@ -1608,10 +1608,10 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 								if(flag)
 								{
 									status=sscanf(&buf[flag],"%d,%d,%d %[OK]\r\n",&data[0],&data[1],&data[2],oldfilename);
-									flag=0;
 									if(status==4)
 									{
-										memmove(buf,&buf[flag],sizeof(buf[flag+1]));
+										memmove(buf,&buf[flag],sizeof(buf[flag]));
+										flag=0;
 										if(CmdStrHandler("LOAD",buf))
 										{
 											printf("have second\n");
