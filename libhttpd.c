@@ -3812,9 +3812,9 @@ cgi( httpd_conn* hc )
     if ( r == 0 )
 	{
 	
-	sub_process = 1;
-	Process=1;
-	httpd_unlisten( hc->hs );
+	//sub_process = 1;
+	//Process=1;
+	//httpd_unlisten( hc->hs );
 	
 	cgi_child( hc );
 	
