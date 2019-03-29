@@ -1620,9 +1620,8 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 										{
 											printf("no second\n");
 											bzero(buf,sizeof(buf));
-											do{
-        										length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-											}while(length==0);
+											usleep(50);
+        									lig_pip_read_bytes(sockfd,buf,sizeof(buf));	
 										}
 										
 										sprintf(str,"LOAD %s,%d OK",newfilename,jistat.st_size);
