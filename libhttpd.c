@@ -3798,6 +3798,7 @@ cgi( httpd_conn* hc )
 	}
     ++hc->hs->cgi_count;
     httpd_clear_ndelay( hc->conn_fd );
+	/*
     r = fork( );
     if ( r < 0 )
 	{
@@ -3820,7 +3821,7 @@ cgi( httpd_conn* hc )
 	
 	exit(0);
 	}
-	wait();
+	wait();*/
 	//printf("have wait\n");
 /*	
 
@@ -3851,6 +3852,7 @@ cgi( httpd_conn* hc )
     hc->status = 200;
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;*/
+	cgi_child( hc );
     return 0;
     }
 
