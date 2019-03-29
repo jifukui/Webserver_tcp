@@ -1611,7 +1611,6 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 									if(status==4)
 									{
 										memmove(buf,&buf[flag],sizeof(buf[flag]));
-										flag=0;
 										if(CmdStrHandler("LOAD",buf))
 										{
 											printf("have second\n");
@@ -1620,8 +1619,9 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 										{
 											printf("no second\n");
 											bzero(buf,sizeof(buf));
-											usleep(50);
-        									lig_pip_read_bytes(sockfd,buf,sizeof(buf));	
+											do{
+        										length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+											}while(length==0);
 										}
 										
 										sprintf(str,"LOAD %s,%d OK",newfilename,jistat.st_size);
@@ -1633,11 +1633,13 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 										}
 										else
 										{
+											flag=0;
 											strcpy(estr,"upgrade2 failed");
 										}	
 									}
 									else
 									{
+										flag=0;
 										strcpy(estr,"upgrade1 failed");
 									}	
 								}
