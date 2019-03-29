@@ -1611,11 +1611,20 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 									flag=0;
 									if(status==4)
 									{
-										//memmove(buf,&buf[flag],sizeof(buf[flag]));
-										bzero(buf,sizeof(buf));
-										do{
-        									length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-										}while(length==0);
+										memmove(buf,&buf[flag],sizeof(buf[flag]));
+										if(CmdStrHandler("LOAD",buf))
+										{
+											printf("have second\n");
+										}
+										else
+										{
+											printf("no second\n");
+											bzero(buf,sizeof(buf));
+											do{
+        										length=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+											}while(length==0);
+										}
+										
 										sprintf(str,"LOAD %s,%d OK",newfilename,jistat.st_size);
 										printf("buf is %s\n",buf);
 										printf("str is %s\n",str);
