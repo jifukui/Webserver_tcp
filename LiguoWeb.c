@@ -1029,6 +1029,10 @@ uint8 CopyPortEDID(json_t *json,json_t* cmd,char *estr)
 				{
 					if(type<=2)
 					{
+						if(type==2)
+						{
+							in=(in-1)/(LigPortNum/8)+1;
+						}
 						arr=json_object_get(cmd,"dim");
 						if(json_typeof(arr)==JSON_ARRAY)
 						{
