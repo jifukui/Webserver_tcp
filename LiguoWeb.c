@@ -1608,6 +1608,7 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 								if(flag)
 								{
 									status=sscanf(&buf[flag],"%d,%d,%d %[OK]\r\n",&data[0],&data[1],&data[2],oldfilename);
+									flag=0;
 									if(status==4)
 									{
 										//memmove(buf,&buf[flag],sizeof(buf[flag]));
