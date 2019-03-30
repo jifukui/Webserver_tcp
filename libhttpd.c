@@ -610,9 +610,9 @@ httpd_write_response( httpd_conn* hc )
     /* Send the response, if necessary. */
     if ( hc->responselen > 0 )
 	{
-		printf("before httpd_write_fully\n");
+		//printf("before httpd_write_fully\n");
 	(void) httpd_write_fully( hc->conn_fd, hc->response, hc->responselen );
-		printf("end httpd_write_fully\n");
+		//printf("end httpd_write_fully\n");
 	hc->responselen = 0;
 	}
     }
@@ -3610,9 +3610,10 @@ cgi_child( httpd_conn* hc )
 		}
 		str=json_dumps(jsonobj,JSON_PRESERVE_ORDER);
 		add_response(hc,str);
-		printf("send before\n");
+		//printf("send before\n");
+		sub_process = 1;
     	httpd_write_response( hc );
-		printf("send after\n");
+		//printf("send after\n");
 		//json_decref(jsonres);
 		//json_decref(jsonecho);
 		//json_decref(jsonobj);
