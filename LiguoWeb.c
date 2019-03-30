@@ -343,6 +343,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 				if(!strcmp(str,CommandHandler[i].CommandName))
 				{
 					flag=(*CommandHandler[i].CmdHandler)(json,command,estr);
+					printf("handler over\n");
 					break;
 				}
 			}

@@ -3608,15 +3608,18 @@ cgi_child( httpd_conn* hc )
 		}
 		str=json_dumps(jsonobj,JSON_PRESERVE_ORDER);
 		add_response(hc,str);
+		printf("send before\n");
     	httpd_write_response( hc );
+		printf("send after\n");
 		//json_decref(jsonres);
 		//json_decref(jsonecho);
-		json_decref(jsonobj);
+		//json_decref(jsonobj);
 		free(str);
 		if(str!=NULL)
 		{
 			str=NULL;
 		}
+		printf("end of all\n");
 		return 0;
 	}
 	else
