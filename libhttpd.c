@@ -612,7 +612,7 @@ httpd_write_response( httpd_conn* hc )
 	{
 		//printf("before httpd_write_fully\n");
 	(void) httpd_write_fully( hc->conn_fd, hc->response, hc->responselen );
-		//printf("end httpd_write_fully\n");
+		printf("end httpd_write_fully\n");
 	hc->responselen = 0;
 	}
     }
@@ -3613,6 +3613,7 @@ cgi_child( httpd_conn* hc )
 		//printf("send before\n");
 		sub_process = 1;
     	httpd_write_response( hc );
+		printf("end of all\n");
 		//printf("send after\n");
 		//json_decref(jsonres);
 		//json_decref(jsonecho);
@@ -3622,7 +3623,7 @@ cgi_child( httpd_conn* hc )
 		{
 			str=NULL;
 		}
-		printf("end of all\n");
+		
 		return 0;
 	}
 	else
@@ -4505,7 +4506,10 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
 		return r;
 	}
 	if ( r == 0 )
-	    break;
+	{
+		printf("write data is zero error is %d\n",errno);
+		break;
+	}
 	nwritten += r;
 	}
 
