@@ -4490,6 +4490,7 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
     int nwritten;
 
     nwritten = 0;
+	printf("the number is %d\n",nbytes);
     while ( nwritten < nbytes )
 	{
 	int r;
