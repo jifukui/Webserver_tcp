@@ -4494,8 +4494,9 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
     while ( nwritten < nbytes )
 	{
 	int r;
-
+	printf("start write\n");
 	r = write( fd, buf + nwritten, nbytes - nwritten );
+	printf("The write number is %d\n",r);
 	if ( r < 0 && ( errno == EINTR || errno == EAGAIN ) )
 	    {
 	    sleep( 1 );
@@ -4513,7 +4514,7 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
 	}
 	nwritten += r;
 	}
-
+	printf("the total is %d\n",nwritten);
     return nwritten;
     }
 
