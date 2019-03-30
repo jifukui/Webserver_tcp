@@ -610,7 +610,9 @@ httpd_write_response( httpd_conn* hc )
     /* Send the response, if necessary. */
     if ( hc->responselen > 0 )
 	{
+		printf("before httpd_write_fully\n");
 	(void) httpd_write_fully( hc->conn_fd, hc->response, hc->responselen );
+		printf("end httpd_write_fully\n");
 	hc->responselen = 0;
 	}
     }
@@ -4497,7 +4499,10 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
 	    continue;
 	    }
 	if ( r < 0 )
-	    return r;
+	{
+		printf("httpd_write_fully error\n");
+		return r;
+	}
 	if ( r == 0 )
 	    break;
 	nwritten += r;
