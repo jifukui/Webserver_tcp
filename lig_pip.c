@@ -93,7 +93,7 @@ int lig_pip_open(int server_or_client)
 int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
 {
         int res=0;
-        int r=0;
+        int r;
         if(fd>=LIG_PIP_CLIENT_NUM)
         {
                 return -1;
@@ -102,7 +102,7 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
         {
                 return -1;
         }
-        while(res)
+        while(res==0)
         {
                r=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
                if(r<0&& ( errno == EINTR || errno == EAGAIN ))
@@ -140,7 +140,7 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         }
 
         
-        while(res)
+        while(res==0)
         {
                r=write(m_lig_pip_fd[fd].wfd,buff,datalen);
                if(r<0&& ( errno == EINTR || errno == EAGAIN ))
