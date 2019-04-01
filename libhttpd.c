@@ -3714,7 +3714,7 @@ cgi_child( httpd_conn* hc )
 			if ( r == 0 )
 	    	{
 	    	/* Interposer process. */
-	    		sub_process = 1;
+	    		//sub_process = 1;
 	    		(void) close( p[1] );
 	    		cgi_interpose_output( hc, p[0] );
 	    		exit( 0 );
