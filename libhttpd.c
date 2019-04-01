@@ -3828,10 +3828,19 @@ cgi( httpd_conn* hc )
 	{
 		do{
 			ret=wait(&status);
-			printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
+			//printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
+			if(errno == EINTR || errno == EAGAIN)
+			{
+				printf("errno == EINTR || errno == EAGAIN\n");
+			}
+			else
+			{
+				//printf("have other error\n");
+				break;
+			}
 		}while(ret!=r);
 		
-		printf("good to return \n");
+		//printf("good to return \n");
 		
 		
 	}
@@ -4505,11 +4514,11 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
     while ( nwritten < nbytes )
 	{
 	int r;
-	printf("start write\n");
-	printf("the fd is %d\n",fd);
-	printf("the buf str is %d\n",strlen(buf));
+	//printf("start write\n");
+	//printf("the fd is %d\n",fd);
+	//printf("the buf str is %d\n",strlen(buf));
 	r = write( fd, buf + nwritten, nbytes - nwritten );
-	printf("The write number is %d\n",r);
+	//printf("The write number is %d\n",r);
 	if ( r < 0 && ( errno == EINTR || errno == EAGAIN ) )
 	    {
 	    sleep( 1 );
@@ -4525,7 +4534,7 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
 	}
 	nwritten += r;
 	}
-	printf("the total is %d\n",nwritten);
+	//printf("the total is %d\n",nwritten);
     return nwritten;
     }
 

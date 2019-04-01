@@ -404,21 +404,21 @@ main( int argc, char** argv )
 				if(json_typeof(LigPra)==JSON_INTEGER)
 				{
 					LigPortNum=json_integer_value(LigPra);
-					printf("The Port NUM is %d\n",LigPortNum);
+					//printf("The Port NUM is %d\n",LigPortNum);
 				}
 				else
 				{
-					printf("is not integer\n");
+					//printf("is not integer\n");
 				}
 			}
 			else
 			{
-				printf("get type error\n");
+				//printf("get type error\n");
 			}
 		}
 		else
 		{
-			printf("get matrix error\n");
+			//printf("get matrix error\n");
 		}
 	}
 	else
@@ -427,7 +427,7 @@ main( int argc, char** argv )
 	}
 	if(!mkdir("/tmp/www",0777))
 	{
-		printf("good for creat dir\n");
+		//printf("good for creat dir\n");
 	}
 	sockfd=lig_pip_open(0);
 	
