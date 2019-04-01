@@ -194,8 +194,6 @@ static long long atoll( const char* str );
 ** of a hack but it seems to do the right thing.
 */
 static int sub_process = 0;
-static int Process=0;
-
 static void
 check_options( void )
     {
@@ -610,9 +608,7 @@ httpd_write_response( httpd_conn* hc )
     /* Send the response, if necessary. */
     if ( hc->responselen > 0 )
 	{
-		printf("before httpd_write_fully\n");
 	(void) httpd_write_fully( hc->conn_fd, hc->response, hc->responselen );
-		printf("end httpd_write_fully\n");
 	hc->responselen = 0;
 	}
     }
@@ -3610,7 +3606,6 @@ cgi_child( httpd_conn* hc )
 		}
 		str=json_dumps(jsonobj,JSON_PRESERVE_ORDER);
 		add_response(hc,str);
-		printf("send before\n");
 		sub_process = 1;
     	httpd_write_response( hc );
 		printf("end of all\n");
@@ -3793,6 +3788,8 @@ static int
 cgi( httpd_conn* hc )
     {
 		int Jtimer=0;
+		int status;
+		int ret;
     int r;
     ClientData client_data;
 
@@ -3822,7 +3819,14 @@ cgi( httpd_conn* hc )
 		cgi_child( hc );
 		exit(0);
 	}
-	wait();
+	
+	else
+	{
+		ret=wait(&status);
+		printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
+		
+	}
+	
 	//printf("have wait\n");
 /*	
 
@@ -4490,7 +4494,6 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
     int nwritten;
 
     nwritten = 0;
-	printf("the number is %d\n",nbytes);
     while ( nwritten < nbytes )
 	{
 	int r;
@@ -4506,12 +4509,10 @@ httpd_write_fully( int fd, const char* buf, size_t nbytes )
 	    }
 	if ( r < 0 )
 	{
-		printf("httpd_write_fully error\n");
 		return r;
 	}
 	if ( r == 0 )
 	{
-		printf("write data is zero error is %d\n",errno);
 		break;
 	}
 	nwritten += r;

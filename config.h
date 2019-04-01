@@ -90,7 +90,7 @@
 /* CONFIGURE: How many seconds to allow for reading the initial request
 ** on a new connection.
 */
-#define IDLE_READ_TIMELIMIT 60
+#define IDLE_READ_TIMELIMIT 100
 
 /* CONFIGURE: How many seconds before an idle connection gets closed.
 */
