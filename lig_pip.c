@@ -93,7 +93,6 @@ int lig_pip_open(int server_or_client)
 int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
 {
         int res=0;
-        int r;
         if(fd>=LIG_PIP_CLIENT_NUM)
         {
                 return -1;
@@ -102,25 +101,19 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
         {
                 return -1;
         }
-        while(res<0>)
+        restart:
+        res=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
+        if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
-               r=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
-               if(r<0&& ( errno == EINTR || errno == EAGAIN ))
-               {
-                        sleep(1);
-                        continue;
-               }
-               if(r<0)
-               {
-                       printf("read Have error\n");
-                       printf("The pip error is %s\n",strerror(errno));
-                       return r;
-               }
-               if(r==0)
-               {
-                       break;
-               }
-               res+=r;
+                printf("have error for read\n");
+                sleep(1);
+                goto restart;
+        }
+        if(res<0)
+        {
+                printf("read Have error\n");
+                printf("The pip error is %s\n",strerror(errno));
+                res=0;
         }
         
         return res;
@@ -129,7 +122,7 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
 int lig_pip_write_bytes(int fd,char*buff,int datalen)
 {
         int res=0;
-        int r=0;
+       
         if(fd>=LIG_PIP_CLIENT_NUM)
         {
                 return -1;
@@ -138,28 +131,20 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         {
                 return -1;
         }
-
-        
-        while(res<0)
+        restart:
+        res=write(m_lig_pip_fd[fd].wfd,buff,datalen);
+        if(r<0&& ( errno == EINTR || errno == EAGAIN ))
         {
-               r=write(m_lig_pip_fd[fd].wfd,buff,datalen);
-               if(r<0&& ( errno == EINTR || errno == EAGAIN ))
-               {
-                        sleep(1);
-                        continue;
-               }
-               if(r<0)
-               {
-                       printf("write Have error\n");
-                       printf("The pip error is %s\n",strerror(errno));
-                       return r;
-               }
-               if(r==0)
-               {
-                       break;
-               }
-               res+=r;
+                printf("error no write\n");
+                sleep(1);
+                goto restart;
         }
+        if(r<0)
+        {
+                printf("write Have error\n");
+                printf("The pip error is %s\n",strerror(errno));
+                res=0;
+        }     
         return res;
 }
 
