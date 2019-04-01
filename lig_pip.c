@@ -53,13 +53,13 @@ int lig_pip_open(int server_or_client)
         if(server_or_client==LIG_PIP_SERVER)
         {
                 m_lig_pip_rdwr_fd=open(LIG_PIP_CLN_FILE_PATH,O_RDONLY|O_NONBLOCK);
-                s_mode=O_RDONLY;
+                s_mode=O_RDONLY|O_NONBLOCK;
                 c_mode=O_WRONLY|O_NONBLOCK;
         }
         else
         {
                 m_lig_pip_rdwr_fd= open(LIG_PIP_SRV_FILE_PATH,O_RDONLY|O_NONBLOCK);
-                s_mode=O_WRONLY;
+                s_mode=O_WRONLY|O_NONBLOCK;
                 c_mode=O_RDONLY|O_NONBLOCK;
         }
 
