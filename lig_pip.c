@@ -102,7 +102,7 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
         {
                 return -1;
         }
-        while(res<bufflen)
+        while(res)
         {
                r=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
                if(r<0&& ( errno == EINTR || errno == EAGAIN ))
@@ -140,7 +140,7 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         }
 
         
-        while(res<datalen)
+        while(res)
         {
                r=write(m_lig_pip_fd[fd].wfd,buff,datalen);
                if(r<0&& ( errno == EINTR || errno == EAGAIN ))
