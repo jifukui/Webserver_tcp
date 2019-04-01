@@ -106,6 +106,7 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
         if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
                 printf("have error for read\n");
+                printf("The pip error is %s\n",strerror(errno));
                 sleep(1);
                 goto restart;
         }
@@ -136,6 +137,7 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
                 printf("error no write\n");
+                printf("The pip error is %s\n",strerror(errno));
                 sleep(1);
                 goto restart;
         }
