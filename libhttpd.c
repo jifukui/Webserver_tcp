@@ -3826,8 +3826,13 @@ cgi( httpd_conn* hc )
 	
 	else
 	{
-		ret=wait(&status);
-		printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
+		do{
+			ret=wait(&status);
+			printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
+		}while(ret!=r);
+		
+		
+		
 		
 	}
 	//printf("have wait\n");
