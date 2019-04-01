@@ -133,13 +133,13 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         }
         restart:
         res=write(m_lig_pip_fd[fd].wfd,buff,datalen);
-        if(r<0&& ( errno == EINTR || errno == EAGAIN ))
+        if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
                 printf("error no write\n");
                 sleep(1);
                 goto restart;
         }
-        if(r<0)
+        if(res<0)
         {
                 printf("write Have error\n");
                 printf("The pip error is %s\n",strerror(errno));
