@@ -41,14 +41,12 @@ int lig_pip_open(int server_or_client)
 
         if(mkfifo(LIG_PIP_SRV_FILE_PATH,S_IRUSR|S_IWUSR|S_IWGRP)==-1&&errno!=EEXIST)
         {
-                perror("mkfifo_server:");
-                Exerr(1);
+                
                 return -1;
         }
         if(mkfifo(LIG_PIP_CLN_FILE_PATH,S_IRUSR|S_IWUSR|S_IWGRP)==-1&&errno!=EEXIST)
         {
-                perror("mkfifo_client:");
-                Exerr(1);
+               
                 return -1;
         }
 
@@ -70,8 +68,7 @@ int lig_pip_open(int server_or_client)
 
         if(s_fd==-1||c_fd==-1)
         {
-                perror("open fifo:");
-                Exerr(1);
+              
                 return -1;
         }
 
@@ -87,8 +84,7 @@ int lig_pip_open(int server_or_client)
         }
         if(signal(SIGPIPE,SIG_IGN)==SIG_ERR)
         {
-                perr_pip("signal SIGPIPE:");
-                Exerr(1);
+               
                 return -1;
         }
         return 0;
