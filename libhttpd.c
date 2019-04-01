@@ -3817,9 +3817,9 @@ cgi( httpd_conn* hc )
 	
     if ( r == 0 )
 	{
-		//nice(-1);
+		nice(-1);
 		sub_process = 1;
-		httpd_unlisten( hc->hs );
+		//httpd_unlisten( hc->hs );
 		cgi_child( hc );
 		exit(0);
 	}
