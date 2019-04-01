@@ -130,7 +130,7 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
                 }
                 else
                 {
-                        pr_pip_debug(LIG_LOG_DEBUG,"error num :[%d]\n",errno);
+                        printf("The pip error is %s\n",strerror(errno));
                 }
         }
 
@@ -157,7 +157,7 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
                 }
                 else
                 {
-                      pr_pip_debug(LIG_LOG_ERR,"error num %d\n,",errno);
+                      printf("The pip error is %s\n",strerror(errno));
                 }
         }
         return res;
