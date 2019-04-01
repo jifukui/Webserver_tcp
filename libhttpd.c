@@ -3831,7 +3831,7 @@ cgi( httpd_conn* hc )
 			printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
 		}while(ret!=r);
 		
-		
+		printf("good to return \n");
 		
 		
 	}
