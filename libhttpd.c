@@ -3814,6 +3814,7 @@ cgi( httpd_conn* hc )
 	    hc, 500, err500title, "", err500form, hc->encodedurl );
 	return -1;
 	}
+	/*
     if ( r == 0 )
 	{
 		cgi_child( hc );
@@ -3826,7 +3827,7 @@ cgi( httpd_conn* hc )
 		printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
 		
 	}
-	
+	*/
 	//printf("have wait\n");
 /*	
 
@@ -3857,7 +3858,7 @@ cgi( httpd_conn* hc )
     hc->status = 200;
     hc->bytes_sent = CGI_BYTECOUNT;
     hc->should_linger = 0;*/
-	//cgi_child( hc );
+	cgi_child( hc );
     return 0;
     }
 
