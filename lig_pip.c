@@ -8,25 +8,9 @@
 
 #include "lig_pip.h"
 #include <stdio.h>
-
-//#include "debug_config.h"
+#include <unistd.h>
 
 #define THIS_MODULE_NAME "pip"
-//#define LIG_PIP_DEBUG_ENABLE
-#ifdef LIG_PIP_DEBUG_ENABLE
-	#define pr_pip_debug(lv,fmt,args...)                pr_log(lv,THIS_MODULE_NAME,fmt,##args)
-	#define Exerr(x)        do{pr_pip_debug(LIG_LOG_ERR,"error=%d\n",errno);exit(x);}while(0);
-	#define perr_pip(fmt)   pr_pip_debug(LIG_LOG_ERR,"lig_pip:"fmt)
-#else
-	#define pr_pip_debug(lv,fmt,args...)                /* do nothing */
-        #define Exerr(x)
-	#define perr_pip(fmt)   
-#endif
-
-/*for 
-thttpd , ser:lig_core_demo
-         clt:thttpd
-*/
 
 #define LIG_PIP_SRV_FILE_PATH "/tmp/webpip_ser"
 #define LIG_PIP_CLN_FILE_PATH "/tmp/webpip_clt"
@@ -124,6 +108,7 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
         res=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
         if(res<0)
         {
+                printf("pip read Have error");
                 if(errno==EEXIST||errno==EAGAIN)
                 {
                         res=0;
@@ -151,6 +136,7 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         res=write(m_lig_pip_fd[fd].wfd,buff,datalen);
         if(res<0)
         {
+                printf("pip write Have error");
                 if(errno==EEXIST||errno==EAGAIN)
                 {
                         res=0;
