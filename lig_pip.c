@@ -105,15 +105,15 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
         res=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
         if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
-                printf("have error for read\n");
-                printf("The pip error is %s\n",strerror(errno));
-                sleep(1);
+                //printf("have error for read\n");
+                //printf("The pip error is %s\n",strerror(errno));
+                //sleep(1);
                 goto restart;
         }
         if(res<0)
         {
-                printf("read Have error\n");
-                printf("The pip error is %s\n",strerror(errno));
+                //printf("read Have error\n");
+                //printf("The pip error is %s\n",strerror(errno));
                 res=0;
         }
         
@@ -136,15 +136,15 @@ int lig_pip_write_bytes(int fd,char*buff,int datalen)
         res=write(m_lig_pip_fd[fd].wfd,buff,datalen);
         if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
-                printf("error no write\n");
-                printf("The pip error is %s\n",strerror(errno));
-                sleep(1);
+                //printf("error no write\n");
+                //printf("The pip error is %s\n",strerror(errno));
+                //sleep(1);
                 goto restart;
         }
         if(res<0)
         {
-                printf("write Have error\n");
-                printf("The pip error is %s\n",strerror(errno));
+                //printf("write Have error\n");
+                //printf("The pip error is %s\n",strerror(errno));
                 res=0;
         }     
         return res;

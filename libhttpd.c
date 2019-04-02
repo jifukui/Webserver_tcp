@@ -3828,14 +3828,14 @@ cgi( httpd_conn* hc )
 	{
 		do{
 			ret=wait(&status);
-			//printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
+			printf("res:%d, status=%X, %s\n", ret, status, strerror(errno));
 			if(errno == EINTR || errno == EAGAIN)
 			{
 				printf("errno == EINTR || errno == EAGAIN\n");
 			}
 			else
 			{
-				//printf("have other error\n");
+				printf("have other error \n");
 				break;
 			}
 		}while(ret!=r);
