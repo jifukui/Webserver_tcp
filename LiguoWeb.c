@@ -381,7 +381,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 	
 	bzero(rx,len);
 	printf("The send buf is %s",tx);
-	lig_pip_read_bytes(sockfd,rx,len);
+	//lig_pip_read_bytes(sockfd,rx,len);
 	length=lig_pip_write_bytes(sockfd,tx,strlen(tx)+1);
 	if(length>0)
 	{
