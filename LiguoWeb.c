@@ -429,14 +429,8 @@ uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr)
 		json_t *portnum=NULL;
 		json_t *version=NULL;
 		json_t *sn=NULL;
-		//name=json_string(&buf[flag]);
-		//json_object_set_new(json,"name",name);
-		//json_decref(name);
 		json_object_set_new(json,"name",json_string(&buf[flag]));
 		
-		//portnum=json_integer(LigPortNum);
-		//json_object_set_new(json,"PortNumber",portnum);
-		//json_decref(portnum);
 		json_object_set_new(json,"PortNumber",json_integer(LigPortNum));
 		
 		strcpy(str,"#VERSION?\r\n");
