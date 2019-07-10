@@ -52,15 +52,15 @@ int lig_pip_open(int server_or_client)
 
         if(server_or_client==LIG_PIP_SERVER)
         {
-                m_lig_pip_rdwr_fd=open(LIG_PIP_CLN_FILE_PATH,O_RDONLY|O_NDELAY);
-                s_mode=O_RDONLY|O_NDELAY;
-                c_mode=O_WRONLY|O_NDELAY;
+                m_lig_pip_rdwr_fd=open(LIG_PIP_CLN_FILE_PATH,O_RDONLY|O_NONBLOCK);
+                s_mode=O_RDONLY|O_NONBLOCK;
+                c_mode=O_WRONLY|O_NONBLOCK;
         }
         else
         {
-                m_lig_pip_rdwr_fd= open(LIG_PIP_SRV_FILE_PATH,O_RDONLY|O_NDELAY);
-                s_mode=O_WRONLY|O_NDELAY;
-                c_mode=O_RDONLY|O_NDELAY;
+                m_lig_pip_rdwr_fd= open(LIG_PIP_SRV_FILE_PATH,O_RDONLY|O_NONBLOCK);
+                s_mode=O_WRONLY|O_NONBLOCK;
+                c_mode=O_RDONLY|O_NONBLOCK;
         }
 
         s_fd= open(LIG_PIP_SRV_FILE_PATH,s_mode);
@@ -102,9 +102,9 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
                 return -1;
         }
         restart:
-        //printf("have read\n");
+        printf("have read\n");
         res=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
-        //printf("The pip error is   %s res is %d\n",res,strerror(errno));
+        printf("The pip  res is %d\n",res);
         if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
                 //printf("have error for read\n");

@@ -430,9 +430,6 @@ main( int argc, char** argv )
 		//printf("good for creat dir\n");
 	}
 	sockfd=lig_pip_open(0);
-	
-
-
     cp = strrchr( argv0, '/' );
     if ( cp != (char*) 0 )
 	++cp;

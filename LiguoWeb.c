@@ -372,12 +372,15 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 {
 	uint32 length=0;
 	uint32 status=0;
+	int32 flag=0;
 	//struct timeval start,end;
 	//unsigned long time;
 	/*do{
 		length=lig_pip_read_bytes(sockfd,rx,len);
 	}while(length);*/
 	//printf("The length is %d\n",length);
+	flag=fcntl(sockfd,F_GETFL);
+	printf("The flag is %d\n",flag);
 	printf("The send buf is %s",tx);
 	length=lig_pip_read_bytes(sockfd,rx,len);
 	printf("The length is %d\n",length);
@@ -392,7 +395,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 			usleep(90000);
 		}
 		do{
-			usleep(20);
+			//usleep(20);
         	length=lig_pip_read_bytes(sockfd,rx,len);
 		}while(length==0);
 		
