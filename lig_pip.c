@@ -102,7 +102,9 @@ int  lig_pip_read_bytes(int fd,char *buff,int bufflen)
                 return -1;
         }
         restart:
+        printf("have read\n");
         res=read(m_lig_pip_fd[fd].rfd,buff,bufflen);
+        printf("The pip error is   %s res is %d\n",res,strerror(errno));
         if(res<0&& ( errno == EINTR || errno == EAGAIN ))
         {
                 //printf("have error for read\n");
