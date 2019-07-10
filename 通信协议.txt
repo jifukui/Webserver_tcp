@@ -1,3 +1,8 @@
+向管道写数据：
+printf "#\r\n" > /tmp/webpip_ser
+读取管道数据：
+cat < /tmp/webpip_clt
+cat < /tmp/webpip_clt
 （1）设置设备名称
 {
     "cmd":"SetDeviceName",
