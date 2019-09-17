@@ -3594,6 +3594,7 @@ cgi_child( httpd_conn* hc )
 		if(flag)
 		{
 			json_object_set_new(jsonobj,"status",json_string("SUCCESS"));
+			json_object_set_new(jsonobj,"error",json_string(errstr));
 		}
 		else
 		{

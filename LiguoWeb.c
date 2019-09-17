@@ -1293,6 +1293,8 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 	uint8 i=0;
 	json_t *obj;
 	json_t *data;
+	uint32 errorid[128];
+	uint8 error=0;
 	if(cmd)
 	{
 		if(json_typeof(cmd)==JSON_ARRAY)
@@ -1321,7 +1323,8 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 										PiPHandler(str,buf,sizeof(buf));
 										if(strstr(buf,"ERR"))
 										{
-											strcpy(estr,"set Module function error");
+											//strcpy(estr,"set Module function error");
+											errorid[error++]=sid;
 										}
 										else
 										{
@@ -1364,6 +1367,15 @@ uint8 SetPortFunc(json_t *json,json_t* cmd,char *estr)
 	else
 	{
 		strcpy(estr,"error get Data");
+	}
+	for(i=0;i<error;i++)
+	{
+		sprintf(estr+strlen(estr),"%d,",errorid[i]);
+	}
+	if(error!=0)
+	{
+		estr[strlen(estr)-1]=NULL;
+		printf("The error data is %s\r\n",estr);
 	}
 	return flag;
 }
@@ -1524,7 +1536,12 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			else
 			{
 				printf("good for this \n");
+				struct stat file;
+				sprintf(filename,"/tmp/%s",newfilename);
+				printf("file name is %s\n",filename);
+				stat(filename,&file);
 				json_object_set(json,"Filename",json_string(newfilename));
+				json_object_set(json,"FileSize",json_integer(file.st_size));
 				flag=1;
 			}
 		}
