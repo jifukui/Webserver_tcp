@@ -241,7 +241,7 @@ uint8 Port2Phy(uint8 port)
 	return flag;
 }
 
-
+/**找到str是否在buf中如果在buf中设置buf的值为str开始的字符串，并返回找到的第一个非空格的位置*/
 uint8 CmdStrHandler(uint8 *str,uint8 *buf)
 {
 	uint8 flag=0;
@@ -842,8 +842,8 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 		PiPHandler(sendbuf,buf,sizeof(buf));
 		if(CmdStrHandler("NAME",buf))
 		{
-			printf("The buf is %s",buf);
-			status=sscanf(&buf[START],"NAME ERR %d",&data);
+			//printf("The buf is %s",buf);
+			status=sscanf(buf,"NAME ERR %d",&data);
 			printf("NAME status is  %d\n",status);
 			flag=!status;
 		}
