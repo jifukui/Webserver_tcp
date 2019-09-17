@@ -842,6 +842,7 @@ uint8 SetDeviceName(json_t *json,json_t* cmd,char *estr)
 		PiPHandler(sendbuf,buf,sizeof(buf));
 		if(CmdStrHandler("NAME",buf))
 		{
+			printf("The buf is %s",buf);
 			status=sscanf(&buf[START],"NAME ERR %d",&data);
 			printf("NAME status is  %d\n",status);
 			flag=!status;
