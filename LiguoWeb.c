@@ -356,10 +356,6 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
         {
             strcpy(estr,"No the key of cmd");
         }
-        //json_decref(cmd);
-		//json_decref(command);
-		//json_decref(jsonget);
-		//json_decref(cpy);
     }
     else
     {
@@ -379,7 +375,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		length=lig_pip_read_bytes(sockfd,rx,len);
 	}while(length);*/
 	//printf("The length is %d\n",length);
-	//printf("The send buf is %s",tx);
+	printf("The send buf is %s",tx);
 	length=lig_pip_read_bytes(sockfd,rx,len);
 	//printf("The length is %d\n",length);
 	bzero(rx,len);
@@ -413,7 +409,7 @@ uint32 PiPHandler(char *tx,char *rx,uint32 len)
 		//pid =getpid();
 		//printf("The child pid is %d \n",pid);
 	}
-	//printf("The recieve buf is %s",rx);
+	printf("The recieve buf is %s",rx);
 	return length;
 }
 
