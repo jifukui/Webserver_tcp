@@ -1537,9 +1537,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			{
 				printf("good for this \n");
 				struct stat file;
-				sprintf(filename,"/tmp/%s",newfilename);
-				printf("file name is %s\n",filename);
-				stat(filename,&file);
+				stat(newpath,&file);
 				json_object_set(json,"Filename",json_string(newfilename));
 				json_object_set(json,"FileSize",json_integer(file.st_size));
 				flag=1;
