@@ -658,7 +658,7 @@ send_mime( httpd_conn* hc, int status, char* title, char* encodings, char* extra
     char buf[1000];
     int partial_content;
     int s100;
-
+	char titledata[100]="jifukui&hualili together forever";
     hc->status = status;
     hc->bytes_to_send = length;
     if ( hc->mime_flag )
@@ -689,8 +689,7 @@ send_mime( httpd_conn* hc, int status, char* title, char* encodings, char* extra
 	    fixed_type, sizeof(fixed_type), type, hc->hs->charset );
 	(void) my_snprintf( buf, sizeof(buf),
 	    "%.20s %d %s\015\012Server: %s\015\012Content-Type: %s\015\012Date: %s\015\012Last-Modified: %s\015\012Accept-Ranges: bytes\015\012Connection: close\015\012",
-	    hc->protocol, status, title, EXPOSED_SERVER_SOFTWARE, fixed_type,
-	    nowbuf, modbuf );
+	    hc->protocol, status, titledata, EXPOSED_SERVER_SOFTWARE, fixed_type,nowbuf, modbuf );
 	add_response( hc, buf );
 	s100 = status / 100;
 	if ( s100 != 2 && s100 != 3 )
