@@ -1,4 +1,4 @@
-向管道写数据：
+﻿向管道写数据：
 printf "#\r\n" > /tmp/webpip_ser
 读取管道数据：
 cat < /tmp/webpip_clt
@@ -537,6 +537,39 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	{
         "result":{
             "cmd":"Upgrade"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（18）获取插槽的波特率
+{
+    "cmd":"GetSlotUart",
+	"Data":{
+		"slotid":"xxxxx"
+	}
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetSlotUart",
+			"Data":{
+				"slotid":xx，
+				"uart":19200/230400	
+			}
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetSlotUart"
         }
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"

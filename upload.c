@@ -104,36 +104,55 @@ void getfiletype()
 }
 int getfilecontent()
 {
+	static filesize=4096;
 	int i;
+	int nums;
   	ssize_t num;
 	int length=0;
-	char data[contentlen];
+	int readlength=0;
+	char data[filesize];
 	char path[256];
-	length=contentlen-codelength;
-	for(i=0;i<length;i++)
-	{
-		data[i]=getchar();	
-	}
-	length-=2;
-	data[length]=0;
+	length=contentlen-codelength-2;
+	nums=length/filesize;
 	FILE *fp=NULL;
 	sprintf(path,"/tmp/%s",uploadfilename);
 	fp=fopen(path,"wb+");
 	if(fp)
 	{
-		if(length==fwrite(data,1,length,fp))
+		for(i=0;i<nums;i++)
+		{
+			read(stdin,&data,filesize);
+			if(filesize==fwrite(data,1,filesize,fp))
+			{
+				readlength+=filesize;
+			}
+			else
+			{
+				return 1;
+			}	
+			return 0;
+		}
+		if(readlength<length)
+		{
+			i=length-readlength;
+			read(stdin,&data,i);
+			if(i==fwrite(data,1,filesize,fp))
+			{		
+				readlength+=i;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		getchar();
+		getchar();
+		if(readlength==length)
 		{
 			return 0;
 		}
-		else
-		{
-			return 1;
-		}
 	}
-	else
-	{
-		return 2;
-	}
+	return 1;
 }
 void getendcode()
 {

@@ -58,6 +58,7 @@ STATIC uint8 SetDHCPStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 Upgrade(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -82,6 +83,7 @@ LigCommandHandler CommandHandler[]={
 	{"GetHDCPStatus",&GetHDCPStatus},
 	{"GetUpgradeFileName",&GetUpgradeFileName},
 	{"Upgrade",&Upgrade},
+	{"GetSlotUart",&GetSlotUart}
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -1494,6 +1496,7 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 	uint8 untarfilename[1024];
 	uint8 newfilename[1024];
 	uint8 newpath[1024];
+	uint8 IsKmpt=0;
 	char *str;
 	json_t *untar;
 	json_t *file;
@@ -1506,12 +1509,13 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			if(!strcasecmp(str,".kmpt"))
 			{
 				printf("match kmpt\n");
+				IsKmpt=1;
 				memcpy(untarfilename,filename,sizeof(filename));
 			}
 			else
 			{
 				FILE * fstream;
-				sprintf(untarfilename,"unzip -o /tmp/www/%s -d /tmp/www  > /dev/null && ls -t /tmp/www/ | grep -i \".k[pm][pt][tw]\"",filename);
+				sprintf(untarfilename,"unzip -o \"/tmp/www/%s\" -d /tmp/www  > /dev/null && ls -t /tmp/www/ | grep -i \".xml\"",filename);
 				printf("The untarfilename is %s\n",untarfilename);
 				if(NULL==(fstream=popen(untarfilename,"r"))||NULL==fgets(untarfilename,sizeof(untarfilename), fstream))    
 				{    
@@ -1527,8 +1531,8 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 			printf("The new filename is %s\n",newfilename);
 			sprintf(filename,"/tmp/www/%s",untarfilename);
 			sprintf(newpath,"/tmp/www/%s",newfilename);
-			printf("The old file path is %s\n",filename);
-			printf("The new file path is %s\n",filename);
+			// printf("The old file path is %s\n",filename);
+			// printf("The new file path is %s\n",filename);
 			if(rename(filename,newpath))
 			{
 				strcpy(estr,"rename error");
@@ -1542,10 +1546,24 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 				json_object_set(json,"FileSize",json_integer(file.st_size));
 				flag=1;
 			}
+			// str=strrchr(newfilename,'.');
+			// printf("the str is %s\n",str);
+			if(IsKmpt==1)
+			{
+				printf("have match kmpt\n");
+				// flag=1;	
+			}	
+			else
+			{
+				sprintf(untarfilename,"mv %s /nandflash/thttpd/www/",newpath);
+				printf("The value is %s\n",untarfilename);
+				system(untarfilename);
+			}
+			return flag;		
 		}
 		else
 		{
-			strcpy(estr,"Get File Name have a error");
+			strcpy(estr,"Get File  error");
 		}
 	}
 	else
@@ -1683,6 +1701,51 @@ uint8 Upgrade(json_t *json,json_t* cmd,char *estr)
 	else
 	{
 		strcpy(estr,"not the file name");
+	}
+	return flag;
+}
+
+uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	uint32 slotid;
+	uint32 uart;
+	json_t *obj;
+	uint8 str[1024];
+	uint8 buf[1024];
+	json_t *uartnum;
+	uint32 status;
+	uartnum=json_object();
+	if(cmd&&uartnum)
+	{
+		obj=json_object_get(cmd,"slotid");
+		if(JsonGetInteger(obj,&slotid))
+		{
+			sprintf(str,"#MODULE-UART? %d\r\n",slotid);
+			PiPHandler(str,buf,sizeof(buf));
+			flag=CmdStrHandler("MODULE-UART",buf);
+			if(flag)
+			{
+				status=sscanf(&buf[flag],"%d,%d\r\n",&slotid,&uart);
+				if(status==2)
+				{
+					json_object_set(uartnum,"slotid",json_integer(slotid));
+					json_object_set(uartnum,"uart",json_integer(uart));
+					json_object_set(json,"Data",uartnum);
+					flag=1;
+				}
+				else
+				{
+					flag=0;
+					strcpy(estr,"get uart  error1");
+				}
+			}
+			else
+			{
+				strcpy(estr,"get uart  error");
+				flag=0;
+			}
+		}
 	}
 	return flag;
 }
