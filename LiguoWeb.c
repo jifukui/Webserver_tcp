@@ -1764,7 +1764,7 @@ uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr)
 	uint8 gateway[16];
 	json_t *obj;
 	uint8 status;
-	if(network)
+	if(json&&network)
 	{
 		sprintf(str,"#EXT-NET-STATIC?\r\n");
 		PiPHandler(str,buf,sizeof(buf));
@@ -1777,6 +1777,7 @@ uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr)
 				json_object_set(network,"ip",json_string(ip));
 				json_object_set(network,"submask",json_string(submask));
 				json_object_set(network,"gateway",json_string(gateway));
+				json_object_set(json,"staticnetwork",network);
 				flag=1;
 			}
 			else
