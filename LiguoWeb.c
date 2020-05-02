@@ -59,6 +59,7 @@ STATIC uint8 GetHDCPStatus(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 Upgrade(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -83,7 +84,8 @@ LigCommandHandler CommandHandler[]={
 	{"GetHDCPStatus",&GetHDCPStatus},
 	{"GetUpgradeFileName",&GetUpgradeFileName},
 	{"Upgrade",&Upgrade},
-	{"GetSlotUart",&GetSlotUart}
+	{"GetSlotUart",&GetSlotUart},
+	{"GetStaticNetWork",&GetStaticNetWork};
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -1243,6 +1245,7 @@ uint8 SetNetwork(json_t *json,json_t* cmd,char *estr)
 			PiPHandler(str,buf,sizeof(buf));
 			if(strstr(buf,"ERR"))
 			{
+				flag=0;
 				strcpy(estr,"set net work error");
 			}
 		}
@@ -1506,9 +1509,9 @@ uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr)
 		if(JsonGetString(file,filename))
 		{
 			str=strrchr(filename,'.');
-			if(!strcasecmp(str,".kmpt"))
+			if(!strcasecmp(str,".kmpt")||!strcasecmp(str,".json"))
 			{
-				printf("match kmpt\n");
+				printf("match kmpt or json\n");
 				IsKmpt=1;
 				memcpy(untarfilename,filename,sizeof(filename));
 			}
@@ -1745,6 +1748,47 @@ uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr)
 				strcpy(estr,"get uart  error");
 				flag=0;
 			}
+		}
+	}
+	return flag;
+}
+uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag;
+	json_t network;
+	network=json_object();
+	uint8 str[1024];
+	uint8 buf[1024];
+	uint8 ip[16];
+	uint8 submask[16];
+	uint8 gateway[16];
+	json_t *obj;
+	uint8 status;
+	if(network)
+	{
+		sprintf(str,"#EXT-NET-STATIC?\r\n");
+		PiPHandler(str,buf,sizeof(buf));
+		flag=CmdStrHandler("EXT-NET-STATIC",buf);
+		if(flag)
+		{
+			status=sscanf(&buf[flag],"%[^,],%[^,],%15s\r\n",&ip,&submask,&gateway);
+			if(status==3)
+			{
+				json_object_set(network,"ip",json_string(ip));
+				json_object_set(network,"submask",json_string(submask));
+				json_object_set(network,"gateway",json_string(gateway));
+				flag=1;
+			}
+			else
+			{
+				flag=0;
+				strcpy(estr,"get static network format error");
+			}
+		}
+		else
+		{
+			strcpy(estr,"get static network error");
+			flag=0;
 		}
 	}
 	return flag;
