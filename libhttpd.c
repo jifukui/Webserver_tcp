@@ -3521,6 +3521,7 @@ cgi_child( httpd_conn* hc )
 	{
 		send_mime(hc,200,"","","","application/json;charset=utf-8",(off_t)-1,(time_t)0);
 		char *instr=NULL,errstr[200];
+		errstr[0]=NULL;
 		json_t *jsonobj;
 		json_t *jsonecho;
 		json_t *jsonres;

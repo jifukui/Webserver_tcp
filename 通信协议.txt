@@ -575,3 +575,34 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（19）获取设备的静态IP地址
+{
+    "cmd":"GetStaticNetWork"
+}
+成功返回
+{
+	"status":"SUCCESS",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetStaticNetWork",
+			"staticnetwork":{
+				"ip":xx，
+				"submask":xxx,
+				"gateway":xxx
+			}
+        }
+	},
+	"error":null
+}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetStaticNetWork"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
