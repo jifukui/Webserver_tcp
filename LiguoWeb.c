@@ -1755,7 +1755,7 @@ uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr)
 uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr)
 {
 	uint8 flag;
-	json_t network;
+	json_t *network;
 	network=json_object();
 	uint8 str[1024];
 	uint8 buf[1024];
