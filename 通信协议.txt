@@ -2,7 +2,8 @@
 printf "#\r\n" > /tmp/webpip_ser
 读取管道数据：
 cat < /tmp/webpip_clt
-cat < /tmp/webpip_clt
+测试脚本的程序在test.sh文件中
+测试文档主要有get和post两种方法。其中cmd属性是命令的名称，data属性是传输命令的实体
 （1）设置设备名称
 {
     "cmd":"SetDeviceName",

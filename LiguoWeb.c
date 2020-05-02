@@ -85,7 +85,7 @@ LigCommandHandler CommandHandler[]={
 	{"GetUpgradeFileName",&GetUpgradeFileName},
 	{"Upgrade",&Upgrade},
 	{"GetSlotUart",&GetSlotUart},
-	{"GetStaticNetWork",&GetStaticNetWork};
+	{"GetStaticNetWork",&GetStaticNetWork}
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
