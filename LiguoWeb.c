@@ -1151,6 +1151,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					PiPHandler(str,buf,sizeof(buf));
 					if(strstr(buf,"READY"))
 					{
+						printf("start write data\n");
 						bzero(str,sizeof(str));
 						edid[0]=0;
 						edid[1]=1;
@@ -1164,6 +1165,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 							len=0;
 							do{
 								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+								printf("The data len is %d and data is %s\n",buf);
 								if(len>0)
 								{
 									if(strstr(buf,"ERR"))
