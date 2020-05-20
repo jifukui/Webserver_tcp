@@ -1163,6 +1163,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						printf("The len is %d\n",len);
 						if(len)
 						{
+							printf("good nice len\n");
 							len=0;
 							do{
 								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
@@ -1179,6 +1180,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 										flag=1;
 										break;
 									}
+									printf("nice ready\n");
 								}
 							}while(1);
 						}
