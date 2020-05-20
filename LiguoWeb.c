@@ -1106,7 +1106,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 	uint8 str[1024];
 	uint8 data[1024];
 	uint8 edid[1024];
-	uint8 buf[80];
+	uint8 buf[1024];
 	uint32 in;
 	uint32 bitmap[2]={0,0};
 	uint32 status;
@@ -1166,6 +1166,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 							printf("good nice len\n");
 							len=0;
 							do{
+								printf("start read data\n");
 								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
 								printf("The data len is %d and data is %s\n",buf);
 								if(len>0)
