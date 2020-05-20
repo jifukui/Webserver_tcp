@@ -1160,6 +1160,7 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						edid[len+4]=0xAA;
 						edid[len+5]=0x55;
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
+						printf("The len is %d\n",len);
 						if(len)
 						{
 							len=0;
