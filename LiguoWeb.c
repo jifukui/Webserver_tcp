@@ -1151,7 +1151,6 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 					PiPHandler(str,buf,sizeof(buf));
 					if(strstr(buf,"READY"))
 					{
-						printf("start write data\n");
 						bzero(str,sizeof(str));
 						edid[0]=0;
 						edid[1]=1;
@@ -1160,30 +1159,29 @@ uint8 LoadEDID(json_t *json,json_t* cmd,char *estr)
 						edid[len+4]=0xAA;
 						edid[len+5]=0x55;
 						len=lig_pip_write_bytes(sockfd,edid,len+6);
-						printf("The len is %d\n",len);
 						if(len)
 						{
-							printf("good nice len\n");
-							len=0;
-							do{
-								printf("start read data\n");
-								len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
-								printf("The data len is %d and data is %s\n",buf);
-								if(len>0)
-								{
-									if(strstr(buf,"ERR"))
-									{
-										strcpy(estr,"second command error");
-										break;
-									}
-									else if(sscanf(&buf[START],"LDEDID %d,0x%llx,%d,%d OK\r\n",&in,&bitmap,&len,&status))
-									{
-										flag=1;
-										break;
-									}
-									printf("nice ready\n");
-								}
-							}while(1);
+							 len=0;
+							 do{
+							 	//printf("start read data\n");
+							 	len=lig_pip_read_bytes(sockfd,buf,sizeof(buf));
+							 	//printf("The data len is %d and data is %s\n",buf);
+							 	if(len>0)
+							 	{
+							 		if(strstr(buf,"ERR"))
+							 		{
+							 			strcpy(estr,"second command error");
+							 			break;
+							 		}
+							 		else if(sscanf(&buf[START],"LDEDID %d,0x%llx,%d,%d OK\r\n",&in,&bitmap,&len,&status))
+							 		{
+							 			flag=1;
+							 			break;
+							 		}
+							 		//printf("nice ready\n");
+							 	}
+							 }while(1);
+							//flag=1;
 						}
 						else
 						{
