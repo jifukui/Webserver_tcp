@@ -563,7 +563,7 @@ static char* err403form =
 
 static char* err404title = "Not Found";
 static char* err404form =
-    "The requested URL '%.80s' was not found on this server.\n";
+    "The requested URL %.80s was not found on this server.\n";
 
 char* httpd_err408title = "Request Timeout";
 char* httpd_err408form =
@@ -658,7 +658,7 @@ send_mime( httpd_conn* hc, int status, char* title, char* encodings, char* extra
     char buf[1000];
     int partial_content;
     int s100;
-	char titledata[100]="jifukui&hualili together forever";
+	char titledata[100]="";
     hc->status = status;
     hc->bytes_to_send = length;
     if ( hc->mime_flag )
@@ -688,16 +688,33 @@ send_mime( httpd_conn* hc, int status, char* title, char* encodings, char* extra
 	(void) my_snprintf(
 	    fixed_type, sizeof(fixed_type), type, hc->hs->charset );
 	(void) my_snprintf( buf, sizeof(buf),
-	    "%.20s %d %s\015\012Server: %s\015\012Content-Type: %s\015\012Date: %s\015\012Last-Modified: %s\015\012Accept-Ranges: bytes\015\012Connection: close\015\012",
-	    hc->protocol, status, titledata, EXPOSED_SERVER_SOFTWARE, fixed_type,nowbuf, modbuf );
+"%.20s %d %s\015\012\
+Content-Type: %s\015\012\
+Date: %s\015\012\
+Last-Modified: %s\015\012\
+Accept-Ranges: bytes\015\012\
+Connection: close \015\012\
+X-Frame-Options:deny \015\012\
+X-XSS-Protection:1;mode=block \015\012\
+Expect-CT:max-age = 86400;enforce \015\012\
+X-Content-Type-Options:nosniff \015\012\
+Content-Security-Policy:default-src 'self';font-src 'self' data:;script-src 'unsafe-eval' 'self';img-src 'self' data: \015\012\
+Cache-Control:no-store\015\012",
+	    hc->protocol, 
+		status, 
+		titledata, 
+		// EXPOSED_SERVER_SOFTWARE, 
+		fixed_type,
+		nowbuf, 
+		modbuf );
 	add_response( hc, buf );
 	s100 = status / 100;
-	if ( s100 != 2 && s100 != 3 )
-	    {
-	    (void) my_snprintf( buf, sizeof(buf),
-		"Cache-Control: no-cache,no-store\015\012" );
-	    add_response( hc, buf );
-	    }
+	// if ( s100 != 2 && s100 != 3 )
+	//     {
+	//     (void) my_snprintf( buf, sizeof(buf),
+	// 	"Cache-Control: no-cache,no-store\015\012" );
+	//     add_response( hc, buf );
+	//     }
 	if ( encodings[0] != '\0' )
 	    {
 	    (void) my_snprintf( buf, sizeof(buf),
@@ -816,18 +833,18 @@ send_response( httpd_conn* hc, int status, char* title, char* extraheads, char* 
 static void
 send_response_tail( httpd_conn* hc )
     {
-    char buf[1000];
+//     char buf[1000];
 
-    (void) my_snprintf( buf, sizeof(buf), "\
-    <hr>\n\
-\n\
-    <address><a href=\"%s\">%s</a></address>\n\
-\n\
-  </body>\n\
-\n\
-</html>\n",
-	SERVER_ADDRESS, EXPOSED_SERVER_SOFTWARE );
-    add_response( hc, buf );
+//     (void) my_snprintf( buf, sizeof(buf), "\
+//     <hr>\n\
+// \n\
+//     <address><a href=\"%s\">%s</a></address>\n\
+// \n\
+//   </body>\n\
+// \n\
+// </html>\n",
+// 	SERVER_ADDRESS, EXPOSED_SERVER_SOFTWARE );
+//     add_response( hc, buf );
     }
 
 
@@ -852,6 +869,21 @@ defang( char* str, char* dfstr, int dfsize )
 	    case '>':
 	    *cp2++ = '&';
 	    *cp2++ = 'g';
+	    *cp2++ = 't';
+	    *cp2 = ';';
+	    break;
+		case '&':
+		*cp2++ = '&';
+	    *cp2++ = 'a';
+	    *cp2++ = 'm';
+		*cp2++ = 'p';
+	    *cp2 = ';';
+	    break;
+		case '"':
+		*cp2++ = '&';
+	    *cp2++ = 'q';
+		*cp2++ = 'u';
+		*cp2++ = 'o';
 	    *cp2++ = 't';
 	    *cp2 = ';';
 	    break;
@@ -3929,7 +3961,7 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	/* If there's pathinfo, it's just a non-existent file. */
 	if ( hc->pathinfo[0] != '\0' )
 	    {
-	    httpd_send_err( hc, 404, err404title, "", err404form, hc->encodedurl );
+	    httpd_send_err( hc, 404, err404title, "", err404form, hc->decodedurl );
 	    return -1;
 	    }
 
