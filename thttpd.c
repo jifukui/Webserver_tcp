@@ -171,6 +171,7 @@ static void logstats( struct timeval* nowP );
 static void thttpd_logstats( long secs );
 int sockfd;
 unsigned int LigPortNum=0;
+extern Auth_liguo liguoauth;
 /* SIGTERM and SIGINT say to exit immediately. */
 static void
 handle_term( int sig )
@@ -429,6 +430,60 @@ main( int argc, char** argv )
 	{
 		//printf("good for creat dir\n");
 	}
+	liguoauth.security=0;
+	strcpy(liguoauth.Auth[0].username,"Admin");
+	//memset(liguoauth.Auth[0].password,0,PASSWORDLEN);
+	strcpy(liguoauth.Auth[0].password,"Admin");
+	json_t *authfile;
+	json_error_t error;
+	authfile=json_load_file("/nandflash/thttpd/bin/security.json",0,&error);
+	struct stat jifile;
+	time_t jitime;
+	//time_t jiconftime;
+	json_t *authdata;
+	json_t *authdata1;
+	json_t *authdata2;
+	// printf("good start work 1.1\n");
+	if(authfile)
+	{
+		
+		authdata=json_object_get(authfile,"security");
+		liguoauth.security=(unsigned int )json_integer_value(authdata);
+		printf("liguoauth.security is %d\n",liguoauth.security);
+		authdata=json_object_get(authfile,"User");
+		int i=0;
+		char *str=NULL;
+		for(i;i<AUTH_NUM&&i<json_array_size(authdata);i++)
+		{
+			authdata1=json_array_get(authdata,i);
+			authdata2=json_object_get(authdata1,"username");
+			str=json_string_value(authdata2);
+			strcpy(liguoauth.Auth[i].username,str);
+			authdata2=json_object_get(authdata1,"password");
+			str=json_string_value(authdata2);
+			if(CheckPassword(str))
+			{
+				strcpy(str,"Admin");
+				strcpy(liguoauth.Auth[i].password,str);
+				//writesecurityfile();
+			}
+			else
+			{
+				strcpy(liguoauth.Auth[i].password,str);
+			}
+			printf("The liguoauth.Auth[i].username is %s\n",liguoauth.Auth[i].username);
+			printf("The liguoauth.Auth[i].password is %s\n",liguoauth.Auth[i].password);
+		}
+	}
+	else
+	{
+		printf("The liguoauth.Auth[i].username is %s\n",liguoauth.Auth[0].username);
+		printf("The liguoauth.Auth[i].password is %s\n",liguoauth.Auth[0].password);
+		//writesecurityfile();
+	}
+	writesecurityfile();
+	stat("/nandflash/thttpd/bin/security.json",&jifile);
+	jitime=jifile.st_mtime;
 	sockfd=lig_pip_open(0);
     cp = strrchr( argv0, '/' );
     if ( cp != (char*) 0 )

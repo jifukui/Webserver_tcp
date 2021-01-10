@@ -1067,27 +1067,74 @@ b64_decode( const char* str, unsigned char* space, int size )
 /* Returns -1 == unauthorized, 0 == no auth file, 1 = authorized. */
 static int
 auth_check( httpd_conn* hc, char* dirname  )
-    {
-    if ( hc->hs->global_passwd )
+{
+	if(liguoauth.security)
 	{
-	char* topdir;
-	if ( hc->hs->vhost && hc->hostdir[0] != '\0' )
-	    topdir = hc->hostdir;
+		//printf("open security\n");
+		int l;
+		char authinfo[500];
+    	char* authpass;
+		int i=0;
+		char str[30];
+		int ji1,ji2;
+		if ( hc->authorization[0] == '\0' ||
+	 	strncmp( hc->authorization, "Basic ", 6 ) != 0 )
+		{
+		/* Nope, return a 401 Unauthorized. */
+			send_authenticate( hc, dirname );
+			return -1;
+		}
+		l = b64_decode(&(hc->authorization[6]), (unsigned char*) authinfo,sizeof(authinfo) - 1 );
+    	authinfo[l] = '\0';
+    	/* Split into user and password. */
+    	authpass = strchr( authinfo, ':' );
+    	if ( authpass == (char*) 0 )
+		{
+			/* No colon?  Bogus auth info. */
+			send_authenticate( hc, dirname );
+			return -1;
+		}
+    	*authpass++ = '\0';
+		
+		//printf("the user name is %s\n",authinfo);
+		//printf("The password is %s\n",authpass);
+		while (i<AUTH_NUM&&liguoauth.Auth[i].username[0])
+		{
+			strcpy(str,liguoauth.Auth[i].username);
+			ji1=strcmp(str,authinfo);
+			//ji1=strcmp(liguoauth.Auth[i].username,authinfo);
+			//printf("The liguoauth.Auth[i].username is %s\n",str);
+			strcpy(str,liguoauth.Auth[i].password);
+			ji2=strcmp(str,authpass);
+			//printf("The liguoauth.Auth[i].password is %s\n",str);
+			//ji2=strcmp(liguoauth.Auth[i].password,authpass);
+			//printf("the ji1 is %d  ji2 is %d\n",ji1,ji2);
+			if(ji1||ji2)
+			{
+				//printf("have error\n");
+			}
+			else
+			{
+				//printf("success\n");
+				return 1;
+			}
+			//printf("the i is %d\n",i);
+			i++;
+		}
+		//printf("jifuku error \n");
+		send_authenticate( hc, dirname );
+		return -1;
+	}	
 	else
-	    topdir = ".";
-	switch ( auth_check2( hc, topdir ) )
-	    {
-	    case -1:
-	    return -1;
-	    case 1:
-	    return 1;
-	    }
+	{
+		//printf("close security\n");
+		return 0;
 	}
-    return auth_check2( hc, dirname );
-    }
+}
 
 
 /* Returns -1 == unauthorized, 0 == no auth file, 1 = authorized. */
+#if 0
 static int
 auth_check2( httpd_conn* hc, char* dirname  )
     {
@@ -1236,7 +1283,7 @@ auth_check2( httpd_conn* hc, char* dirname  )
     send_authenticate( hc, dirname );
     return -1;
     }
-
+#endif
 #endif /* AUTH_FILE */
 
 

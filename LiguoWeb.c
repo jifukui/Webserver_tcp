@@ -23,7 +23,7 @@ typedef long long int64;
 #define MAXBYTE 2048
 extern int sockfd;
 extern unsigned int LigPortNum;
-
+extern Auth_liguo liguoauth;
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr);
 uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr);
@@ -1797,4 +1797,92 @@ uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr)
 		}
 	}
 	return flag;
+}
+
+void writesecurityfile()
+{
+	json_t *file;
+	json_t *userarray;
+	json_t *json;
+	json_t *data;
+	json_t *cpy;
+	json_t *value;
+	json=json_object();
+	userarray=json_array();
+	file=json_object();
+	if(file&&userarray&&json)
+	{
+		int ji=0;
+		data=json_integer(liguoauth.security);
+		printf("The liguoauth.security is %d\n",liguoauth.security);
+		json_object_set_new(file,"security",data);
+		int i=0;
+		for(i;i<AUTH_NUM;i++)
+		{
+			if(liguoauth.Auth[i].username[0]==0)
+			{
+				break;
+			}
+			else
+			{
+				printf("username is %s\n",liguoauth.Auth[i].username);
+				printf("password is %s\n",liguoauth.Auth[i].password);
+				data=json_string(liguoauth.Auth[i].username);
+				json_object_set(json,"username",data);
+				value=json_string(liguoauth.Auth[i].password);
+				json_object_set(json,"password",value);
+				cpy=json_deep_copy(json);
+				json_array_append(userarray,cpy);
+			}
+		}
+		json_object_set_new(file,"User",userarray);
+		char *str=NULL;
+		str=json_dumps(file,JSON_PRESERVE_ORDER);
+		printf("The str is %s\n",str);
+		FILE *authfile=NULL;
+		authfile=fopen("/nandflash/thttpd/bin/security.json","w+");
+		fwrite(str,1,strlen(str),authfile);
+		fclose(authfile);
+		free(str);
+		if(str)
+		{
+			str=NULL;
+		}
+		json_decref(file);
+		json_decref(userarray);
+		json_decref(json);
+		json_decref(data);
+		json_decref(cpy);
+		json_decref(value);
+	}
+	else
+	{
+		printf("write file error\n");
+	}	
+}
+
+uint8 CheckPassword(uint8 *password)
+{
+	uint8 flag=0;
+	uint8 i=0;
+	if(strlen(password)>0&&strlen(password)<=16)
+	{
+		
+		for(i;i<strlen(password);i++)
+		{
+			if(!isalnum(password[i]))
+			{
+				break;
+			}
+		}
+		if(i!=strlen(password))
+		{
+			flag=2;
+		}
+	}
+	else
+	{
+		flag=1;
+	}
+	return flag ;
 }
