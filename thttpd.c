@@ -372,6 +372,7 @@ re_open_logfile( void )
 int
 main( int argc, char** argv )
     {
+	printf("Hell,this is jifukui\r\n");
     char* cp;
     struct passwd* pwd;
     uid_t uid = 32767;
