@@ -1,6 +1,7 @@
 #ifndef _LIGUO_WEB_H_
 #define _LIGUO_WEB_H_
 #include <jansson.h>
+#include "config.h"
 typedef unsigned char uint8;
 typedef struct 
 {
