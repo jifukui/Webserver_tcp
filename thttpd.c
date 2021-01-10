@@ -938,6 +938,31 @@ main( int argc, char** argv )
     (void) gettimeofday( &tv, (struct timezone*) 0 );
     while ( ( ! terminate ) || num_connects > 0 )
 	{
+		stat("/nandflash/thttpd/bin/security.json",&jifile);
+		if(jitime<jifile.st_mtime)
+		{
+			authfile=json_load_file("/nandflash/thttpd/bin/security.json",0,&error);
+			authdata=json_object_get(authfile,"security");
+			liguoauth.security=(unsigned int )json_integer_value(authdata);
+			authdata=json_object_get(authfile,"User");
+			int i=0;
+			char *str;
+			for(i;i<AUTH_NUM&&i<json_array_size(authdata);i++)
+			{
+				authdata1=json_array_get(authdata,i);
+				authdata2=json_object_get(authdata1,"username");
+				str=json_string_value(authdata2);
+				strcpy(liguoauth.Auth[i].username,str);
+				authdata2=json_object_get(authdata1,"password");
+				str=json_string_value(authdata2);
+				strcpy(liguoauth.Auth[i].password,str);
+			}
+		}
+		else
+		{
+			//printf("no change \n");
+		}
+		jitime=jifile.st_mtime;
 	/* Do we need to re-open the log file? */
 	if ( got_hup )
 	    {
