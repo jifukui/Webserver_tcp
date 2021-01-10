@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "LiguoWeb.h"
 typedef unsigned char uint8;
 typedef char int8;
 typedef unsigned int uint32;
