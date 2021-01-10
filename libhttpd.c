@@ -967,21 +967,23 @@ send_err_file( httpd_conn* hc, int status, char* title, char* extraheads, char* 
 
 static void
 send_authenticate( httpd_conn* hc, char* realm )
-    {
+{
+	printf("need send auth\r\n");
     static char* header;
     static size_t maxheader = 0;
     static char headstr[] = "WWW-Authenticate: Basic realm=\"";
-
-    httpd_realloc_str(
-	&header, &maxheader, sizeof(headstr) + strlen( realm ) + 3 );
-    (void) my_snprintf( header, maxheader, "%s%s\"\015\012", headstr, realm );
+    httpd_realloc_str(&header, &maxheader, sizeof(headstr) + strlen( realm ) + 3 );
+    //(void) my_snprintf( header, maxheader, "%s%s\"\015\012", headstr, realm );
+	(void) my_snprintf( header, maxheader, "%s\"\015\012", headstr);
     httpd_send_err( hc, 401, err401title, header, err401form, hc->encodedurl );
     /* If the request was a POST then there might still be data to be read,
     ** so we need to do a lingering close.
     */
     if ( hc->method == METHOD_POST )
-	hc->should_linger = 1;
-    }
+	{
+		hc->should_linger = 1;
+	}
+}
 
 
 /* Base-64 decoding.  This represents binary data as printable ASCII
@@ -1069,6 +1071,7 @@ b64_decode( const char* str, unsigned char* space, int size )
 static int
 auth_check( httpd_conn* hc, char* dirname  )
 {
+	printf("check auth\r\n");
 	if(liguoauth.security)
 	{
 		//printf("open security\n");
