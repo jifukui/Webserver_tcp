@@ -60,6 +60,7 @@
 #include "timers.h"
 #include "match.h"
 #include <jansson.h>
+#include "LiguoWeb.h"
 #ifndef SHUT_WR
 #define SHUT_WR 1
 #endif
