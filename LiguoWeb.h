@@ -1,5 +1,6 @@
 #ifndef _LIGUO_WEB_H_
 #define _LIGUO_WEB_H_
+typedef unsigned char uint8;
 unsigned char LiguoWeb_GET_Method(const char *sstr,json_t * json,char *estr);
 unsigned char LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char * estr);
 typedef struct 
@@ -13,4 +14,4 @@ typedef struct{
 }Auth_liguo;
 void writesecurityfile();
 uint8 CheckPassword(uint8 *password);
-#endif _LIGUO_WEB_H_
+#endif //_LIGUO_WEB_H_
