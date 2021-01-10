@@ -54,7 +54,8 @@
 #include <syslog.h>
 #include <unistd.h>
 #include <stdarg.h>
-
+#include "LiguoWeb.h"
+Auth_liguo liguoauth;
 #ifdef HAVE_OSRELDATE_H
 #include <osreldate.h>
 #endif /* HAVE_OSRELDATE_H */
