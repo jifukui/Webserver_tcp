@@ -802,7 +802,7 @@ send_response( httpd_conn* hc, int status, char* title, char* extraheads, char* 
 	hc, status, title, "", extraheads, "text/html; charset=%s", (off_t) -1,
 	(time_t) 0 );
     (void) my_snprintf( buf, sizeof(buf), "\
-<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n\
+<!DOCTYPE html >\n\
 \n\
 <html>\n\
 \n\
@@ -811,7 +811,7 @@ send_response( httpd_conn* hc, int status, char* title, char* extraheads, char* 
     <title>%d %s</title>\n\
   </head>\n\
 \n\
-  <body bgcolor=\"#cc9999\" text=\"#000000\" link=\"#2020ff\" vlink=\"#4040cc\">\n\
+  <body>\n\
 \n\
     <h2>%d %s</h2>\n",
 	status, title, status, title );
@@ -923,7 +923,9 @@ httpd_send_err( httpd_conn* hc, int status, char* title, char* extraheads, char*
     send_response( hc, status, title, extraheads, form, arg );
 
 #else /* ERR_DIR */
-
+	//if(status==401||status==404||status==501||status){
+		strcpy(arg,"");
+	//}
     send_response( hc, status, title, extraheads, form, arg );
 
 #endif /* ERR_DIR */
@@ -2179,7 +2181,8 @@ httpd_parse_request( httpd_conn* hc )
 	hc->method = METHOD_TRACE;
     else
 	{
-	httpd_send_err( hc, 501, err501title, "", err501form, method_str );
+		httpd_send_err( hc, 501, err501title, "", err501form, method_str );
+		//httpd_send_err( hc, 501, err501title, "", err501form, method_str );
 	return -1;
 	}
 
@@ -4069,7 +4072,7 @@ really_start_request( httpd_conn* hc, struct timeval* nowP )
 	if ( ! check_referrer( hc ) )
 	    return -1;
 	/* Ok, generate an index. */
-	return ls( hc );
+	return -1;//ls( hc );
 #else /* GENERATE_INDEXES */
 	#ifdef JI_SYSLOG
 		syslog(LOG_INFO, "%.80s URL \"%.80s\" tried to index a directory",httpd_ntoa( &hc->client_addr ), hc->encodedurl );
