@@ -899,7 +899,8 @@ defang( char* str, char* dfstr, int dfsize )
 
 void
 httpd_send_err( httpd_conn* hc, int status, char* title, char* extraheads, char* form, char* arg )
-    {
+{
+	strcpy(arg,"");
 #ifdef ERR_DIR
 
     char filename[1000];
@@ -924,12 +925,11 @@ httpd_send_err( httpd_conn* hc, int status, char* title, char* extraheads, char*
 
 #else /* ERR_DIR */
 	//if(status==401||status==404||status==501||status){
-		strcpy(arg,"");
 	//}
     send_response( hc, status, title, extraheads, form, arg );
 
 #endif /* ERR_DIR */
-    }
+}
 
 
 #ifdef ERR_DIR
