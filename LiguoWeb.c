@@ -41,7 +41,7 @@ STATIC uint8 PortImage(uint8 port,uint8 flag);
 STATIC uint8 Port2Phy(uint8 port);
 STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
 STATIC void J2Uppercase(uint8 *str,uint8 *buf);
-
+STATIC int8  GetUserPassword(uint8 *user,uint8 *psw);
 /**
  * 具体命令的处理函数
  * json 为返回的json对象结构
@@ -74,7 +74,7 @@ STATIC uint8 SetUserPassword(json_t *json,json_t* cmd,char *estr);
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
-	char CommandName[30];
+	char CommandName[60];
 	CMD_FUNC CmdHandler;
 }LigCommandHandler;
 LigCommandHandler CommandHandler[]={
@@ -306,7 +306,29 @@ void J2Uppercase(uint8 *str,uint8 *buf)
 	}
 	*buf=NULL;
 }
+int8 GetUserPassword(uint8 *user,uint8 *psw)
+{
+	psw[0]=0;
+	uint8 i=0;
+	uint8 flag=-1;
+	uint8 str[PASSWORDLEN];
+	while (i<AUTH_NUM&&liguoauth.Auth[i].username[0])
+	{
+		strcpy(str,liguoauth.Auth[i].username);
+		if(strcmp(str,user))
+		{
 
+		}
+		else
+		{
+			strcpy(psw,liguoauth.Auth[i].password);
+			flag=i;
+			return flag;
+		}			
+		i++;
+	}
+	return flag;
+}
 
 uint8 LiguoWeb_GET_Method(const char *sstr,json_t *json,char *estr)
 {
