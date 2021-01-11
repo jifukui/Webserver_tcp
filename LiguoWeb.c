@@ -67,7 +67,9 @@ STATIC uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 Upgrade(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetSecurityStat(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetSecurityStat(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 SetUserPassword(json_t *json,json_t* cmd,char *estr);
 
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
