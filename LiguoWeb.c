@@ -42,6 +42,12 @@ STATIC uint8 Port2Phy(uint8 port);
 STATIC uint8 CmdStrHandler(uint8 *str,uint8 *buf);
 STATIC void J2Uppercase(uint8 *str,uint8 *buf);
 
+/**
+ * 具体命令的处理函数
+ * json 为返回的json对象结构
+ * cmd 为请求的数据内容
+ * estr 为错误的数据
+*/
 STATIC uint8 GetDeviceModuleName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetPortInfo(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetCardOnlineStatus(json_t *json,json_t* cmd,char *estr);
@@ -61,6 +67,8 @@ STATIC uint8 GetUpgradeFileName(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 Upgrade(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetSlotUart(json_t *json,json_t* cmd,char *estr);
 STATIC uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr);
+STATIC uint8 GetSecurityStat(json_t *json,json_t* cmd,char *estr);
+
 
 typedef uint8 (*CMD_FUNC)(json_t *json,json_t* cmd,char * estr);
 typedef struct{
@@ -86,7 +94,10 @@ LigCommandHandler CommandHandler[]={
 	{"GetUpgradeFileName",&GetUpgradeFileName},
 	{"Upgrade",&Upgrade},
 	{"GetSlotUart",&GetSlotUart},
-	{"GetStaticNetWork",&GetStaticNetWork}
+	{"GetStaticNetWork",&GetStaticNetWork},
+	{"SetSecurityStat",&SetSecurityStat},
+	{"GetSecurityStat",&GetSecurityStat},
+	{"SetUserPassword",&SetUserPassword}
 };
 
 STATIC uint32 PiPHandler(char *tx,char *rx,uint32 len);
@@ -320,7 +331,9 @@ uint8 LiguoWeb_POST_Method(const unsigned char *sstr,json_t *json,char *estr)
 	flag=CommandHandle(sstr,json,estr);
 	return flag;
 }
-
+/**
+ * 命令处理函数
+*/
 uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 {
 	json_error_t error;
@@ -338,7 +351,7 @@ uint8 CommandHandle(const char *sstr,json_t *json,char *estr)
 		json_t *cpy=NULL;
         cmd=json_object_get(jsonget,"cmd");
 		command=json_object_get(jsonget,"Data");
-		char str[30];
+		char str[60];
         if(JsonGetString(cmd,str))
         {	
 			json_error_t error;
@@ -1796,6 +1809,197 @@ uint8 GetStaticNetWork(json_t *json,json_t* cmd,char *estr)
 			strcpy(estr,"get static network error");
 			flag=0;
 		}
+	}
+	return flag;
+}
+uint8 SetSecurityStat(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	json_t *value;
+	uint8 name[USERNAMELEN];
+	uint8 password[PASSWORDLEN];
+	uint8 pws[PASSWORDLEN];
+	int32 Security;
+	value=json_object_get(cmd,"username");
+	if(value)
+	{
+		if(JsonGetString(value,name))
+		{
+			value=json_object_get(cmd,"password");
+			if(value)
+			{
+				if(JsonGetString(value,password))
+				{
+					if(GetUserPassword(name,pws)>=0)
+					{
+						if(!strcmp(password,pws))
+						{
+							value=json_object_get(cmd,"Security");
+							if(value)
+							{
+								if(JsonGetInteger(value,&Security))
+								{
+									//printf("The Security is %d\n",Security);
+									//printf("The liguoauth.security is %d\n",liguoauth.security);
+									if(Security!=liguoauth.security)
+									{
+										printf("no equal\n");
+										liguoauth.security=Security;
+										writesecurityfile();
+										//SendSysIRQ(em_lig_sys_param_web_security);
+									}
+									printf("The liguoauth.security is %d\n",liguoauth.security);
+									flag=1;
+								}
+								else
+								{
+									strcpy(estr,"Security type error");
+								}
+								
+							}
+							else
+							{
+								strcpy(estr,"Get Security error");
+							}
+						}
+						else
+						{
+							strcpy(estr,"Password error");
+						}
+					}
+					else
+					{
+						strcpy(estr,"no this User");
+					}
+				}
+				else
+				{
+					strcpy(estr,"password type error");
+				}
+			}
+			else
+			{
+				strcpy(estr,"Get password error");
+			}
+		}
+		else
+		{
+			strcpy(estr,"Username type error");
+		}
+	}
+	else
+	{
+		strcpy(estr,"Get Username error");
+	}
+	return flag;
+}
+uint8 GetSecurityStat(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	if(json)
+	{
+		json_object_set(json,"securityStat",json_integer(liguoauth.security));
+		flag = 1;
+	}
+	else
+	{
+		strcpy(estr,"Init Json Error");
+	}
+	return flag;
+}
+uint8 SetUserPassword(json_t *json,json_t* cmd,char *estr)
+{
+	uint8 flag=0;
+	json_t *value;
+	uint8 name[USERNAMELEN];
+	uint8 password[PASSWORDLEN];
+	uint8 pws[PASSWORDLEN];
+	uint8 newpassword[PASSWORDLEN];
+	value=json_object_get(cmd,"username");
+	uint8 index=0;
+	uint8 status=0;
+	if(value)
+	{
+		if(JsonGetString(value,name))
+		{
+			value=json_object_get(cmd,"password");
+			if(value)
+			{
+				if(JsonGetString(value,password))
+				{
+					index=GetUserPassword(name,pws);
+					if(index>=0)
+					{
+						if(!strcmp(password,pws))
+						{
+							value=json_object_get(cmd,"newpassword");
+							if(value)
+							{
+								if(!status)
+								{
+									if(JsonGetString(value,newpassword))
+									{
+										status=CheckPassword(newpassword);
+										if(!status)
+										{
+											if(strcmp(password,newpassword))
+											{
+												strcpy(liguoauth.Auth[index].password,newpassword);
+												writesecurityfile();
+											}
+											flag=1;
+										}
+										else
+										{
+											if(status==1)
+											{
+												strcpy(estr,"length error");
+											}
+											else if(status==2)
+											{
+												strcpy(estr,"have Illegal character");
+											}
+										}	
+									}
+									else
+									{
+										strcpy(estr,"Security type error");
+									}
+								}
+							}
+							else
+							{
+								strcpy(estr,"Get Security error");
+							}
+						}
+						else
+						{
+							strcpy(estr,"Password error");
+						}
+					}
+					else
+					{
+						strcpy(estr,"no this User");
+					}
+				}
+				else
+				{
+					strcpy(estr,"password type error");
+				}
+			}
+			else
+			{
+				strcpy(estr,"Get password error");
+			}
+		}
+		else
+		{
+			strcpy(estr,"Username type error");
+		}
+	}
+	else
+	{
+		strcpy(estr,"Get Username error");
 	}
 	return flag;
 }
