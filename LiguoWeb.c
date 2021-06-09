@@ -425,7 +425,7 @@ uint32 PiPHandler(char *tx, char *rx, uint32 len)
 		}
 		do
 		{
-			usleep(2000000);
+			// usleep(2000000);
 			length = lig_pip_read_bytes(sockfd, rx, len);
 		} while (length == 0);
 
@@ -980,26 +980,26 @@ uint8 GetPortEDID(json_t *json, json_t *cmd, char *estr)
 				status = sscanf(&buf[START], "GEDID %d,%d,%d\r\n", &attr, &port, &len);
 				if (status == 3)
 				{
-					if (attr == 2)
+					// if (attr == 2)
+					// {
+					// 	for (length = 0; length < 50; length++)
+					// 	{
+					// 		if (buf[length] == '\n')
+					// 		{
+					// 			flag = length + 1;
+					// 			break;
+					// 		}
+					// 	}
+					// 	memmove(buf, &buf[flag], len);
+					// }
+					// else
+					// {
+					length = 0;
+					do
 					{
-						for (length = 0; length < 50; length++)
-						{
-							if (buf[length] == '\n')
-							{
-								flag = length + 1;
-								break;
-							}
-						}
-						memmove(buf, &buf[flag], len);
-					}
-					else
-					{
-						length = 0;
-						do
-						{
-							length = lig_pip_read_bytes(sockfd, buf, sizeof(buf));
-						} while (length == 0);
-					}
+						length = lig_pip_read_bytes(sockfd, buf, sizeof(buf));
+					} while (length == 0);
+					// }
 
 					bzero(str, sizeof(str));
 					Uint8toString(str, buf, len);
