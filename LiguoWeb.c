@@ -425,7 +425,7 @@ uint32 PiPHandler(char *tx, char *rx, uint32 len)
 		}
 		do
 		{
-			usleep(2000);
+			usleep(20000);
 			length = lig_pip_read_bytes(sockfd, rx, len);
 		} while (length == 0);
 
