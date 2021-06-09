@@ -425,7 +425,7 @@ uint32 PiPHandler(char *tx, char *rx, uint32 len)
 		}
 		do
 		{
-			usleep(20000);
+			// usleep(20000);
 			length = lig_pip_read_bytes(sockfd, rx, len);
 		} while (length == 0);
 
@@ -438,7 +438,7 @@ uint32 PiPHandler(char *tx, char *rx, uint32 len)
 				printf("The length  2 is %d\n",length);
 			}while(status);
 		}*/
-		//printf("The length  3 is %d\n",length);
+		printf("The length  3 is %d\n", length);
 		//gettimeofday(&end,NULL);
 		//time=1000000*(end.tv_sec-start.tv_sec)+end.tv_usec-start.tv_usec;
 		//printf("The time is %d\n",time);
