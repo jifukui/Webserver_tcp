@@ -606,3 +606,64 @@ ip,mask,gateway如果有一个修改三个参数都必须有，如果都没有�
 	},
 	"error":"xxxxxxxxxxxxxxxxxx"
 }
+（20）设置设备的安全状态
+{
+	"cmd":"SetSecurityStat",
+	"Data":{
+			"username":"Admin",
+			"password":"jifukui",
+			"Security":1
+		}
+}
+成功返回
+{"echo": {"result": {"cmd": "SetSecurityStat"}}, "status": "SUCCESS", "error": ""}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetSecurityStat"
+        }
+	},
+	"error":"xxxxxxxxxxxxxxxxxx"
+}
+（21）获取设备的安全状态
+{
+	"cmd":"GetSecurityStat",
+}
+成功返回
+{"echo": {"result": {"cmd": "GetSecurityStat", "securityStat": 1}}, "status": "SUCCESS", "error": ""}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"GetSecurityStat"
+        }
+	},
+	"error":"xxxxxx"
+}
+(22)设置用户的密码
+{
+	"cmd":"SetUserPassword",
+	"Data":{
+			"username":"Admin",
+			"password":"jifukui",
+			"newpassword":"Admin"
+		}
+}
+成功返回
+{"echo": {"result": {"cmd": "SetUserPassword"}}, "status": "SUCCESS", "error": ""}
+失败返回
+{
+	"status":"ERROR",
+	"echo":
+	{
+        "result":{
+            "cmd":"SetUserPassword"
+        }
+	},
+	"error":"xxxxxxx"
+}
