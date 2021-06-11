@@ -1037,7 +1037,7 @@ uint8 CopyPortEDID(json_t *json, json_t *cmd, char *estr)
 	uint32 in;
 	uint32 type;
 	uint32 out = 0;
-	uint32 bitmap[2] = {0, 0};
+	uint32 bitmap[3] = {0, 0, 0};
 	uint32 status;
 	json_t *obj;
 	json_t *arr;
@@ -1078,16 +1078,20 @@ uint8 CopyPortEDID(json_t *json, json_t *cmd, char *estr)
 										{
 											bitmap[0] |= 1 << out;
 										}
-										else
+										else if (out < 64)
 										{
 											bitmap[1] |= 1 << (out - 32);
+										}
+										else
+										{
+											bitmap[2] |= 1 << (out - 64);
 										}
 									}
 								}
 							}
-							if (bitmap[0] || bitmap[1])
+							if (bitmap[0] || bitmap[1] || bitmap[3])
 							{
-								sprintf(str, "#CPEDID %d,%d,0,0x%08x%08x\r\n", type, in, bitmap[1], bitmap[0]);
+								sprintf(str, "#CPEDID %d,%d,0,0x%08x%08x%08x\r\n", type, in, bitmap[2], bitmap[1], bitmap[0]);
 								PiPHandler(str, buf, sizeof(buf));
 								status = sscanf(&buf[START], "CPEDID ERR,%d\r\n", &type);
 								flag = !status;
