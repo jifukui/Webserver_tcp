@@ -1173,7 +1173,7 @@ uint8 LoadEDID(json_t *json, json_t *cmd, char *estr)
 					}
 				}
 			}
-			if (bitmap[0] || bitmap[1])
+			if (bitmap[0] || bitmap[1] || bitmap[2])
 			{
 				obj = json_object_get(cmd, "EDID");
 				if (JsonGetString(obj, data))
