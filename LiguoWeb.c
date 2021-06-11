@@ -980,26 +980,26 @@ uint8 GetPortEDID(json_t *json, json_t *cmd, char *estr)
 				status = sscanf(&buf[START], "GEDID %d,%d,%d\r\n", &attr, &port, &len);
 				if (status == 3)
 				{
-					// if (attr == 2)
-					// {
-					// 	for (length = 0; length < 50; length++)
-					// 	{
-					// 		if (buf[length] == '\n')
-					// 		{
-					// 			flag = length + 1;
-					// 			break;
-					// 		}
-					// 	}
-					// 	memmove(buf, &buf[flag], len);
-					// }
-					// else
-					// {
-					length = 0;
-					do
+					if (attr == 2)
 					{
-						length = lig_pip_read_bytes(sockfd, buf, sizeof(buf));
-					} while (length == 0);
-					// }
+						for (length = 0; length < 50; length++)
+						{
+							if (buf[length] == '\n')
+							{
+								flag = length + 1;
+								break;
+							}
+						}
+						memmove(buf, &buf[flag], len);
+					}
+					else
+					{
+						length = 0;
+						do
+						{
+							length = lig_pip_read_bytes(sockfd, buf, sizeof(buf));
+						} while (length == 0);
+					}
 
 					bzero(str, sizeof(str));
 					Uint8toString(str, buf, len);
@@ -1137,7 +1137,7 @@ uint8 LoadEDID(json_t *json, json_t *cmd, char *estr)
 	uint8 edid[1024];
 	uint8 buf[1024];
 	uint32 in;
-	uint32 bitmap[2] = {0, 0};
+	uint32 bitmap[3] = {0, 0, 0};
 	uint32 status;
 	uint32 len;
 	json_t *obj;
@@ -1161,9 +1161,13 @@ uint8 LoadEDID(json_t *json, json_t *cmd, char *estr)
 						{
 							bitmap[0] |= 1 << in;
 						}
-						else
+						else if (in < 64)
 						{
 							bitmap[1] |= 1 << (in - 32);
+						}
+						else
+						{
+							bitmap[2] |= 1 << (in - 64);
 						}
 						//bitmap|=(1<<in);
 					}
@@ -1176,7 +1180,7 @@ uint8 LoadEDID(json_t *json, json_t *cmd, char *estr)
 				{
 					len = strlen(data) / 2;
 					StringtoUint8(&edid[4], data);
-					sprintf(str, "#LDEDID 0,0x%08x%08x,%d,1\r\n", bitmap[1], bitmap[0], len);
+					sprintf(str, "#LDEDID 0,0x%08x%08x%08x,%d,1\r\n", bitmap[2], bitmap[1], bitmap[0], len);
 					PiPHandler(str, buf, sizeof(buf));
 					if (strstr(buf, "READY"))
 					{
