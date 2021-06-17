@@ -1070,9 +1070,9 @@ uint8 CopyPortEDID(json_t *json, json_t *cmd, char *estr)
 								obj = json_array_get(arr, i);
 								if (JsonGetInteger(obj, &out))
 								{
-									printf("the origin out is %d\r\n",out);
+									// printf("the origin out is %d\r\n",out);
 									out = Port2Phy(out);
-									printf("the origin1 out is %d\r\n",out);
+									// printf("the origin1 out is %d\r\n",out);
 									if (out)
 									{
 										out -= 1;
